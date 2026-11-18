@@ -1,1 +1,1 @@
-"""TEE attestation material: docs and the planned GPU-bound signer extension point."""
+"""TEE attestation material and the GPU attestation extension."""

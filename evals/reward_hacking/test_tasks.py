@@ -2,7 +2,7 @@
 the committed split file. No network: `load_tasks` (which calls `datasets.load_dataset`)
 is never invoked here.
 
-Per the handoff's "Data splits and independence" section, splitting must be by
+Splitting must be by
 *original task*, never by rollout or variant, so that a task's original/oneoff/
 conflicting variants -- which share `task_id` -- always land in the same
 partition and never leak across train/val/test.

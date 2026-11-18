@@ -23,11 +23,7 @@ def main() -> int:
         ("rh-eq2-cv-report", "rh_eq2_cv_report",
          "Reward hacking EQ2: split monitors vs train-cv probes, non-inferiority, cost"),
         ("rh-t1-eq2-report", "rh_t1_eq2_report",
-         "T1 EQ2: status-filtered terminal and early monitor metrics with a test freeze guard"),
-        ("rh-t1-invalid-sensitivity", "rh_t1_invalid_sensitivity",
-         "T1 EQ2 supplemental: invalid-as-maximum AUROC sensitivity after the initial aggregate"),
-        ("rh-t1-finalstate-compare", "rh_t1_finalstate_compare",
-         "T1 EQ2 exploratory: paired final-state vs history-only monitor aggregate"),
+         "LiveCodeBench EQ2 report: status-filtered terminal and early monitor metrics with a test freeze guard"),
         ("rh-probe", "rh_probe",
          "Reward hacking: fit and freeze the probe taps on training data; score rollouts (CPU)"),
     ):

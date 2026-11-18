@@ -8,7 +8,6 @@ import torch
 
 from evals.tap_live import decode_bench as db
 from evals.tap_live import generate_calls as gc
-from evals.tap_live import summarize_calls as sc
 from evals.tap_live.test_decode_bench import artifact, force, histories, mk, traj_dir  # noqa: F401  (fixtures and helpers)
 
 LAYER = 2
@@ -54,9 +53,6 @@ def test_cap_hits_and_natural_stops_are_recorded_and_outputs_saved(model, tok, f
     assert all(r["finish_reason"] == "cap" and r["hit_cap"] and r["n_generated"] == 7 and not r["stopped_naturally"] for r in r2)
     o2 = json.loads((out2 / "outputs.jsonl").read_text().splitlines()[0])
     assert o2["finish_reason"] == "cap" and o2["stop_token_id"] is None and o2["text_with_special_tokens"] == o2["text_stop_token_removed"]
-    s = sc.summarize(out2)
-    assert s["counts"]["A0"]["cap_hits"] == 2 and s["counts"]["A0"]["natural_stops"] == 0 and "mean_seconds_per_call_natural_only" not in s["counts"]["A0"]
-    assert s["identical_natural_stop_only"]["empty"]
 
 
 def test_run_rows_order_arms_seeds_and_provenance(model, tok, fmt, histories, artifact, tmp_path):
@@ -67,7 +63,7 @@ def test_run_rows_order_arms_seeds_and_provenance(model, tok, fmt, histories, ar
     cfg = json.loads((out / "run_config.json").read_text())
     c = cfg["config"]
     assert c["kind"] == "generate_calls" and c["cap"] == 10 and c["repeats"] == 2 and "cap_behaviour" in c and c["histories_sha256"] == db.sha256_file(histories[0])
-    assert "generate_calls.py" in c["code_sha256"] and "summarize_calls.py" in c["code_sha256"] and c["artifact"]["heads"] and c["sampling"]["top_k"] == 20
+    assert "generate_calls.py" in c["code_sha256"] and c["artifact"]["heads"] and c["sampling"]["top_k"] == 20
     assert {r["config_sha256"] for r in rows} == {cfg["config_sha256"]}
     for r in rows:
         assert r["order_position"] == db.arm_order(r["repeat"]).index(r["arm"]) and r["seed"] == gc.seed_call(r["history_id"], r["repeat"])
@@ -84,8 +80,6 @@ def test_a0_only_schedule(model, tok, fmt, histories, artifact, tmp_path):
     out = tmp_path / "o"
     gc.main(argv(histories, artifact, out, ["--arms", "A0"]), inject=inject(model, tok, fmt))
     assert {r["arm"] for r in rows_of(out)} == {"A0"} and len(rows_of(out)) == 4
-    s = sc.summarize(out)
-    assert "pairs" not in s and s["counts"]["A0"]["completed"] == 4
     with pytest.raises(SystemExit):
         gc.main(argv(histories, artifact, tmp_path / "bad", ["--arms", "A1"]), inject=inject(model, tok, fmt))
 
@@ -109,7 +103,7 @@ def test_resume_refuses_a_changed_config_and_repairs_an_interrupted_run(model, t
     assert len(rows_of(out)) == n and len((out / "outputs.jsonl").read_text().splitlines()) == 1
 
 
-def test_a_failed_call_is_a_row_and_summary_counts_it(model, tok, fmt, histories, artifact, tmp_path):
+def test_a_failed_call_is_a_row(model, tok, fmt, histories, artifact, tmp_path):
     state = {"n": 0}
 
     def boom(logits, gen, ci):
@@ -121,31 +115,3 @@ def test_a_failed_call_is_a_row_and_summary_counts_it(model, tok, fmt, histories
     gc.main(argv(histories, artifact, out, ["--limit-histories", "1", "--no-warmup"]), inject=inject(model, tok, fmt, boom))
     rows = rows_of(out)
     assert len(rows) == 4 and [r["status"] for r in rows].count("error") == 1
-    s = sc.summarize(out)
-    assert sum(c["failed"] for c in s["counts"].values()) == 1 and s["pairs"]["with_a_failed_arm"] == 1
-
-
-def test_summary_tables_cover_the_requested_quantities(tmp_path):
-    hs = [f"{t}@{d}" for t in "abc" for d in (0.25, 0.5)]
-    cfg = {"config_sha256": "z" * 64, "config": {"history_ids": hs, "repeats": 2, "cap": 4096, "arms": ["A0", "A1"],
-                                                  "histories_summary": {"fallback_history_ids": ["a@0.5"]}}}
-    (tmp_path / "run_config.json").write_text(json.dumps(cfg))
-    rows = []
-    for i, h in enumerate(hs):
-        for rep in (0, 1):
-            nat = i % 2 == 0
-            base = {"finish_reason": "natural" if nat else "cap", "stopped_naturally": nat, "hit_cap": not nat, "cap": 4096}
-            rows += [{**mk(h, rep, "A0", 50.0 + i, gen=1800 if nat else 4096), **base}, {**mk(h, rep, "A1", 50.0 + i + (0.01 if i % 3 else -0.01), gen=1800 if nat else 4096), **base}]
-    (tmp_path / "calls.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
-    s = sc.summarize(tmp_path)
-    a0 = s["counts"]["A0"]
-    assert a0["scheduled"] == 12 and a0["attempted"] == 12 and a0["natural_stops"] == 6 and a0["cap_hits"] == 6
-    assert a0["mean_generated_all"] == pytest.approx((1800 + 4096) / 2) and a0["mean_generated_natural_only"] == 1800
-    assert a0["mean_seconds_per_call_all"] > 0 and s["unique_tasks"] == 3 and s["unique_histories"] == 6
-    assert s["all_attempts"]["n_pairs"] == 12 and s["identical_natural_stop_only"]["n_pairs"] == 6
-    e = s["all_attempts"]["estimand_overall"]
-    assert e["n_tasks"] == 3 and "task" in e["bootstrap"]["unit"] and s["all_attempts"]["absolute_ms_per_call_pair_weighted"]["ci95_ms"]
-    md = sc.to_markdown(s)
-    assert "3 unique tasks" in md and "cap hits" in md and "natural stops" in md and "whole tasks" in md
-    sc.main([str(tmp_path)])
-    assert (tmp_path / "calls_summary.md").exists()

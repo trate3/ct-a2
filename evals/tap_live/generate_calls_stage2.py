@@ -81,6 +81,24 @@ def parse_info(tok, fmt, gen: list[int], stopped: bool) -> dict:
         return {"parse_failure": True, "parse_error": f"{type(exc).__name__}: {exc}"[:300]}
 
 
+def check_inputs(stage2_list: Path, histories: Path, limit_runs: int = 0):
+    """The stage-2 list and the histories it was made from: file hash and per-run prompt hashes. Returns
+    (selection, histories document, runs, the history of each run); raises SystemExit on a mismatch."""
+    sel = json.loads(Path(stage2_list).read_text())
+    doc = json.loads(Path(histories).read_text())
+    if sel["histories_sha256"] != db.sha256_file(histories):
+        raise SystemExit("the histories file differs from the one the stage-2 list was made from")
+    hist = {h["history_id"]: h for h in doc["histories"]}
+    runs = sel["runs"][:limit_runs or None]
+    run_hist = []
+    for r in runs:
+        h = hist[r["history_id"]]
+        if h["prompt_sha256"] != r["prompt_sha256"]:
+            raise SystemExit(f"prompt hash of {r['history_id']} differs from the stage-2 list")
+        run_hist.append(h)
+    return sel, doc, runs, run_hist
+
+
 def main(argv=None, *, inject: dict | None = None) -> int:
     """`inject` (tests only): {"model", "tokenizer", "fmt", "logits_processor"}."""
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -103,18 +121,7 @@ def main(argv=None, *, inject: dict | None = None) -> int:
     args = ap.parse_args(argv)
     inject = inject or {}
     device = torch.device(args.device)
-    sel = json.loads(args.stage2_list.read_text())
-    doc = json.loads(args.histories.read_text())
-    if sel["histories_sha256"] != db.sha256_file(args.histories):
-        raise SystemExit("the histories file differs from the one the stage-2 list was made from")
-    hist = {h["history_id"]: h for h in doc["histories"]}
-    runs = sel["runs"][:args.limit_runs or None]
-    run_hist = []
-    for r in runs:
-        h = hist[r["history_id"]]
-        if h["prompt_sha256"] != r["prompt_sha256"]:
-            raise SystemExit(f"prompt hash of {r['history_id']} differs from the stage-2 list")
-        run_hist.append(h)
+    sel, doc, runs, run_hist = check_inputs(args.stage2_list, args.histories, args.limit_runs)
     fmt = inject.get("fmt") or llm.get_format(gc.TARGET, **({"reasoning_effort": args.reasoning_effort} if args.reasoning_effort else {}))
     t_load = time.perf_counter()
     if "model" in inject:

@@ -1,4 +1,4 @@
-"""LCB-oneoff T1 schedules (data/a32): k=0..5 on every usable task, trainval sharded for parallel jobs.
+"""LCB-oneoff T1 schedules (data/lcb_oneoff_schedules): k=0..5 on every usable task, trainval sharded for parallel jobs.
 
 Same 100 tasks as the conflicting T1 population (the runner drops `rollout.MALFORMED_TASKS` for every
 variant; on oneoff only lcbhard_77 is actually malformed). Seeds come from (task:prompt_id, k), so each
@@ -13,7 +13,7 @@ import pathlib
 from evals.reward_hacking import rollout
 
 D = pathlib.Path(__file__).resolve().parents[1] / "data"
-OUT = D / "a32"
+OUT = D / "lcb_oneoff_schedules"
 PROMPT = "T1"
 KS = tuple(range(6))
 TRAINVAL_SHARDS = 3

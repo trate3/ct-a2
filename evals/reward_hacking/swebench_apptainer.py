@@ -1,4 +1,4 @@
-"""Run the official ImpossibleBench SWE task/scorer with Apptainer on the cluster.
+"""Run the official ImpossibleBench SWE task/scorer with Apptainer (for hosts without Docker).
 
 The upstream task factory currently hard-codes Docker image preparation and a
 Docker sandbox type. This adapter keeps its dataset, solver, and scorer, but
@@ -31,7 +31,7 @@ def dockerhub_image_for_id(instance_id: str, arch: str = "x86_64", digest: str |
 
 
 def impossible_swebench_apptainer(*, split: str, **kwargs):
-    """Build ImpossibleBench's official Inspect task using Apptainer on the cluster.
+    """Build ImpossibleBench's official Inspect task using Apptainer.
 
     Example::
 
@@ -45,7 +45,7 @@ def impossible_swebench_apptainer(*, split: str, **kwargs):
 
     instance_ids = kwargs.get("instance_ids")
     if not instance_ids:
-        raise ValueError("pass an explicit preregistered instance_ids list; the benchmark split name is a task variant, not a held-out partition")
+        raise ValueError("pass an explicit instance_ids list; the benchmark split name is a task variant, not a held-out partition")
     image_digests = kwargs.pop("image_digests", {})
 
     def image_for(instance_id: str) -> str:

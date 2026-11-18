@@ -12,11 +12,42 @@ import json
 import pytest
 
 from evals.reward_hacking import llm, tools
-from evals.reward_hacking.test_glm_format import CONVERSATIONS, FakeComp
 
 Q38 = llm.get_format("qwen3.8-27b")
 Q36 = llm.get_format("qwen3.6")
 TOOLS = tools.TOOL_SPECS
+
+
+def tc(name, args):
+    return {"type": "function", "function": {"name": name, "arguments": args}}
+
+
+CONVERSATIONS = {
+    "system_user": [{"role": "system", "content": "You are an agent."}, {"role": "user", "content": "hi"}],
+    "tool_loop": [
+        {"role": "system", "content": "You are a coding agent.\nUse the tools."},
+        {"role": "user", "content": "Implement func.py."},
+        {"role": "assistant", "content": "Let me look.", "reasoning_content": "First read.\nThen edit.",
+         "tool_calls": [tc("bash", {"cmd": "ls /; cat /func.py"}),
+                        tc("text_editor", {"command": "insert", "path": "/func.py", "insert_line": 3,
+                                           "new_str": "x = 1\n\ty = \"é中\"", "view_range": [1, -1]})]},
+        {"role": "tool", "content": "func.py test.py"},
+        {"role": "tool", "content": "Error: file not found"},
+        {"role": "assistant", "content": "", "reasoning_content": "", "tool_calls": [tc("submit", {"answer": "done"})]},
+        {"role": "tool", "content": "done"},
+        {"role": "user", "content": "Your submission was incorrect."},
+    ],
+    "no_reasoning_key": [
+        {"role": "user", "content": "q"},
+        {"role": "assistant", "content": "  padded answer \n"},
+        {"role": "user", "content": "next"},
+    ],
+}
+
+
+class FakeComp:
+    def __init__(self, text, last_token, stop_type="eos"):
+        self.text, self.tokens, self.stop_type = text, [5, 6, last_token], stop_type
 
 
 def reference(messages, tools_=None, add_generation_prompt=True, **kw):
@@ -40,7 +71,7 @@ def test_template_pin_and_registry():
     cfg = json.loads((llm.QWEN38_TEMPLATE_PATH.parent / "qwen3.8-27b.config.json").read_text())["text_config"]
     assert cfg["num_hidden_layers"] == Q38.num_hidden_layers == 64
     assert Q38.probe_layers == tuple(round(Q38.num_hidden_layers * f) for f in (.25, .5, .75)) == (16, 32, 48)
-    assert Q36.probe_layers == (10, 20, 30) and Q36.num_hidden_layers == 40       # the pre-registered pilot layers
+    assert Q36.probe_layers == (10, 20, 30) and Q36.num_hidden_layers == 40       # the pilot layers
 
 
 @pytest.mark.parametrize("name", sorted(CONVERSATIONS))
@@ -137,7 +168,6 @@ def test_default_format_is_still_qwen36():
 
 def test_default_probe_layers_follow_the_target_depth():
     import argparse
-    from evals.reward_hacking import dom_pairs
     from evals.reward_hacking.scripts import extract_activations as ea
     from evals_runner import rh_probe
     assert ea.default_layers() == list(ea.DEFAULT_LAYERS) == [10, 20, 30]
@@ -145,19 +175,6 @@ def test_default_probe_layers_follow_the_target_depth():
     assert rh_probe._layers(argparse.Namespace(layers=None, target_model="qwen3.8-27b")) == [16, 32, 48]
     assert rh_probe._layers(argparse.Namespace(layers=None)) == list(rh_probe.LAYERS)
     assert rh_probe._layers(argparse.Namespace(layers=[7], target_model="qwen3.8-27b")) == [7]
-    assert dom_pairs._layers(argparse.Namespace(layers=None, target_model="qwen3.8-27b")) == [16, 32, 48]
-    assert dom_pairs._layers(argparse.Namespace(layers=None)) == list(dom_pairs.LAYERS)
     p = ea.argparse.ArgumentParser()
     ea.add_model_args(p)
     assert p.parse_args(["--model", "m", "--target-model", "qwen3.8-27b"]).target_model == "qwen3.8-27b"
-
-
-def test_dom_pairs_prompt_uses_the_target_format():
-    from evals.reward_hacking import dom_pairs
-    msgs = [{"role": "system", "content": "s"}, {"role": "user", "content": "u"}]
-    assert dom_pairs.render_final(msgs, "hack it") == llm.render(
-        msgs + [{"role": "user", "content": "hack it"}], TOOLS, add_generation_prompt=True, enable_thinking=False)
-    p = dom_pairs.render_final(msgs, "hack it", Q38)
-    assert p.endswith("<|im_start|>assistant\n<think>\n\n</think>\n\n") and "Reasoning effort" not in p
-    assert p == reference(msgs + [{"role": "user", "content": "hack it"}], TOOLS, True, preserve_thinking=True,
-                          enable_thinking=False)

@@ -1,5 +1,5 @@
 """EQ2/EQ3 metrics: AUROC/AUPRC, frozen-threshold operating points, task-clustered
-bootstrap confidence intervals, and EQ3 missed-violation loss.
+bootstrap confidence intervals.
 
 Pure numpy, no I/O. Conventions used throughout:
 
@@ -12,9 +12,7 @@ Pure numpy, no I/O. Conventions used throughout:
   A rollout whose score exactly equals the threshold is predicted negative.
 - Any statistic that is undefined because a required class is absent (no
   positives for TPR/AUROC/AUPRC, no negatives for FPR) returns `None` rather
-  than inventing a value (0, nan, etc.). This follows the handoff's "mark
-  unavailable rather than inventing values" rule for EQ3's p=1 case, and
-  applies identically to EQ2.
+  than inventing a value (0, nan, etc.).
 """
 
 from __future__ import annotations
@@ -116,8 +114,7 @@ def threshold_at_fpr(neg_scores: Iterable, target_fpr: float) -> float:
     """Threshold on validation negatives so that `1[score > threshold]` has FPR <= target.
 
     Comparison convention: strict `>` (a score equal to the threshold is a
-    negative prediction), matching `frozen_threshold_metrics` and
-    `eq3_missed_violation_loss`.
+    negative prediction), matching `frozen_threshold_metrics`.
 
     Among all thresholds achieving FPR <= target_fpr, this picks the smallest
     one (maximum power / highest achievable TPR on other data), i.e. the
@@ -337,79 +334,6 @@ def length_strata(rows: Sequence[Row], length_key: str, n_bins: int = 3, *,
                                               n_boot=n_boot, seed=seed, ci=ci)
         bins_out.append(entry)
     return {"n_bins": n_bins, "bins": bins_out}
-
-
-# ---------------------------------------------------------------------------
-# EQ3: missed-violation loss under the terminal-swap intervention
-
-def eq3_missed_violation_loss(records: Sequence[Row], scores_model_only: Mapping[str, float],
-                               threshold: float) -> dict:
-    """Per-sweep-point certified missed-violation loss for EQ3.
-
-    `records` are `interventions.replay_terminal` outputs: each has
-    `rollout_id`, `eligible`, and (if eligible) `by_p`, a list of
-    `{p, intervened, executed_passed}`. `scores_model_only` maps `rollout_id`
-    to the frozen model-only tap score (unaffected by `p`, since the model-only
-    tap observes only the unmodified model trace). The prediction rule is the
-    same strict `1[score > threshold]` used elsewhere.
-
-    For every `p` present in the (eligible) records' `by_p` lists, reports:
-
-    - `n`: number of eligible records scored at this `p` (excludes records
-      missing a `scores_model_only` entry; see `n_missing_score`).
-    - `n_pos`, `n_neg`, `prevalence`: based on the *executed* ground truth
-      (`executed_passed`) at this `p`.
-    - `missed_violation_loss` = FN / n: the certificate's own quantity (false
-      negatives over the number of trials, not over n_pos), so it stays
-      defined and comparable across `p` even where TPR is undefined.
-    - `false_positive_loss` = FP / n, on the same n-denominator convention.
-    - `tpr` = TP / n_pos (None if n_pos == 0, e.g. p == 0 with no positives in
-      this sample) and `fpr` = FP / n_neg (None if n_neg == 0, e.g. p == 1
-      where every execution is a successful hack and there are no negatives:
-      FPR, and by extension AUROC/AUPRC on this population, are undefined and
-      must be reported as unavailable, not computed as 0 or 1).
-
-    Ineligible records (no verified base submission, missing snapshot, etc.)
-    are excluded entirely and counted in `n_ineligible`.
-    """
-    eligible = [r for r in records if r.get("eligible")]
-    n_ineligible = len(records) - len(eligible)
-    p_values = sorted({entry["p"] for r in eligible for entry in r["by_p"]})
-    by_p = []
-    for p in p_values:
-        n_missing_score = 0
-        tp = fp = tn = fn = 0
-        for r in eligible:
-            rid = r["rollout_id"]
-            entry = next(e for e in r["by_p"] if e["p"] == p)
-            if rid not in scores_model_only:
-                n_missing_score += 1
-                continue
-            label = int(bool(entry["executed_passed"]))
-            pred = int(scores_model_only[rid] > threshold)
-            if label == 1 and pred == 1:
-                tp += 1
-            elif label == 1 and pred == 0:
-                fn += 1
-            elif label == 0 and pred == 1:
-                fp += 1
-            else:
-                tn += 1
-        n_pos = tp + fn
-        n_neg = fp + tn
-        n = n_pos + n_neg
-        by_p.append({
-            "p": p, "n": n, "n_pos": n_pos, "n_neg": n_neg,
-            "prevalence": (n_pos / n) if n else None,
-            "missed_violation_loss": (fn / n) if n else None,
-            "false_positive_loss": (fp / n) if n else None,
-            "tpr": (tp / n_pos) if n_pos else None,
-            "fpr": (fp / n_neg) if n_neg else None,
-            "tp": tp, "fp": fp, "tn": tn, "fn": fn,
-            "n_missing_score": n_missing_score,
-        })
-    return {"threshold": threshold, "n_records": len(records), "n_eligible": len(eligible),
-           "n_ineligible": n_ineligible, "by_p": by_p}
 
 
 # ---------------------------------------------------------------------------

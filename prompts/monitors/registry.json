@@ -1,71 +1,4 @@
 {
- "gemma4-e2b": {
-  "api": "chat",
-  "assistant_prefill": "",
-  "chars_per_token": 3.0,
-  "dynamic_output": false,
-  "enable_thinking": false,
-  "engine": "vllm",
-  "fail_closed_no_marker": false,
-  "hf_id": "google/gemma-4-E2B-it",
-  "hf_overrides": null,
-  "language_only": false,
-  "max_model_len": 131072,
-  "max_prompt_tokens": 128000,
-  "max_tokens": 1024,
-  "min_output_tokens": 1024,
-  "name": "gemma4-e2b",
-  "notes": "Gemma 4 effective-parameter model; 128K context (text_config.max_position_embeddings=131072); template default enable_thinking=false, we send it explicitly.",
-  "prompt_style": "matched",
-  "reasoning_format": false,
-  "request_extra": {},
-  "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
-  "sampling": {
-   "temperature": 0.0,
-   "top_k": 1
-  },
-  "seed": 0,
-  "think_close": "()",
-  "think_open": "()",
-  "vllm_args": "('--limit-mm-per-prompt', '{\"image\":0,\"audio\":0}')",
-  "weights_name": null,
-  "yarn_base": null
- },
- "gemma4-e2b-think": {
-  "api": "chat",
-  "assistant_prefill": "",
-  "chars_per_token": 3.0,
-  "dynamic_output": true,
-  "enable_thinking": true,
-  "engine": "vllm",
-  "fail_closed_no_marker": false,
-  "hf_id": "google/gemma-4-E2B-it",
-  "hf_overrides": null,
-  "language_only": false,
-  "max_model_len": 131072,
-  "max_prompt_tokens": 112000,
-  "max_tokens": 65536,
-  "min_output_tokens": 16384,
-  "name": "gemma4-e2b-think",
-  "notes": "Gemma 4 effective-parameter model; 128K context (text_config.max_position_embeddings=131072); template default enable_thinking=false, we send it explicitly. [thinking on; model-card sampling 1.0/0.95/64]",
-  "prompt_style": "matched",
-  "reasoning_format": false,
-  "request_extra": {
-   "skip_special_tokens": false,
-   "top_k": 64,
-   "top_p": 0.95
-  },
-  "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
-  "sampling": {
-   "temperature": 1.0
-  },
-  "seed": 0,
-  "think_close": "('<channel|>',)",
-  "think_open": "('<|channel>thought',)",
-  "vllm_args": "('--limit-mm-per-prompt', '{\"image\":0,\"audio\":0}')",
-  "weights_name": "gemma4-e2b",
-  "yarn_base": null
- },
  "gemma4-e4b": {
   "api": "chat",
   "assistant_prefill": "",
@@ -95,8 +28,7 @@
   "think_close": "()",
   "think_open": "()",
   "vllm_args": "('--limit-mm-per-prompt', '{\"image\":0,\"audio\":0}')",
-  "weights_name": null,
-  "yarn_base": null
+  "weights_name": null
  },
  "gemma4-e4b-think": {
   "api": "chat",
@@ -130,40 +62,7 @@
   "think_close": "('<channel|>',)",
   "think_open": "('<|channel>thought',)",
   "vllm_args": "('--limit-mm-per-prompt', '{\"image\":0,\"audio\":0}')",
-  "weights_name": "gemma4-e4b",
-  "yarn_base": null
- },
- "glm5.3-flash-nvfp4": {
-  "api": "chat",
-  "assistant_prefill": "<think></think>",
-  "chars_per_token": 3.0,
-  "dynamic_output": false,
-  "enable_thinking": false,
-  "engine": "vllm",
-  "fail_closed_no_marker": false,
-  "hf_id": "nvidia/GLM-5.3-Flash-NVFP4",
-  "hf_overrides": null,
-  "language_only": true,
-  "max_model_len": 196608,
-  "max_prompt_tokens": 190000,
-  "max_tokens": 4096,
-  "min_output_tokens": 1024,
-  "name": "glm5.3-flash-nvfp4",
-  "notes": "GLM-5.3-Flash NVFP4 outside monitor, reasoning off by the template's own empty-reasoning form as assistant prefill (continue_final_message), greedy, 4096 output tokens (amendment 50). Server flags (modelopt_fp4, fp8 KV cache) come from lib.sh with TARGET_MODEL=glm-5.3-flash.",
-  "prompt_style": "matched",
-  "reasoning_format": false,
-  "request_extra": {},
-  "revision": "da920bb0b9f4a06727223a349e55468e38352348",
-  "sampling": {
-   "temperature": 0.0,
-   "top_k": 1
-  },
-  "seed": 0,
-  "think_close": "()",
-  "think_open": "()",
-  "vllm_args": "()",
-  "weights_name": "glm-5.3-flash-nvfp4",
-  "yarn_base": null
+  "weights_name": "gemma4-e4b"
  },
  "glm5.3-flash-nvfp4-think": {
   "api": "chat",
@@ -181,7 +80,7 @@
   "max_tokens": 16384,
   "min_output_tokens": 1024,
   "name": "glm5.3-flash-nvfp4-think",
-  "notes": "GLM-5.3-Flash NVFP4 outside monitor, reasoning on (the template opens <think> itself), greedy (temperature 0, as EQ3), 16384 output tokens (amendment 50)",
+  "notes": "GLM-5.3-Flash NVFP4 outside monitor, reasoning on (the template opens <think> itself), greedy (temperature 0), 16384 output tokens",
   "prompt_style": "matched",
   "reasoning_format": false,
   "request_extra": {
@@ -195,8 +94,7 @@
   "think_close": "('</think>',)",
   "think_open": "('<think>',)",
   "vllm_args": "()",
-  "weights_name": "glm-5.3-flash-nvfp4",
-  "yarn_base": null
+  "weights_name": "glm-5.3-flash-nvfp4"
  },
  "qwen3.8-27b-4k": {
   "api": "chat",
@@ -214,7 +112,7 @@
   "max_tokens": 4096,
   "min_output_tokens": 1024,
   "name": "qwen3.8-27b-4k",
-  "notes": "Qwen3.8-27B outside monitor, reasoning off (template enable_thinking=false), greedy, 4096 output tokens (amendment 50; the agent model itself)",
+  "notes": "Qwen3.8-27B outside monitor, reasoning off (template enable_thinking=false), greedy, 4096 output tokens (the agent model itself)",
   "prompt_style": "matched",
   "reasoning_format": false,
   "request_extra": {},
@@ -227,8 +125,7 @@
   "think_close": "()",
   "think_open": "()",
   "vllm_args": "()",
-  "weights_name": "qwen3.8-27b",
-  "yarn_base": null
+  "weights_name": "qwen3.8-27b"
  },
  "qwen3.8-27b-think": {
   "api": "chat",
@@ -246,7 +143,7 @@
   "max_tokens": 8192,
   "min_output_tokens": 1024,
   "name": "qwen3.8-27b-think",
-  "notes": "Qwen3.8-27B outside monitor, reasoning on at medium effort (chat_template_kwargs enable_thinking + reasoning_effort), greedy (temperature 0, as EQ3), 8192 output tokens (amendment 50)",
+  "notes": "Qwen3.8-27B outside monitor, reasoning on at medium effort (chat_template_kwargs enable_thinking + reasoning_effort), greedy (temperature 0), 8192 output tokens",
   "prompt_style": "matched",
   "reasoning_format": false,
   "request_extra": {
@@ -264,7 +161,6 @@
   "think_close": "('</think>',)",
   "think_open": "('<think>',)",
   "vllm_args": "()",
-  "weights_name": "qwen3.8-27b",
-  "yarn_base": null
+  "weights_name": "qwen3.8-27b"
  }
 }

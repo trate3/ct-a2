@@ -39,13 +39,13 @@ from pathlib import Path
 
 from evals.tap_live import decode_core as dc
 
-RULE = ("Prompt-representative design (reviewer 178). Positions are grouped by prompt sha256; the representative of a group is its first position in the "
+RULE = ("Prompt-representative design. Positions are grouped by prompt sha256; the representative of a group is its first position in the "
         "manifest order of histories.json; its stage-1 repeat-0 seed and repeat-0 A0/A1 pair define the group's realization and every position of the group "
         "reuses it with its own preselected weight 1 / n_positions. A group needs stage 2 iff the representative's repeat-0 A0 or A1 call ended at the cap "
         "(finish_reason cap) or failed (status not ok, or no row); stage 2 reruns the representative with the same representative seed in both arms. A "
         "non-representative label's own outcome is sensitivity evidence only. Distinct prompts are never merged; no timing, length or stability enters the choice.")
 RULE_SHA256 = hashlib.sha256(RULE.encode()).hexdigest()
-RULE_ALL = ("Prompt-representative design, one main stage (reviewers 178 and 180). Positions are grouped by prompt sha256 in the manifest order of histories.json; "
+RULE_ALL = ("Prompt-representative design, one main stage. Positions are grouped by prompt sha256 in the manifest order of histories.json; "
             "the representative of a group is its first position, its index is the group's index in that order, its seed is the stage-1 repeat-0 seed "
             "sha256('tap-live-decode:calls:<history_id>:0'). ALL groups are run uncapped (no per-call cap; natural stop or the 240,000-token total-context ceiling, "
             "recorded as context_ceiling), both arms, the arm order alternating by representative index (A0 first for even, A1 first for odd). Every position keeps its "

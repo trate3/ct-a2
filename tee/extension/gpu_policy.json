@@ -35,7 +35,7 @@
   "schema": 1
  },
  "fields_digest": "sha256:ba3ed130e741d8f2c5ce9a4ad511047a0d9e8e4b06afd4a796d3367959c266f1",
- "frozen_from": "development smoke 2026-11-17: results/tee_attestation_smoke/claims_rep0.json (sha256 16c37b0188e3da405acb2a61bdb545d960625391bc4d57489670cbfd4bda2792), 10 of 10 repetitions showed this state",
+ "frozen_from": "verified attestation claims of one confidential-computing GPU (10 of 10 repetitions showed this state)",
  "policy_version": 1,
  "scope": "GPU state only (hardware, driver, VBIOS, security flags); not a workload image or CPU policy"
 }

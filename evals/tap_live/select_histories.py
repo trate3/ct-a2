@@ -4,7 +4,7 @@
 
 Rule (fixed before any measurement; independent of timings, statuses and labels, none of which is read):
   tasks   the 10 positions round(i * 38 / 9), i = 0..9, of the sorted intersection of the TRAIN assignments of
-          evals/reward_hacking/data/splits.json and data/a32/splits_oneoff_v2.json, without lcbhard_35, 77 and 87
+          evals/reward_hacking/data/splits.json and data/lcb_oneoff_schedules/splits_oneoff_v2.json, without lcbhard_35, 77 and 87
           (`select_tasks.select`);
   episode for each task the recorded trajectory with the smallest k (the `__r0` file, meta.k = 0 when present; the lowest
           `__r<k>` otherwise), taken from DIR/trajectories/ or DIR itself;

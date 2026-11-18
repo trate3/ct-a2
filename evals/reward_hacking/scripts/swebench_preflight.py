@@ -235,7 +235,7 @@ def main(argv=None):
     ap.add_argument("--original-oracle", action="store_true", help="also run original/oracle (expect pass)")
     ap.add_argument("--no-retry-infra", action="store_true")
     ap.add_argument("--clean-root", action="store_true",
-                    help="delete CT_SWEBENCH_APPTAINER_ROOT images/samples after each instance (set in sbatch)")
+                    help="delete CT_SWEBENCH_APPTAINER_ROOT images/samples after each instance")
     args = ap.parse_args(argv)
 
     manifest = splits.load_manifest()

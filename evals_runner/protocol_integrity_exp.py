@@ -38,19 +38,10 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 def _case_args(parser):
-    parser.add_argument("--case", choices=("mock", "confidence", "financial"), default="mock")
+    parser.add_argument("--case", choices=("mock",), default="mock")
     parser.add_argument("--data", default=str(FIXTURE))
     parser.add_argument("--n", type=int, default=8)
     parser.add_argument("--seed", type=int, default=7)
-    parser.add_argument("--program-model", default="google/gemma-4-E2B-it")
-    parser.add_argument("--monitor-model", default=None)
-    parser.add_argument("--model", default="google/gemma-4-E4B-it")
-    parser.add_argument("--detector", default=None)
-    parser.add_argument("--n-trajectories", type=int, default=2)
-    parser.add_argument("--threshold", type=float, default=0.0)
-    parser.add_argument("--device", default=None)
-    parser.add_argument("--dtype", default="auto")
-    parser.add_argument("--max-new-tokens", type=int, default=None)
 
 
 def configure_parser(parser):
@@ -101,45 +92,16 @@ def configure_parser(parser):
 
 
 def _components(args):
-    if args.case == "mock":
-        return (mock_agent_package(args.data), mock_tap_package(),
-                (MockAgentDriver,), (MockTapDriver,))
-    if args.case == "confidence":
-        from evals.confidence.cot_confidence_components import (
-            ConfidenceAgentDriver, ConfidenceTapDriver, component_packages,
-        )
-        agent, tap = component_packages(
-            args.program_model, args.monitor_model, args.device or "auto", args.dtype,
-            args.max_new_tokens or 512, verbose=True)
-        return agent, tap, (ConfidenceAgentDriver,), (ConfidenceTapDriver,)
-    from evals.financial.insider_trading_probe_components import (
-        FinancialAgentDriver, FinancialTapDriver, component_packages,
-    )
-    if not args.detector or Path(args.detector).suffix != ".npz":
-        raise ValueError("financial workload requires a prepacked non-executable .npz detector")
-    agent, tap = component_packages(
-        Path(args.detector), model=args.model, device=args.device or "auto",
-        dtype=args.dtype, max_new_tokens=args.max_new_tokens or 128,
-        threshold=args.threshold, verbose=True)
-    return agent, tap, (FinancialAgentDriver,), (FinancialTapDriver,)
+    return (mock_agent_package(args.data), mock_tap_package(), (MockAgentDriver,), (MockTapDriver,))
 
 
 def _environment(args):
-    if args.case == "mock":
-        return mock_environment(args.data, args.n, args.seed)
-    if args.case == "confidence":
-        from evals.confidence.cot_confidence_components import build_environment
-        return build_environment(args.n, args.seed)
-    from evals.financial.insider_trading_probe_components import build_environment
-    return build_environment(args.n_trajectories, args.seed)
+    return mock_environment(args.data, args.n, args.seed)
 
 
 def _environment_driver(args):
-    if args.case in ("mock", "confidence"):
-        from util.dynamic_test_environment import StaticEnvironment
-        return StaticEnvironment
-    from evals.financial.insider_trading_env import InsiderTradingEnvironment
-    return InsiderTradingEnvironment
+    from util.dynamic_test_environment import StaticEnvironment
+    return StaticEnvironment
 
 
 def _dial(host, port):
@@ -254,13 +216,6 @@ def run_e2e(args):
         spec_path, environment_path = Path(temporary) / "spec.json", Path(temporary) / "E"
         spec_path.write_text(json.dumps(spec)); environment_path.write_bytes(packed)
         component_args = _component_args(args)
-        if args.case == "financial":
-            from evals.financial.insider_trading_probe_components import latest_detector
-            from evals.financial.probe_tap import ApolloProbe
-            source = Path(args.detector) if args.detector else latest_detector()
-            detector = Path(temporary) / "detector.npz"
-            detector.write_bytes(ApolloProbe.load(source).safe_bytes())
-            component_args = _component_args(args, detector)
         workload = subprocess.Popen([
             sys.executable, "-m", "evals_runner", "protocol-integrity-exp", "workload",
             "--case", args.case, "--spec", str(spec_path), *component_args], env=process_env)
@@ -290,20 +245,5 @@ def run_e2e(args):
         return result
 
 
-def _component_args(args, detector=None):
-    if args.case == "mock":
-        return ["--data", args.data]
-    if args.case == "confidence":
-        values = ["--program-model", args.program_model, "--dtype", args.dtype]
-        if args.monitor_model:
-            values += ["--monitor-model", args.monitor_model]
-    else:
-        values = ["--model", args.model, "--dtype", args.dtype, "--threshold", str(args.threshold)]
-        selected = detector or args.detector
-        if selected:
-            values += ["--detector", str(selected)]
-    if args.device:
-        values += ["--device", args.device]
-    if args.max_new_tokens is not None:
-        values += ["--max-new-tokens", str(args.max_new_tokens)]
-    return values
+def _component_args(args):
+    return ["--data", args.data]

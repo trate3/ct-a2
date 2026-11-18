@@ -1,5 +1,5 @@
 # GPU re-runs (in addition to requirements-cpu.txt). Versions we used.
-torch==2.15.0          # cu132 build on the RTX PRO 6000 workstation
+torch==2.15.0          # cu132 build
 transformers==5.23.0
 flash-linear-attention==0.6.0
 causal-conv1d==1.7.0

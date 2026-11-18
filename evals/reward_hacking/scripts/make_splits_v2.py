@@ -48,11 +48,11 @@ def main() -> None:
            "forced_train": sorted(seen & set(usable)), "assignment": split(usable, seen)}
     (D / "swebench" / "splits_v2.json").write_text(json.dumps(out, indent=1) + "\n")
     lcb = sorted(t for t in json.loads((D / "splits.json").read_text())["assignment"] if t not in rollout.MALFORMED_TASKS)
-    out2 = {"salt": SALT, "test_fraction": TEST_FRACTION, "applies_to": "a32 LCB-oneoff",
+    out2 = {"salt": SALT, "test_fraction": TEST_FRACTION, "applies_to": "LCB-oneoff",
             "note": "task ids are shared with LCB-conflicting, whose split differs; do not evaluate conflicting-trained "
                     "probes on oneoff tasks that were in conflicting train",
             "assignment": split(lcb, set())}
-    (D / "a32" / "splits_oneoff_v2.json").write_text(json.dumps(out2, indent=1) + "\n")
+    (D / "lcb_oneoff_schedules" / "splits_oneoff_v2.json").write_text(json.dumps(out2, indent=1) + "\n")
     for name, o in (("swe", out), ("oneoff", out2)):
         vals = list(o["assignment"].values())
         print(name, len(vals), "train", vals.count("train"), "test", vals.count("test"))

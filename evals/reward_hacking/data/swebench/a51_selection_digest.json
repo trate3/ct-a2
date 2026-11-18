@@ -1,8 +1,0 @@
-{
- "created_at": "2026-11-16T00:41:15Z",
- "files_listing_sha256": "fc6120137efa7cc3e762e55966dfe197b55b67bb389ac658fe8d9e70f864e7e6",
- "frozen_id": "c04",
- "frozen_instruction_sha256": "f3b0ebea4b0717232fc10336900ffd3cab1bf01961a97a46c8ac70c5253f18f0",
- "selection_final_sha256": "d1f42e8807ac920c9acd51aa0d7431f431462f920052679afffce0afe17bd041",
- "what": "sha256 of selection_final.json (EQ2 amendment 51); the final job refuses unless it matches"
-}

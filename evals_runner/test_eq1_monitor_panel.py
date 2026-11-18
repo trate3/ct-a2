@@ -363,7 +363,7 @@ def test_summary_quantiles_and_markdown_table(world, tmp_path):
     rc, d = run_panel(world, stub, name="gemma4-e4b", out="root/gemma4-e4b")
     stub.close()
     root = d.parent
-    panel.not_measured("glm5.3-flash-nvfp4", root / "glm5.3-flash-nvfp4", "weights are 204 GB; the GPU has 96 GB")
+    panel.not_measured("glm5.3-flash-nvfp4-think", root / "glm5.3-flash-nvfp4-think", "weights are 204 GB; the GPU has 96 GB")
     assert panel.main(["--combine", str(root)]) == 0
     md = (root / "panel_table.md").read_text()
     assert md.splitlines()[0].startswith("| Monitor | View | Config | Invocations | Valid | Seconds/invocation (mean, median) | Input tok. | Output tok. |")
@@ -371,8 +371,8 @@ def test_summary_quantiles_and_markdown_table(world, tmp_path):
     assert "not measured on this hardware" in md and "204 GB" in md and "accounting estimate" in md
     tex = (root / "panel_table.tex").read_text()
     assert r"\toprule" in tex and "not measured on this hardware" in tex
-    rec = json.loads((root / "glm5.3-flash-nvfp4" / "not_measured.json").read_text())
-    assert rec["measured"] is False and rec["registry_spec"]["name"] == "glm5.3-flash-nvfp4"
+    rec = json.loads((root / "glm5.3-flash-nvfp4-think" / "not_measured.json").read_text())
+    assert rec["measured"] is False and rec["registry_spec"]["name"] == "glm5.3-flash-nvfp4-think"
 
 
 def test_server_log_parser(tmp_path):

@@ -36,7 +36,7 @@ MODEL_REVISION = "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0"
 CHAT_TEMPLATE_PATH = pathlib.Path(__file__).parents[1] / "data" / "qwen3.8-27b_chat_template.jinja"
 CHAT_TEMPLATE_SHA256 = "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041"
 BASE_SEED = 20261104
-# the run plan (Muse diagnostic screens): SWE_MESSAGE_LIMIT overrides the limit; unset it is 100, as in every earlier run.
+# SWE_MESSAGE_LIMIT overrides the message limit (default 100).
 MESSAGE_LIMIT = int(os.environ.get("SWE_MESSAGE_LIMIT") or 100)
 MAX_ATTEMPTS = 3
 RESET_TESTS = True
@@ -170,7 +170,7 @@ def _failure_reason(logs: list | None, exc: Exception | None = None) -> str:
     return str(getattr(error, "message", error) or f"Inspect status={getattr(log, 'status', None)}")
 
 
-SWE_SPLIT = os.environ.get("SWE_SPLIT", "conflicting")   # the run plan: "oneoff" runs the one-off variant of the same instances
+SWE_SPLIT = os.environ.get("SWE_SPLIT", "conflicting")   # "oneoff" runs the one-off variant of the same instances
 if SWE_SPLIT not in ("conflicting", "oneoff"):
     raise ValueError(f"SWE_SPLIT must be conflicting or oneoff, got {SWE_SPLIT!r}")
 
@@ -258,8 +258,8 @@ def run(args: argparse.Namespace) -> int:
     }
     os.environ["CT_SWEBENCH_APPTAINER_SIF_SHA256S"] = json.dumps(sif_hashes, sort_keys=True)
     os.environ.setdefault("CT_SWEBENCH_APPTAINER_CONCURRENCY", "1")
-    # Inspect's OpenAI-compatible provider reads OPENAI_API_KEY; the Slurm
-    # endpoint convention exposes the same local token as VLLM_API_KEY.
+    # Inspect's OpenAI-compatible provider reads OPENAI_API_KEY; the local
+    # endpoint exposes the same token as VLLM_API_KEY.
     os.environ.setdefault("OPENAI_API_KEY", api_key)
 
     failures = 0

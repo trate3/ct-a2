@@ -1,7 +1,7 @@
 """One complete agent rollout on an Impossible-LiveCodeBench task.
 
 Reproduces ImpossibleBench's full tool scaffold (inspect_ai 0.3.137 `basic_agent`
-with bash/python/text_editor/think and a submit tool; see SANDBOX.md) with our own
+with bash/python/text_editor/think and a submit tool) with our own
 loop, so every model call is a token-exact record:
 
   system + task messages -> model call -> every tool call executed in order
@@ -16,8 +16,8 @@ loop stops at the first pass, no monitor-visible event can follow a positive
 label. Infrastructure failures end the rollout with `infra_error` and no label.
 
 Control logic is a `Wrapper` that maps each proposed action to an executed one;
-the identity wrapper is the ordinary agent. EQ3's terminal-submission wrapper acts
-after the final model inference, so model-produced events are unchanged.
+the identity wrapper is the ordinary agent. A wrapper that changes only the final
+submission acts after the last model inference, so model-produced events are unchanged.
 """
 
 from __future__ import annotations
@@ -60,16 +60,6 @@ class RolloutConfig:
         return {k: getattr(self, k) for k in self.__dataclass_fields__}
 
 
-@dataclass(frozen=True)
-class CeilingRolloutConfig(RolloutConfig):
-    """RolloutConfig plus a hard context ceiling counted on the rendered prompt (messages, tool schemas, template
-    tokens) AND the reserved output (Muse Glimmer 30B, the run plan: 131,072). Before every model call the loop
-    counts the prompt with the server's tokenizer and sends max_tokens = min(per-call cap, ceiling - prompt tokens),
-    so prompt + max_tokens never exceeds the ceiling; a prompt that leaves no room ends the rollout as
-    `context_exhausted` without a request. A subclass, so Qwen/GLM configs (and their recorded dicts) are unchanged."""
-    context_ceiling: int = 131072
-
-
 class Wrapper:
     """Control logic between the model and the world. Identity by default."""
 
@@ -105,7 +95,7 @@ class _InfraError(Exception):
 def run_rollout(task: Task, *, rollout_id: str, seed: int, client: llm.CompletionClient,
                 config: RolloutConfig = RolloutConfig(), wrapper: Wrapper | None = None,
                 meta: dict | None = None, fmt: llm.ChatFormat | None = None) -> tj.Trajectory:
-    """Run inspect 0.3.137 `basic_agent` semantics (see SANDBOX.md) on one task.
+    """Run inspect 0.3.137 `basic_agent` semantics on one task.
 
     Loop end conditions: a passing in-loop score; the `max_attempts`-th submission
     (left for the final scorer); a flagged submission; the message limit; a
@@ -196,19 +186,7 @@ def _agent_loop(task, sandbox, traj, state, client, config, wrapper, rng, seed, 
                 raise _Stop("message_limit", f"{config.message_limit} messages")
             prompt = fmt.render(messages, tools.TOOL_SPECS)
             prefix_ok = None if prev is None else prompt.startswith(prev)
-            max_tokens, budget = config.max_tokens_per_call or None, None
-            ceiling = getattr(config, "context_ceiling", None)
-            if ceiling:      # Muse: exact prompt count, output reserved under the ceiling, before the request
-                try:
-                    counted = len(client.tokenize(prompt))
-                except Exception as exc:
-                    raise _InfraError(f"token count before model call {call_index}: {exc!r}") from exc
-                room = ceiling - counted
-                if room < 1:
-                    raise _Stop("context_exhausted", f"before call {call_index}: the prompt is {counted} tokens, no room "
-                                                     f"for output under the {ceiling}-token ceiling")
-                max_tokens = room if max_tokens is None else min(max_tokens, room)
-                budget = {"ceiling": ceiling, "prompt_tokens_counted": counted, "max_tokens_sent": max_tokens}
+            max_tokens = config.max_tokens_per_call or None
             m0 = time.perf_counter()
             try:
                 comp = client.complete(prompt, max_tokens=max_tokens,
@@ -222,7 +200,6 @@ def _agent_loop(task, sandbox, traj, state, client, config, wrapper, rng, seed, 
                 "stop_type": comp.stop_type, "prompt_tokens": comp.prompt_tokens,
                 "cached_tokens": comp.cached_tokens, "seconds": comp.seconds,
                 "seed": call_seed(seed, call_index), "timings": comp.timings,
-                **({"context_budget": budget} if budget else {}),
             }, call_index=call_index, t=now())
             # the next render must extend this (Qwen: generation + "<|im_end|>\n"; see ChatFormat)
             prev = fmt.expected_next_prefix(prompt, comp)
@@ -239,7 +216,7 @@ def _agent_loop(task, sandbox, traj, state, client, config, wrapper, rng, seed, 
             append(fmt.assistant_message(turn))
             if comp.stop_type == "limit":
                 raise _Stop("model_length", f"call {call_index} hit "
-                                            f"{max_tokens if budget else config.max_tokens_per_call or 'the server context'} tokens")
+                                            f"{config.max_tokens_per_call or 'the server context'} tokens")
             if comp.prompt_tokens + len(comp.tokens) > config.max_context_tokens:
                 raise _Stop("context_exhausted", f"{comp.prompt_tokens + len(comp.tokens)} tokens")
 

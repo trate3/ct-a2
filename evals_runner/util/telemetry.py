@@ -1,14 +1,13 @@
-"""RQ1 cost-of-certification telemetry: JSONL run + stage records.
+"""Cost-of-certification telemetry: JSONL run + stage records.
 
 One run record per (arm, configuration, repeat); one stage record per instrumented
 stage. Analysis (curve fitting, confidence intervals, dollar cost) happens entirely in
 post-processing against these files, never during the run -- this module only
-measures and writes. Every field name below matches the RQ1 experiment specification
-so the files can be loaded without a translation layer.
+measures and writes.
 
 Certification-stage instrumentation lives in `ct_core/certification.py` (the protocol
-engine); baseline-stage instrumentation lives in each arm's execution loop
-(`evals_runner/rq1_cost_exp.py`). Both write through the same `StageRecorder`/
+engine); baseline-stage instrumentation lives in each arm's execution loop.
+Both write through the same `StageRecorder`/
 `JsonlWriter` pair defined here so one JSONL file mixes both without special-casing.
 """
 
@@ -206,7 +205,7 @@ class ModelInfo:
 
 @dataclass(frozen=True)
 class TapInfo:
-    type: str  # "probe" | "cot" | "none" (the probe-cost baseline; see rq1_cost_exp)
+    type: str  # "probe" | "cot" | "none" (the probe-cost baseline)
     monitor_model_id: str | None = None
     probe_layers: tuple[int, ...] | None = None
     threshold: float | None = None

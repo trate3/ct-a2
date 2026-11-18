@@ -21,12 +21,7 @@ Engines: `--engine llamacpp` (default; raw `/completion`) or `--engine vllm` (`/
 our own rendered prompt text). The engine, its version and the model identity go into the manifest;
 changing the engine refuses to resume in an existing `--out`.
 
-Muse Glimmer 30B (`--target-model muse-glimmer-30b --engine vllm --reasoning-effort high`, the run plan): same loop, own
-chat format. The 131,072-token ceiling is counted by the server's tokenizer on the rendered prompt before every call and
-the call gets max_tokens = min(per-call cap, ceiling - prompt); no room -> `context_exhausted` without a request, a call
-reaching max_tokens -> `model_length`. Defaults and their sources are recorded under `muse_limits` in the manifest.
-
-Interruption (Slurm preemption/time limit): SIGTERM or SIGUSR1 stops the runner gracefully. No new
+Interruption (scheduler preemption or time limit): SIGTERM or SIGUSR1 stops the runner gracefully. No new
 rollout starts, rollouts in flight get `--grace-seconds` to finish, then are abandoned (no
 trajectory is written, so they rerun from scratch next time), and the process exits with status 75.
 Startup deletes half-written `*.tmp` files and snapshot pickles whose trajectory was never written.
@@ -53,19 +48,10 @@ import time
 import traceback
 from concurrent.futures import ThreadPoolExecutor, wait
 
-from evals.reward_hacking import extend, llm, prompt_registry, rollout, sandbox, scorer, tasks, tools
+from evals.reward_hacking import extend, llm, rollout, sandbox, scorer, tasks, tools
 from evals.reward_hacking import trajectory as tj
 
 DEFAULT_OUT = pathlib.Path("evals_results/reward_hacking_pilot")
-# Muse Glimmer 30B. Ceiling: 131,072 tokens counted on the rendered prompt plus the reserved output
-# The other limits are the Qwen LiveCodeBench T1 values of the run plan (3 submissions, 100
-# messages, no per-call cap = the call may fill the remaining context, request timeout 21,600 s), except that Qwen's
-# 240,000-token context rule (server context 262,144) becomes the ceiling itself.
-MUSE_TARGET = "muse-glimmer-30b"
-MUSE_CONTEXT_CEILING = 131072
-MUSE_MESSAGE_LIMIT = 100
-MUSE_MAX_TOKENS_PER_CALL = 0
-MUSE_REQUEST_TIMEOUT = 21600.0
 EXIT_INTERRUPTED = 75          # EX_TEMPFAIL: stopped by a signal, rerun to resume
 _hard_exit = os._exit          # replaced in tests
 
@@ -84,10 +70,8 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
                              "tool-call parsing and stop tokens (recorded in the manifest; a changed value "
                              "refuses to resume in an existing --out)")
     parser.add_argument("--reasoning-effort", default=None,
-                        help="pass `reasoning_effort` to the target's template (qwen3.8-27b: xhigh|medium|low; "
-                             "glm-5.3-flash: low|high|max). Default: not passed, so the template's own default "
-                             "applies (xhigh / max); qwen3.6 has no such setting. muse-glimmer-30b: REQUIRED, "
-                             "low|medium|high|xhigh (its `reasoning_strength`; the Muse LiveCodeBench runs use high)")
+                        help="pass `reasoning_effort` to the target's template (qwen3.8-27b: xhigh|medium|low). "
+                             "Default: not passed, so the template's own default applies (xhigh)")
     parser.add_argument("--out", type=pathlib.Path, default=DEFAULT_OUT)
     parser.add_argument("--base-seed", type=int, default=20261008)
     parser.add_argument("--message-limit", type=int, default=None,
@@ -106,14 +90,14 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
                              "unchanged if no call hit its cap, continued from the cut-off call if it stopped "
                              "on the cap, and sampled fresh only if it is missing or an infra error")
     parser.add_argument("--registry-extra", type=pathlib.Path, default=None, metavar="JSON",
-                        help="with --schedule: JSON file {prompt_id: {direction, set, text}} of additional candidate "
-                             "prompts merged into the frozen registry (ids must not collide; its sha256 is pinned in "
-                             "the manifest). The frozen registry is not modified")
+                        help="with --schedule: JSON file {prompt_id: {text}} of the agent instructions the schedule "
+                             "names (for example evals/reward_hacking/data/lcb_instruction_T1.json); its sha256 is "
+                             "pinned in the manifest")
     parser.add_argument("--schedule", type=pathlib.Path, default=None, metavar="JSONL",
-                        help="prompt-diversity runs: one rollout per row {task_id, prompt_id, k}; the "
-                             "agent gets prompt_registry.compose(prompt_id) instead of the default instruction; rollout "
+                        help="one rollout per row {task_id, prompt_id, k}; the agent gets the instruction text of "
+                             "prompt_id from --registry-extra instead of the default instruction; rollout "
                              "id <task>__<variant>__<prompt_id>__r<k>, seed from (task:prompt_id, k); --tasks/--rollouts "
-                             "are ignored. The schedule and registry digests are pinned in the manifest")
+                             "are ignored. The schedule and prompt-file digests are pinned in the manifest")
     parser.add_argument("--extend-below-k", type=int, default=None, metavar="K",
                         help="with --extend-from: take only k < K from OLD_OUT, sample k >= K fresh. Use it when "
                              "OLD_OUT's k >= K were interrupted part-way: which of those finished depends on their "
@@ -128,8 +112,7 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
                              "must be 'default'); A-D: the paper's Table 1 prompts")
     parser.add_argument("--request-timeout", type=float, default=None,
                         help="seconds to wait for one model call (non-streaming, so this caps a call's total "
-                             "generation time; a timed-out call is retried from scratch). Default 1800 (muse-glimmer-30b: "
-                             "21600, as the Qwen LiveCodeBench runs). Raise it for large "
+                             "generation time; a timed-out call is retried from scratch). Default 1800. Raise it for large "
                              "--max-tokens-per-call: 64k tokens at ~15 tok/s per sequence is ~70 min")
     parser.add_argument("--workers", type=int, default=1,
                         help="rollouts to run concurrently (each has its own sandbox); match the "
@@ -140,7 +123,7 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--retry-infra", type=int, default=0, metavar="N",
                         help="rerun a rollout that ended `infra_error` (same id, same seed) up to N more "
                              "times; failed attempts are kept as trajectories/infra_attempts/<id>.attemptK.json "
-                             "(pre-registration S1: N=2). Default 0: no retries")
+                             "(we used N=2). Default 0: no retries")
     parser.add_argument("--no-cleanup", action="store_true",
                         help="do not remove labelled leftover containers at startup (use when another "
                              "runner shares this Docker daemon)")
@@ -188,9 +171,6 @@ def engine_identity(client) -> dict:
 
 def chat_format(args) -> llm.ChatFormat:
     kw = {"reasoning_effort": args.reasoning_effort} if getattr(args, "reasoning_effort", None) else {}
-    if getattr(args, "target_model", None) == MUSE_TARGET and not kw:
-        raise SystemExit("--reasoning-effort is required for muse-glimmer-30b (low|medium|high|xhigh; amendment 60: "
-                         "high on LiveCodeBench): no silent template default")
     try:
         return llm.get_format(getattr(args, "target_model", None), **kw)
     except ValueError as exc:
@@ -224,14 +204,12 @@ def manifest(client: llm.CompletionClient, config: rollout.RolloutConfig, args) 
         "template_sha256": fmt.template_digest(),
         "tool_specs_sha256": hashlib.sha256(repr(tools.TOOL_SPECS).encode()).hexdigest(),
         "rollout_config": config.as_dict(),
-        **({"muse_limits": muse_limits(config, args)} if fmt.name == MUSE_TARGET else {}),
         "splits": {"path": str(tasks.SPLITS_PATH),
                    "sha256": hashlib.sha256(tasks.SPLITS_PATH.read_bytes()).hexdigest()},
         "selection": {"tasks": args.tasks, "rollouts_per_task": args.rollouts, "limit": args.limit,
                       "base_seed": args.base_seed},
         **({"prompt_schedule": {"path": str(args.schedule),
                                 "sha256": hashlib.sha256(pathlib.Path(args.schedule).read_bytes()).hexdigest(),
-                                "registry_sha256": prompt_registry.registry_digest(),
                                 **({"registry_extra": {"path": str(args.registry_extra),
                                                        "sha256": hashlib.sha256(
                                                            pathlib.Path(args.registry_extra).read_bytes()).hexdigest()}}
@@ -242,28 +220,9 @@ def manifest(client: llm.CompletionClient, config: rollout.RolloutConfig, args) 
     }
 
 
-def muse_limits(config: rollout.RolloutConfig, args) -> dict:
-    """What the Muse run's limits are and where they come from (recorded in the manifest; rollout_config holds the
-    values the loop uses)."""
-    return {
-        "context_ceiling": config.context_ceiling,
-        "ceiling_rule": "prompt tokens (exact, server tokenizer, rendered messages + tool schemas + template) + reserved "
-                        "output <= ceiling before every request; max_tokens = min(per-call cap, ceiling - prompt); a "
-                        "prompt with no room ends the rollout as context_exhausted without a request; a call that "
-                        "reaches max_tokens ends it as model_length",
-        "max_tokens_per_call": config.max_tokens_per_call, "max_tokens_per_call_meaning": "0 = no cap: the call may "
-                                                                                          "fill the remaining ceiling",
-        "max_context_tokens": config.max_context_tokens, "message_limit": config.message_limit,
-        "max_attempts": config.max_attempts,
-        "request_timeout": _request_timeout(args, MUSE_TARGET), "retry_infra": int(getattr(args, "retry_infra", 0) or 0),
-        "qwen_lcb_t1_reference": {"max_tokens_per_call": 0, "max_context_tokens": 240000, "server_context": 262144,
-                                  "message_limit": 100, "max_attempts": 3, "request_timeout": 21600, "retry_infra": 2},
-        "source": "amendment 60 (ceiling 131,072); amendments 26-28 (Qwen T1 values)"}
-
-
 def _request_timeout(args, target: str | None) -> float:
     t = getattr(args, "request_timeout", None)
-    return float(t) if t is not None else (MUSE_REQUEST_TIMEOUT if target == MUSE_TARGET else 1800.0)
+    return float(t) if t is not None else 1800.0
 
 
 def _rid(task_id: str, variant: str, k: int, prompt_id: str | None = None) -> str:
@@ -271,18 +230,15 @@ def _rid(task_id: str, variant: str, k: int, prompt_id: str | None = None) -> st
 
 
 def _registry(extra_path=None) -> dict:
-    """The frozen prompt registry, plus (optionally) extra candidate prompts from a JSON file."""
-    reg = prompt_registry.registry()
+    """The agent instructions a schedule can name, read from a JSON file {prompt_id: {text}}."""
+    reg = {}
     if not extra_path:
         return reg
     extra = json.loads(pathlib.Path(extra_path).read_text())
-    clash = sorted(set(extra) & set(reg))
-    if clash:
-        raise SystemExit(f"--registry-extra: prompt ids collide with the frozen registry: {clash}")
     for pid, e in extra.items():
-        if not {"direction", "set", "text"} <= set(e):
-            raise SystemExit(f"--registry-extra: entry {pid!r} needs direction, set and text")
-        reg[pid] = {"direction": e["direction"], "set": e["set"], "text": e["text"],
+        if "text" not in e:
+            raise SystemExit(f"--registry-extra: entry {pid!r} needs a text")
+        reg[pid] = {"direction": e.get("direction"), "set": e.get("set"), "text": e["text"],
                     "sha256": hashlib.sha256(e["text"].encode()).hexdigest()}
     return reg
 
@@ -312,15 +268,7 @@ def summarize(traj: tj.Trajectory) -> dict:
     calls = traj.of(tj.MODEL_CALL)
     tool_names = [e.data["name"] for e in traj.of(tj.TOOL_PROPOSED)]
     evals = traj.of(tj.EVALUATION)
-    muse = {}
-    if traj.meta.get("target_model") == MUSE_TARGET:   # Qwen/GLM rows keep their exact keys
-        per_turn: dict = {}
-        for e in traj.of(tj.TOOL_PROPOSED):
-            per_turn.setdefault(e.call_index, []).append(e.data)
-        muse = {"malformed_tool_calls": sum(d.get("parse_error") is not None for ds in per_turn.values() for d in ds),
-                "parallel_call_turns": sum(len(ds) > 1 for ds in per_turn.values())}
     return {
-        **muse,
         **{k: traj.meta[k] for k in ("rollout_id", "task_id", "variant", "seed", "partition")},
         "status": end["status"], "reason": end["reason"], "label": end["label"],
         "n_submissions": len(traj.of(tj.SUBMISSION)),
@@ -489,30 +437,14 @@ def run(args: argparse.Namespace, *, run_one=None) -> int:
     (out / "trajectories").mkdir(parents=True, exist_ok=True)
     engine = getattr(args, "engine", "llamacpp")
     fmt = chat_format(args)
-    muse = fmt.name == MUSE_TARGET
-    if muse:
-        if engine != "vllm":
-            raise SystemExit("muse-glimmer-30b runs on --engine vllm only (raw /v1/completions)")
-        if getattr(args, "extend_from", None):
-            raise SystemExit("--extend-from is not supported for muse-glimmer-30b")
     client = llm.make_client(engine, args.url, timeout=_request_timeout(args, fmt.name),
                              **({"stop_token_ids": fmt.stop_token_ids} if engine == "vllm" else {}))
     base = rollout.RolloutConfig()
-    if muse:       # explicit Muse defaults (see MUSE_* above); the ceiling is part of the recorded rollout_config
-        base = rollout.CeilingRolloutConfig(
-            message_limit=MUSE_MESSAGE_LIMIT, max_tokens_per_call=MUSE_MAX_TOKENS_PER_CALL,
-            max_context_tokens=MUSE_CONTEXT_CEILING, context_ceiling=MUSE_CONTEXT_CEILING)
     if fmt.name != llm.DEFAULT_FORMAT:       # the target model's own sampling preset; Qwen keeps SAMPLING
         base = dataclasses.replace(base, sampling=dict(fmt.sampling))
     config = _apply_overrides(base, args)
-    if muse and (config.max_context_tokens > config.context_ceiling or config.max_tokens_per_call > config.context_ceiling):
-        raise SystemExit(f"muse-glimmer-30b: --max-context-tokens / --max-tokens-per-call may not exceed the "
-                         f"{config.context_ceiling}-token ceiling (amendment 60)")
     fmt_kw = {} if fmt.name == llm.DEFAULT_FORMAT else {"fmt": fmt}    # Qwen: the loop's default
     man = manifest(client, config, args)
-    if muse and man["target_model"].get("n_ctx") not in (None, config.context_ceiling):
-        raise SystemExit(f"muse-glimmer-30b: the server reports max_model_len {man['target_model'].get('n_ctx')}, "
-                         f"amendment 60 fixes {config.context_ceiling}; restart it with --max-model-len {config.context_ceiling}")
     # vLLM never renders a template (we send rendered text), so there is nothing to compare there
     if engine == "llamacpp" and man["target_model"]["server_template_sha256"] not in fmt.server_template_digests():
         raise SystemExit("server chat template differs from the pinned template")

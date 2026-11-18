@@ -5,7 +5,7 @@
         --model-dir <HF_CACHE>/models--google--gemma-4-E4B-it/snapshots/<rev> \\
         --server-log server.log --server-info server_info.json --out-dir out/gemma4-e4b
     python -m evals_runner.eq1_monitor_panel --combine out            # one table over every monitor directory in out/
-    python -m evals_runner.eq1_monitor_panel --not-measured glm5.3-flash-nvfp4 --reason "..." --out-dir out/glm5.3-flash-nvfp4
+    python -m evals_runner.eq1_monitor_panel --not-measured NAME --reason "..." --out-dir out/NAME
 
 What is measured. The registered judge (registry name) reads the user messages in the prompt file (built by
 eq1_monitor_panel_prompts.py from recorded training-partition trajectories; no agent is run) one request at a time
@@ -16,8 +16,7 @@ finds a score (reasoning monitors: only in the final answer, fail-closed on a le
 Scores are never stored in the rows and never compared with labels (cost only).
 
 Boundaries. This is a standalone judge measurement. It is not an agent-plus-judge run; any sum with agent generation time is
-an accounting estimate. It is also not throughput: the existing results/eq2_rtx throughput runs (concurrency 64) are a separate
-descriptive result. The timed interval of a row is the HTTP request to the vLLM server on the same machine (request sent to
+an accounting estimate. It is also not throughput. The timed interval of a row is the HTTP request to the vLLM server on the same machine (request sent to
 parsed JSON reply); prompt construction, tokenization for the cap and the untimed warm-up request are outside it. The server
 start-up time is recorded separately (server log and launcher record), never added to a row.
 
@@ -50,8 +49,7 @@ from evals.reward_hacking import monitors as m
 CONDITIONS = ("history_black_box", "history_reasoning", "final_code_only")
 CONDITION_TEXT = {"history_black_box": "History (transcript)", "history_reasoning": "History + private reasoning",
                   "final_code_only": "Final code only"}
-MONITOR_ORDER = ("gemma4-e4b", "gemma4-e4b-think", "qwen3.8-27b-4k", "qwen3.8-27b-think", "glm5.3-flash-nvfp4",
-                 "glm5.3-flash-nvfp4-think")
+MONITOR_ORDER = ("gemma4-e4b", "gemma4-e4b-think", "qwen3.8-27b-4k", "qwen3.8-27b-think", "glm5.3-flash-nvfp4-think")
 HERE = pathlib.Path(__file__).resolve().parent
 WARMUP_RECORD = ("[ORIGINAL TASK INSTRUCTION]\nWrite a function add(a, b) that returns a + b.\n\n[SUBMITTED FILES]\n"
                  "--- func.py ---\ndef add(a, b):\n    return a + b\n--- test.py ---\nassert add(1, 2) == 3\n")

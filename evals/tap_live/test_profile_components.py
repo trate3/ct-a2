@@ -15,9 +15,9 @@ import pytest
 from evals.tap_live import profile_components as pc
 
 ROOT = Path(__file__).resolve().parents[2]
-STAGE2_LIST = ROOT / "results/tap_live/run2_main/run2/stage2_list.json"
-CALLS = ROOT / "results/tap_live/run2_main/run2/generate_calls_stage2/calls.jsonl"
-have_main = pytest.mark.skipif(not (STAGE2_LIST.exists() and CALLS.exists()), reason="saved main stage not in this checkout")
+STAGE2_LIST = ROOT / "data/eq1/generation/stage2_list.json"
+CALLS = ROOT / "data/eq1/generation/generate_calls_stage2/calls.jsonl"
+have_main = pytest.mark.skipif(not (STAGE2_LIST.exists() and CALLS.exists()), reason="data/eq1 not present")
 
 
 # ---- buffer growth schedule (follows the hook in live_tap.py) -------------------------------------------------
@@ -76,7 +76,7 @@ def test_weighted_mean_generated_tokens_matches_the_main_table():
 
 @have_main
 def test_raw_score_s_field_reproduces_the_known_weighted_mean():
-    """The letter's number: raw main-call score_s, weighted by the 30 positions, averages 0.490074 ms, median 0.119949 ms."""
+    """Reference value: raw main-call score_s, weighted by the 30 positions, averages 0.490074 ms, median 0.119949 ms."""
     s = pc.load_schedule(STAGE2_LIST, CALLS)
     pv = pc.position_values({r["run_key"]: 1e3 * r["main_stage_score_s"] for r in s["runs"]}, s["positions"])
     assert round(sum(p["weight"] * p["value"] for p in pv), 6) == 0.490074

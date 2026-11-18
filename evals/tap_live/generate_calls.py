@@ -17,7 +17,6 @@ natural-stop-only subset. With the probe, a capped call pools all `cap` generate
 Outputs for the monitors: for the A0 first repeat of every history, `outputs.jsonl` holds the generated token ids, the text decoded without
 stripping special tokens (stop token included), the text with the stop token removed, the number of tokens and the finish reason.
 Rows: OUT/calls.jsonl; immutable OUT/run_config.json written before the first row (resume refuses a changed configuration).
-Summarize with `python -m evals.tap_live.summarize_calls OUT`.
 """
 from __future__ import annotations
 

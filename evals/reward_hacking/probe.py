@@ -241,7 +241,7 @@ READ_WORKERS = int(os.environ.get("CT_RH_READ_WORKERS", "12"))
 
 def load_ordered(samples, layers, workers: int = READ_WORKERS):
     """Yield (sample, Extracted) in order while up to `workers` files are read concurrently. A single
-    sequential reader got ~50 MB/s from the cluster's NFS; the shared filesystem serves parallel readers far faster.
+    sequential reader got ~50 MB/s from a network file system, which serves parallel readers far faster.
     At most 2 x workers results are held at once (bounded memory)."""
     from concurrent.futures import ThreadPoolExecutor
     samples = list(samples)

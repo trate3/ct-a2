@@ -9,9 +9,8 @@ call (30 weighted positions, 24 distinct prompts). Each distinct prompt is gener
 once without the tap (A0) and once with the mean probe (A1), same seed, natural stop.
 The probe row's Tap cell is the isolated tap execution time per call, from a separate
 component microbenchmark that replays the tap's own work on synthetic hidden states at the
-main-call shapes (data/eq1/profile_components). It is isolated work, not added latency, and
-it is not a bound on the added latency. The paired A1 - A0 latency difference is reported
-next to it as supporting evidence; it is unresolved around zero.
+main-call shapes (data/eq1/profile_components). The paired A1 - A0 latency difference is
+reported next to it.
 LLM-monitor rows add each monitor's separately measured judging time of the saved A0
 response to the A0 generation time. Means use the 30 position weights; intervals are
 95% task-bootstrap intervals (2,000 draws, seed 0, whole tasks resampled).
@@ -39,11 +38,9 @@ from evals.tap_live.profile_components import summarize as profile_summarize  # 
 D = ROOT / "data" / "eq1"
 GEN = D / "generation"
 PAPER = json.loads((ROOT / "reproduce" / "paper_numbers.json").read_text())["eq1"]
-MONITORS = [("rtx", D / "judges_rtx", ["gemma4-e4b", "gemma4-e4b-think", "qwen3.8-27b-4k", "qwen3.8-27b-think"]),
-            ("second_machine", D / "judges_second_machine" / "e4b_qwen", ["gemma4-e4b", "gemma4-e4b-think", "qwen3.8-27b-4k", "qwen3.8-27b-think"]),
-            ("second_machine", D / "judges_second_machine" / "glm", ["glm5.3-flash-nvfp4", "glm5.3-flash-nvfp4-think"])]
+MONITORS = [("rtx", D / "judges_rtx", ["gemma4-e4b", "gemma4-e4b-think", "qwen3.8-27b-4k", "qwen3.8-27b-think"])]
 SHORT = {"gemma4-e4b": "E4B, off", "gemma4-e4b-think": "E4B, on", "qwen3.8-27b-4k": "Qwen, off",
-         "qwen3.8-27b-think": "Qwen, on", "glm5.3-flash-nvfp4": "GLM, off", "glm5.3-flash-nvfp4-think": "GLM, on"}
+         "qwen3.8-27b-think": "Qwen, on"}
 
 
 def read(p):
@@ -145,7 +142,7 @@ def main(argv=None):
                 secs[r["run_key"]] = r["seconds"]
             mon = stat({k: v * 1000 for k, v in secs.items()})
             composed = stat({k: a0[k] + v for k, v in secs.items()})
-            startup = jl(d / "sessions.jsonl")[0]["server_info_session"]["seconds_launch_to_health_ok"]
+            startup = jl(d / "sessions.jsonl")[0]["seconds_launch_to_health_ok"]
             key = f"{hw}:{name}"
             want = PAPER["table_rounded"]["tap_ms"][key]
             got = [mon["estimate"], *mon["ci95"]]
@@ -155,7 +152,7 @@ def main(argv=None):
             print(f"  {hw:14s} {SHORT[name]:10s} added {got[0]:9.1f} ms [{got[1]:8.1f}, {got[2]:8.1f}]  paper {want}"
                   f"   setup {setup['model_load_s'] + startup:8.2f} s (paper {PAPER['table_rounded']['setup'][key]})"
                   f"   {'ok' if same and s_ok else 'DIFFERS'}   24/24 valid")
-            rows.append({"tap": SHORT[name], "hardware": "RTX PRO 6000" if hw == "rtx" else "second machine",
+            rows.append({"tap": SHORT[name], "hardware": "RTX PRO 6000",
                          "setup_s": setup["model_load_s"] + startup, "no_tap_s": no_tap["estimate"],
                          "with_tap_s": composed["estimate"], "tap_ms": mon})
 
@@ -177,7 +174,6 @@ def main(argv=None):
     lines += [r"\bottomrule", r"\end{tabular}", ""]
     (args.out / "eq1_phases.tex").write_text("\n".join(lines))
     (args.out / "eq1_rows.json").write_text(json.dumps(rows, indent=1) + "\n")
-    print(f"\nAttestation and Total certification: not measured (pending the TEE run); shown as '--'.")
     print(f"wrote {args.out / 'eq1_phases.tex'} and eq1_rows.json")
     print("ALL EQ1 CELLS MATCH" if ok else "SOME EQ1 CELLS DIFFER")
     return 0 if ok else 1

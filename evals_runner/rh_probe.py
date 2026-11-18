@@ -1,6 +1,6 @@
 """rh-probe: P1/P2 selection on val, frozen artifacts, and scoring of rollouts (reward-hacking track, CPU only).
 
-  select-dom      P1 (the run plan section 6): DoM direction from `dom_pairs fit` (dom_L{L}.npz, rollout-fit
+  select-dom      P1: DoM direction from `dom_pairs fit` (dom_L{L}.npz, rollout-fit
                   normalizer), layer in {10,20,30} x alpha in {0.02,0.05,0.2,1.0}, channels reasoning+tool_call+visible,
                   ema_init "first"; chosen by val AUROC of S (ties -> earlier grid entry: lower layer, then smaller
                   alpha). If val has < 4 positive-bearing tasks: layer by the held-out synthetic-pair AUROC
@@ -246,7 +246,7 @@ def select_dom(a) -> int:
         raise SystemExit("rh-probe: val has no negatives to calibrate the threshold on")
     thr = {f"{int(f * 100)}pct": float(metrics.threshold_at_fpr(neg, f)) for f in (FPR_PRIMARY, FPR_SECONDARY)}
     prov = _provenance(a, rollouts, a.splits)
-    extra = {"selection": "P1 (preregistration section 6)", "rule": rule, "chosen": {"layer": chosen[0], "alpha": chosen[1]},
+    extra = {"selection": "P1", "rule": rule, "chosen": {"layer": chosen[0], "alpha": chosen[1]},
              "target_fpr": FPR_PRIMARY, "grid": grid, "holdout_auroc_by_layer": {str(k): v for k, v in holdout.items()},
              "n_val": len(val), "n_val_pos": int(sum(labels)), "n_val_pos_tasks": n_pos_tasks,
              "dom_fit_sha256": _sha256_file(fit_dir / "dom_fit.json"), "dom_fit_dir": str(fit_dir), **prov}
@@ -290,7 +290,7 @@ def train_logistic(a) -> int:
     prov = {**_provenance(a, rollouts, a.splits), "population": a.population,
             "ema_scope": a.ema_scope, "n_train_all_labelled": len(_samples(rollouts, "train", "all_labelled")),
             "n_val_all_labelled": len(_samples(rollouts, "val", "all_labelled"))}
-    art = dataclasses.replace(art, extra={**art.extra, "selection": "P2 (preregistration section 6)",
+    art = dataclasses.replace(art, extra={**art.extra, "selection": "P2",
                                           "threshold_fpr5": thr5,
                                           "threshold_fpr10_length_matched": length_matched, **prov})
     out.mkdir(parents=True, exist_ok=True)

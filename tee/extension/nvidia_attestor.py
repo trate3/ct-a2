@@ -31,8 +31,8 @@ validation. Redirects are refused and keys are never fetched from a URL named by
 
 Policy. A verifier cannot be built without an accepted-GPU policy (``GpuPolicy``): an exact digest
 of the specified fields (GPU count, hardware model, driver and VBIOS versions, secure boot, debug
-state, the required security claims). The policy is chosen before the run, from a development
-smoke, and kept in a file with its hash. The only code that runs without a policy is
+state, the required security claims). The policy is chosen before the run from verified claims
+and kept in a file with its hash. The only code that runs without a policy is
 ``discover_gpu_state``, a distinctly named diagnostic whose output says it is not certified.
 
 Every failure raises. There is no fallback to a stub, and a skipped check is never reported as a
@@ -331,7 +331,7 @@ def _digest(fields: dict) -> str:
 class GpuPolicy:
     """An accepted GPU state: an exact digest of the fields in ``policy_fields``.
 
-    Freeze it from a development smoke, write it to a file, and pass its digest to the final job
+    Freeze it from verified claims, write it to a file, and pass its digest to the verifier
     independently. It is a GPU-state policy, not a workload or image policy.
     """
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# EQ1: time for the phases of certified-tap evaluation (paper Table 1).
+# EQ1: time for the phases of certified-tap evaluation (the paper's EQ1 table).
 #
 #   bash reproduce_eq1.sh            CPU: recompute every cell of the table from the shipped raw export (seconds)
 #   bash reproduce_eq1.sh gpu-plan   print the full GPU re-run commands (nothing is executed)
@@ -7,11 +7,8 @@
 #
 # What the GPU path measures: one generation per distinct prompt (24) without the tap (A0) and with the mean probe (A1),
 # same seed, natural stop, single sequence, Transformers BF16, the probe scoring at the call boundary inside the timer.
-# Measured on an RTX PRO 6000 Blackwell (96 GB), torch 2.15.0+cu132, transformers 5.23.0, Python 3.12: about 1.8 GPU-hours
-# of generation (48 calls; two prompts account for about 80% of the time), plus loading.
-# Monitor rows: each monitor judges the 24 saved A0 responses through a vLLM 0.31.0 server, one request at a time
-# (minutes per monitor on one GPU). GLM-5.3-Flash NVFP4 (about 204 GB) needs a larger GPU (we used one datacenter GPU).
-# Expect timings to differ on other hardware; the paired probe latency difference should stay unresolved around zero.
+# Software: torch 2.15.0+cu132, transformers 5.23.0, Python 3.12. Generation takes about 2 GPU-hours (48 calls), plus loading.
+# Monitor rows: each monitor judges the 24 saved A0 responses through a vLLM 0.31.0 server, one request at a time.
 # The isolated tap execution time (Tap cell) comes from a separate CPU/GPU microbenchmark without the model:
 #   python -m evals.tap_live.profile_components --stage2-list ... --calls ... --artifact ... --out DIR  (GPU, about 8 minutes)
 set -euo pipefail
@@ -28,8 +25,8 @@ plan() {
 cat <<EOF
 # 0. Weights (about 51 GiB in BF16). Set MODEL_DIR to the snapshot directory.
 huggingface-cli download $QWEN_REPO --revision $QWEN_REV
-# 1. Selection (CPU; already done, shipped). Rebuilding the histories needs the recorded development trajectories,
-#    which are not shipped:
+# 1. Selection (CPU; its outputs are in data/eq1). Rebuilding the histories needs recorded development trajectories
+#    (python -m evals_runner rh-rollouts):
 #    $PY -m evals.tap_live.select_tasks --out tasks.json
 #    $PY -m evals.tap_live.select_histories --trajectories TRAJ_DIR --tokenizer \$MODEL_DIR --out histories.json
 #    $PY -m evals.tap_live.select_stage2 --histories histories.json --out stage2_list.json

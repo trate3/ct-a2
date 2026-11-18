@@ -273,17 +273,6 @@ def test_reused_cache_generates_like_a_fresh_one(model, tok, fmt):
     assert reused.tokens == fresh.tokens
 
 
-def test_check_live_preflight_runs_on_the_tiny_model(model, tok, fmt):
-    from evals.tap_live import check_live
-    prompt = "<|im_start|>user\nhello the user wants me<|im_end|>\n<|im_start|>assistant\n<think>\n"
-    res = check_live.check(model, tok, fmt, tm.random_artifact(LAYER, "ema_max", alpha=0.4), "cpu", prompt=prompt, max_tokens=20)
-    assert res["abs_diff"] < 1e-5
-    assert res["reuse"]["max_abs_logit_diff_vs_fresh"] < 1e-4 and res["chunked_prefill"]["argmax_equal"]
-    assert res["reuse"]["n_cached_tokens"] > 0 and res["reuse"]["reset_used"] is False
-
-
-# ---- several heads (the coding run: token-mean and EMA-max in one arm) ------------------------------------------------
-
 @pytest.mark.parametrize("layers", [(2, 2), (1, 3)])
 def test_two_heads_share_or_split_the_capture_and_match_offline(model, tok, fmt, layers):
     stop = tok.convert_tokens_to_ids("<|im_end|>")

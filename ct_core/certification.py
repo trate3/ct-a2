@@ -399,7 +399,7 @@ def measure(components: PreparedComponents, padded_environment: bytes, spec: dic
             # The first query just delivers the environment's initial prompt; any
             # later one is the environment's own response to the agent's last action
             # (e.g. a simulated tool execution) -- real per-step cost, same
-            # attribution as the baseline (uncertified) loop in rq1_cost_exp.py.
+            # attribution as an uncertified baseline loop.
             if step == 1:
                 query = trial.next_query(tuple(transcript))
             else:

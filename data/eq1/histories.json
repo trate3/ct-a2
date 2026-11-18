@@ -1,5 +1,5 @@
 {
- "rule": "fixed before any measurement; independent of timings, statuses and labels, none of which is read):\n  tasks   the 10 positions round(i * 38 / 9), i = 0..9, of the sorted intersection of the TRAIN assignments of\n          evals/reward_hacking/data/splits.json and data/a32/splits_oneoff_v2.json, without lcbhard_35, 77 and 87\n          (`select_tasks.select`);\n  episode for each task the recorded trajectory with the smallest k (the `__r0` file, meta.k = 0 when present; the lowest\n          `__r<k>` otherwise), taken from DIR/trajectories/ or DIR itself;\n  depths  the model calls at 25 %, 50 % and 75 % of the episode: call index floor(f * (n_calls - 1)), n_calls = the number of\n          model_call events;\n  cap     48,000 prompt tokens (the model tokenizer on the recorded prompt text, special tokens not added): if the call at a\n          depth is longer, the nearest EARLIER call that fits is used and the substitution is recorded; if no call fits the\n          history is recorded as 'unavailable' (and counted as missing).",
+ "rule": "fixed before any measurement; independent of timings, statuses and labels, none of which is read):\n  tasks   the 10 positions round(i * 38 / 9), i = 0..9, of the sorted intersection of the TRAIN assignments of\n          evals/reward_hacking/data/splits.json and evals/reward_hacking/data/lcb_oneoff_schedules/splits_oneoff_v2.json, without lcbhard_35, 77 and 87\n          (`select_tasks.select`);\n  episode for each task the recorded trajectory with the smallest k (the `__r0` file, meta.k = 0 when present; the lowest\n          `__r<k>` otherwise), taken from DIR/trajectories/ or DIR itself;\n  depths  the model calls at 25 %, 50 % and 75 % of the episode: call index floor(f * (n_calls - 1)), n_calls = the number of\n          model_call events;\n  cap     48,000 prompt tokens (the model tokenizer on the recorded prompt text, special tokens not added): if the call at a\n          depth is longer, the nearest EARLIER call that fits is used and the substitution is recorded; if no call fits the\n          history is recorded as 'unavailable' (and counted as missing).",
  "prompt_cap_tokens": 48000,
  "depths": [
   0.25,
@@ -19,12 +19,12 @@
   "lcbhard_99"
  ],
  "splits_json": {
-  "path": "<HOME>/ct_eq1/repo_v4/evals/reward_hacking/data/splits.json",
+  "path": "evals/reward_hacking/data/splits.json",
   "sha256": "543afc46caeaa22c788189476de2d870750981519e792449556cd2d13be5b68d"
  },
  "splits_oneoff_v2_json": {
-  "path": "<HOME>/ct_eq1/repo_v4/evals/reward_hacking/data/a32/splits_oneoff_v2.json",
-  "sha256": "c18018ded4a01c76472ad6145f6b3643a740f476aead9f253bf987e5905ee0d1"
+  "path": "evals/reward_hacking/data/lcb_oneoff_schedules/splits_oneoff_v2.json",
+  "sha256": "6b08b3fd37aaee2182f4b941ab226bb9d9a98a54672db6eb7992ad4f20ee0499"
  },
  "task_selection_sha256": "be03779fb5565b9a6e6125e1a764ae2c6ba0337720e98cd3c63e92a56d2e8f5d",
  "histories": [
@@ -511,5 +511,5 @@
  ],
  "n_ok": 30,
  "n_unavailable": 0,
- "tokenizer": "<HOME>/ct_eq1/hf/hub/models--Qwen--Qwen3.8-27B/snapshots/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0"
+ "tokenizer": "Qwen/Qwen3.8-27B at revision 1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0"
 }

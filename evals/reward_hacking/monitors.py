@@ -12,16 +12,9 @@ A black-box view that does not fit is reported as an error, not truncated.
 
 Invocation schedule: once per rollout, at the decision boundary.
 
-Monitor models: `qwen` (the target, raw `/completion` or vLLM `/v1/completions` with our pinned Qwen template)
-and `glm` (GLM-5.3-Flash through llama.cpp's `/v1/chat/completions` with the GGUF's own template). Both receive
-the same user message (`build_prompt`) and are parsed by the same `parse_score`; the context budget is applied
-to the record in characters, so truncation is identical across models.
-
 Registry (`MONITORS`, below): every `--monitor-model NAME` is a `MonitorSpec` (model id + pinned revision, API,
-context limits, request fields, vLLM flags, prompt style). Small open monitors (gemma4-e2b/e4b, cotguard-rl/sft)
-get the SAME user message (`build_prompt`) as qwen/glm; only the per-model context budget differs, counted with the
-model's own tokenizer when it is available (else chars/token). The `*-native` entries instead use CoT-Guard's own
-prompt and A/B/C/D verdict format (`cotguard_native`, `build_native_prompt`).
+context limits, request fields, vLLM flags). Every monitor gets the same user message (`build_prompt`); only the
+per-model context budget differs, counted with the model's own tokenizer when it is available (else chars/token).
 """
 
 from __future__ import annotations
@@ -36,7 +29,6 @@ import time
 import requests
 from dataclasses import dataclass, field, replace
 
-from evals.reward_hacking import cotguard_native as cgn
 from evals.reward_hacking import llm
 from evals.reward_hacking import trajectory as tj
 
@@ -132,7 +124,7 @@ class MonitorConfig:
     sampling: dict = field(default_factory=lambda: {"temperature": 0.0, "top_k": 1})
     seed: int = 0
     chars_per_token: float = 3.0        # conservative estimate used before tokenizing
-    prompt_style: str = "matched"       # "matched" (build_prompt) | "cotguard_native"
+    prompt_style: str = "matched"       # "matched" (build_prompt)
     template_overhead_tokens: int = 64  # chat-template tokens around the user message (counted budgets)
     # Reasoning-on variants. server_context > 0: output budget = min(max_tokens, context left after the
     # prompt), at least min_output_tokens. think_open/think_close: the model's reasoning delimiters; a reply cut by the
@@ -141,7 +133,7 @@ class MonitorConfig:
     min_output_tokens: int = 1024
     think_open: tuple = ()
     think_close: tuple = ()
-    # the run plan: a reasoning-on reply with no closing marker at all is unparseable (fail-closed), instead of being
+    # A reasoning-on reply with no closing marker at all is unparseable (fail-closed), instead of being
     # read as a bare final answer. False keeps the earlier behaviour of every existing entry.
     fail_closed_no_marker: bool = False
 
@@ -284,14 +276,6 @@ def load_counter(source: str | None, *, revision: str | None = None, chars_per_t
 # ---------------------------------------------------------------------------
 # monitor registry
 
-# max_position_embeddings is raised too: vLLM 0.31 derives max_model_len from it BEFORE applying the
-# rope override and refused 131072 > 40960 on the cluster; serve_vllm.sh also sets
-# VLLM_ALLOW_LONG_MAX_MODEL_LEN=1 for YaRN servers.
-YARN_OVERRIDES = {"rope_parameters": {"rope_type": "yarn", "factor": 4.0, "original_max_position_embeddings": 32768,
-                                      "rope_theta": 1000000},
-                  "max_position_embeddings": 131072}
-
-
 def _budget(max_model_len: int, max_tokens: int, margin: int = 2048) -> int:
     """Largest prompt (tokens, rounded down to 1000) that leaves room for the generation and a safety margin."""
     return (max_model_len - max_tokens - margin) // 1000 * 1000
@@ -305,7 +289,7 @@ class MonitorSpec:
     revision: str | None
     api: str = "chat"                       # "completion" | "chat"
     engine: str | None = None               # fixed serving engine ("vllm", "llamacpp"); None = chosen on the CLI
-    prompt_style: str = "matched"           # "matched" | "cotguard_native"
+    prompt_style: str = "matched"           # "matched"
     weights_name: str | None = None         # dir under <MODELS_DIR> and vLLM served name; entries that share it share a server
     max_model_len: int = 131072             # server context (prompt + generation)
     max_tokens: int = 1024
@@ -317,15 +301,14 @@ class MonitorSpec:
     request_extra: dict = field(default_factory=dict)    # merged into the chat request body (e.g. top_p)
     reasoning_format: bool = True           # send reasoning_format="deepseek" (llama.cpp only)
     vllm_args: tuple = ()
-    language_only: bool = True              # serve_vllm.sh --language-model-only
-    hf_overrides: dict | None = None        # vLLM --hf-overrides (YaRN for CoT-Guard)
-    yarn_base: dict | None = None           # {"max_model_len": native context} when hf_overrides is a YaRN extension
+    language_only: bool = True              # vllm serve --language-model-only
+    hf_overrides: dict | None = None        # vLLM --hf-overrides
     dynamic_output: bool = False            # output budget = context left after the prompt, capped at max_tokens
     min_output_tokens: int = 1024
     think_open: tuple = ()                  # reasoning delimiters (e.g. ("<think>",), Gemma 4: ("<|channel>thought",))
     think_close: tuple = ()
     notes: str = ""
-    # the run plan. assistant_prefill: text sent as the start of the assistant turn (continue_final_message), the way a
+    # assistant_prefill: text sent as the start of the assistant turn (continue_final_message), the way a
     # template without a thinking switch (GLM-5.3-Flash) is told to skip its reasoning. fail_closed_no_marker: see
     # MonitorConfig. Both are left out of as_dict() at their defaults.
     assistant_prefill: str = ""
@@ -343,16 +326,6 @@ class MonitorSpec:
                              min_output_tokens=self.min_output_tokens, think_open=tuple(self.think_open),
                              think_close=tuple(self.think_close), fail_closed_no_marker=self.fail_closed_no_marker)
 
-    def with_yarn(self, on: bool | None) -> "MonitorSpec":
-        """None: as registered. False: drop the YaRN extension (native context, smaller budget)."""
-        if on is None or (on and self.hf_overrides) or (not on and not self.yarn_base):
-            return self
-        if not on:
-            n = self.yarn_base["max_model_len"]
-            return replace(self, hf_overrides=None, max_model_len=n, max_prompt_tokens=_budget(n, self.max_tokens),
-                           notes=self.notes + " [YaRN off]")
-        raise ValueError(f"{self.name}: YaRN is not configured for this monitor")
-
     def serve_args(self) -> list[str]:
         """vLLM extra command-line words (compact JSON: no spaces, so `EXTRA` word-splitting is safe)."""
         a = list(self.vllm_args)
@@ -364,14 +337,6 @@ class MonitorSpec:
         return _as_dict(self, _OPTIONAL_SPEC_FIELDS) | {"weights": self.weights}
 
 
-_COTGUARD_COMMON = dict(
-    engine="vllm", language_only=False, reasoning_format=False, hf_overrides=YARN_OVERRIDES,
-    yarn_base={"max_model_len": 40960}, max_model_len=131072,
-    notes="Qwen3ForCausalLM 4B (fp32 checkpoint, served bf16); native context 40960 (config), 32768 pretrained. YaRN "
-          "factor 4 (Qwen's documented extension) is ON because our CoT views reach ~135k tokens; vLLM's YaRN is "
-          "static, so it is applied to short prompts too (a small quality cost Qwen documents).")
-_NATIVE = dict(prompt_style="cotguard_native", enable_thinking=True, max_tokens=32768,
-               sampling={"temperature": 0.6}, request_extra={"top_p": 0.95}, seed=42)
 _GEMMA_COMMON = dict(engine="vllm", language_only=False, reasoning_format=False, max_model_len=131072,
                      vllm_args=("--limit-mm-per-prompt", '{"image":0,"audio":0}'),
                      notes="Gemma 4 effective-parameter model; 128K context (text_config.max_position_embeddings=131072); "
@@ -384,121 +349,47 @@ def _register(spec: MonitorSpec) -> None:
     MONITORS[spec.name] = spec
 
 
-_register(MonitorSpec("qwen", "Qwen/Qwen3.6-35B-A3B", "995ad96eacd98c81ed38be0c5b274b04031597b0", api="completion",
-                      max_model_len=196608, weights_name="qwen3.6-35b-a3b",
-                      notes="the target; pre-EQ2 behaviour and file names (monitor_scores.jsonl)"))
-_register(MonitorSpec("glm", None, None, api="chat", engine="llamacpp",
-                      notes="GLM-5.3-Flash GGUF through the owner's llama.cpp build (see lib.sh GLM_DEFAULT_MODEL)"))
-_register(MonitorSpec("gemma4-e2b", "google/gemma-4-E2B-it", "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
-                      max_prompt_tokens=_budget(131072, 1024), **_GEMMA_COMMON))
 _register(MonitorSpec("gemma4-e4b", "google/gemma-4-E4B-it", "ee0ef6023621cff504d758262d4e04895a5af4a2",
                       max_prompt_tokens=_budget(131072, 1024), **_GEMMA_COMMON))
-# Large outside monitor for EQ3: the agent model itself, served like the agent runs (same checkpoint
-# and flags, text only), called through the chat endpoint with the user message only, thinking OFF via enable_thinking, greedy, 1024 output tokens.
-_register(MonitorSpec("qwen3.8-27b", "Qwen/Qwen3.8-27B", "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0", engine="vllm",
-                      language_only=True, reasoning_format=False, max_model_len=196608,
-                      max_prompt_tokens=_budget(196608, 1024), weights_name="qwen3.8-27b",
-                      notes="Qwen3.8-27B as an outside monitor (EQ3 amendment 40); thinking off through the template "
-                            "(chat_template_kwargs enable_thinking=false). Server settings as the agent runs "
-                            "(max_model_len = pins.env VLLM_MAX_MODEL_LEN, language-model-only)."))
-# Text-only small monitors, served exactly like the Gemma monitors: matched prompt, both views, thinking
-# OFF via the model's own chat template (`enable_thinking=False`), greedy, 1024 output tokens, 128K context.
-_TEXT_SMALL = dict(engine="vllm", language_only=False, reasoning_format=False, max_model_len=131072,
-                   max_prompt_tokens=_budget(131072, 1024))
-_register(MonitorSpec("granite4.2-3b", "ibm-granite/granite-4.2-3b", "4e9c275e232f10211ec88644d106a1f6a1b60e06",
-                      notes="IBM Granite 4.2 3B (GraniteForCausalLM, Apache-2.0); 128K native context; reasoning model "
-                            "with <think> by default, switched off through the template's enable_thinking.",
-                      **_TEXT_SMALL))
-_register(MonitorSpec("minicpm5-2b", "openbmb/MiniCPM5-2B", "f97400052a43d642bbc6e9975e2397e3ae6a6b52",
-                      notes="MiniCPM5-2B (LlamaForCausalLM, Apache-2.0); 131,072 context; <think> reasoning switched "
-                            "off through the template's enable_thinking.",
-                      **_TEXT_SMALL))
-for _k, _sha in (("rl", "f2711e3c4b82405fd4e7767a2b46076fc52c3d74"), ("sft", "870bde3a6a411a7e33e603aca57a56713054826b")):
-    _register(MonitorSpec(f"cotguard-{_k}", f"CoT-Guard/cot-guard-4b-{_k}", _sha, weights_name=f"cotguard-{_k}",
-                          max_prompt_tokens=_budget(131072, 1024), **_COTGUARD_COMMON))
-    _register(MonitorSpec(f"cotguard-{_k}-native", f"CoT-Guard/cot-guard-4b-{_k}", _sha, weights_name=f"cotguard-{_k}",
-                          max_prompt_tokens=_budget(131072, 32768), **_COTGUARD_COMMON, **_NATIVE))
-    # Matched prompt with room to finish: under the 1024-token cap CoT-Guard (trained to reason at
-    # length) ran out before its SCORE line on 61/650 (rl) and 263/333 (sft) cluster rows,
-    # which fail-closed scoring turns into alarms. Same user message; only the output budget differs.
-    _register(MonitorSpec(f"cotguard-{_k}-t8k", f"CoT-Guard/cot-guard-4b-{_k}", _sha, weights_name=f"cotguard-{_k}",
-                          max_tokens=8192, max_prompt_tokens=_budget(131072, 8192), **_COTGUARD_COMMON))
-
-
-# Reasoning-on variants of every small monitor: thinking ON through each model's own chat template, the
+# Reasoning-on variant: thinking ON through each model's own chat template, the
 # model card's recommended sampling, output budget = the context left after the prompt up to 65,536 tokens, prompts
 # capped so that at least 16,384 tokens remain (only private agent reasoning is ever shortened to fit).
 _THINK_BUDGET = dict(max_tokens=65536, dynamic_output=True, min_output_tokens=16384,
                      max_prompt_tokens=_budget(131072, 16384), enable_thinking=True)
 _KEEP_SPECIAL = {"skip_special_tokens": False}
-for _n in ("gemma4-e2b", "gemma4-e4b"):
+for _n in ("gemma4-e4b",):
     _register(replace(MONITORS[_n], name=f"{_n}-think", weights_name=MONITORS[_n].weights, seed=0,
                       sampling={"temperature": 1.0}, request_extra={"top_p": 0.95, "top_k": 64, **_KEEP_SPECIAL},
                       think_open=("<|channel>thought",), think_close=("<channel|>",),
                       notes=MONITORS[_n].notes + " [thinking on; model-card sampling 1.0/0.95/64]", **_THINK_BUDGET))
-for _n in ("granite4.2-3b", "minicpm5-2b"):
-    _register(replace(MONITORS[_n], name=f"{_n}-think", weights_name=MONITORS[_n].weights, seed=0,
-                      sampling={"temperature": 1.0}, request_extra={"top_p": 0.95, **_KEEP_SPECIAL},
-                      think_open=("<think>",), think_close=("</think>",),
-                      notes=MONITORS[_n].notes + " [thinking on; model-card sampling 1.0/0.95]", **_THINK_BUDGET))
-for _k in ("rl", "sft"):
-    _b = MONITORS[f"cotguard-{_k}"]
-    _register(replace(_b, name=f"cotguard-{_k}-think", seed=0, sampling={"temperature": 0.6},
-                      request_extra={"top_p": 0.95, "top_k": 20, **_KEEP_SPECIAL},
-                      think_open=("<think>",), think_close=("</think>",),
-                      notes=_b.notes + " [matched prompt, thinking on; model-card sampling 0.6/0.95/20]", **_THINK_BUDGET))
-    _nb = MONITORS[f"cotguard-{_k}-native"]
-    _register(replace(_nb, name=f"cotguard-{_k}-native-t64k", request_extra={**_nb.request_extra, **_KEEP_SPECIAL},
-                      think_open=("<think>",), think_close=("</think>",),
-                      notes=_nb.notes + " [native prompt, thinking on, budget up to 64K]", **_THINK_BUDGET))
 
 
-# Larger outside monitors for EQ2 on the corrected SWE-bench inputs. Same matched user message and
-# record rules as every other entry. Reasoning off: greedy, 4096 output tokens. Reasoning on: the model card's sampling
-# (greedy, temperature 0, seed 0, no top-p/top-k, as EQ3 ran these two models with reasoning on), fixed output budget (8192 Qwen, 16384 GLM), the prompt
+# Larger outside monitors. Same matched user message and
+# record rules as every other entry. Reasoning off (Qwen): greedy, 4096 output tokens. Reasoning on: the model card's sampling
+# (greedy, temperature 0, seed 0, no top-p/top-k), fixed output budget (8192 Qwen, 16384 GLM), the prompt
 # budget leaves that room (only private agent reasoning is shortened), and a reply that is cut off, leaves the reasoning
-# block unclosed or has no closing marker is unparseable (an alarm under fail-closed). Served at 196,608 tokens as in EQ3.
-_A50_CTX = 196608
-_QWEN38 = MONITORS["qwen3.8-27b"]
-_QWEN38_A50 = dict(hf_id=_QWEN38.hf_id, revision=_QWEN38.revision, engine="vllm", language_only=True,
-                   reasoning_format=False, max_model_len=_A50_CTX, weights_name=_QWEN38.weights)
-_register(MonitorSpec("qwen3.8-27b-4k", max_tokens=4096, max_prompt_tokens=_budget(_A50_CTX, 4096),
+# block unclosed or has no closing marker is unparseable (an alarm under fail-closed). Served at 196,608 tokens.
+_LARGE_CTX = 196608
+_QWEN38_LARGE = dict(hf_id="Qwen/Qwen3.8-27B", revision="1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0", engine="vllm",
+                     language_only=True, reasoning_format=False, max_model_len=_LARGE_CTX, weights_name="qwen3.8-27b")
+_register(MonitorSpec("qwen3.8-27b-4k", max_tokens=4096, max_prompt_tokens=_budget(_LARGE_CTX, 4096),
                       notes="Qwen3.8-27B outside monitor, reasoning off (template enable_thinking=false), greedy, 4096 "
-                            "output tokens (amendment 50; the agent model itself)", **_QWEN38_A50))
-_register(MonitorSpec("qwen3.8-27b-think", max_tokens=8192, max_prompt_tokens=_budget(_A50_CTX, 8192),
+                            "output tokens (the agent model itself)", **_QWEN38_LARGE))
+_register(MonitorSpec("qwen3.8-27b-think", max_tokens=8192, max_prompt_tokens=_budget(_LARGE_CTX, 8192),
                       enable_thinking=True, sampling={"temperature": 0.0}, seed=0,
                       request_extra={"skip_special_tokens": False,
                                      "chat_template_kwargs": {"enable_thinking": True, "reasoning_effort": "medium"}},
                       think_open=("<think>",), think_close=("</think>",), fail_closed_no_marker=True,
                       notes="Qwen3.8-27B outside monitor, reasoning on at medium effort (chat_template_kwargs "
-                            "enable_thinking + reasoning_effort), greedy (temperature 0, as EQ3), 8192 output tokens "
-                            "(amendment 50)", **_QWEN38_A50))
-_GLM_A50 = dict(hf_id="nvidia/GLM-5.3-Flash-NVFP4", revision="da920bb0b9f4a06727223a349e55468e38352348", engine="vllm",
-                language_only=True, reasoning_format=False, max_model_len=_A50_CTX, weights_name="glm-5.3-flash-nvfp4")
-_register(MonitorSpec("glm5.3-flash-nvfp4", max_tokens=4096, max_prompt_tokens=_budget(_A50_CTX, 4096),
-                      assistant_prefill="<think></think>",
-                      notes="GLM-5.3-Flash NVFP4 outside monitor, reasoning off by the template's own empty-reasoning "
-                            "form as assistant prefill (continue_final_message), greedy, 4096 output tokens "
-                            "(amendment 50). Server flags (modelopt_fp4, fp8 KV cache) come from lib.sh with "
-                            "TARGET_MODEL=glm-5.3-flash.", **_GLM_A50))
-_register(MonitorSpec("glm5.3-flash-nvfp4-think", max_tokens=16384, max_prompt_tokens=_budget(_A50_CTX, 16384),
+                            "enable_thinking + reasoning_effort), greedy (temperature 0), 8192 output tokens", **_QWEN38_LARGE))
+_GLM_LARGE = dict(hf_id="nvidia/GLM-5.3-Flash-NVFP4", revision="da920bb0b9f4a06727223a349e55468e38352348", engine="vllm",
+                language_only=True, reasoning_format=False, max_model_len=_LARGE_CTX, weights_name="glm-5.3-flash-nvfp4")
+_register(MonitorSpec("glm5.3-flash-nvfp4-think", max_tokens=16384, max_prompt_tokens=_budget(_LARGE_CTX, 16384),
                       enable_thinking=True, sampling={"temperature": 0.0}, seed=0,
                       request_extra={"skip_special_tokens": False},
                       think_open=("<think>",), think_close=("</think>",), fail_closed_no_marker=True,
                       notes="GLM-5.3-Flash NVFP4 outside monitor, reasoning on (the template opens <think> itself), "
-                            "greedy (temperature 0, as EQ3), 16384 output tokens (amendment 50)", **_GLM_A50))
-# the run plan: GLM-5.3-Flash again with larger output budgets, after 391 reasoning-on replies and 58 reasoning-off replies ended at
-# their length limit without a score. Same weights, prompts, greedy decoding; only the budget changes.
-_register(MonitorSpec("glm5.3-flash-nvfp4-16k", max_tokens=16384, max_prompt_tokens=_budget(_A50_CTX, 16384),
-                      assistant_prefill="<think></think>",
-                      notes="GLM-5.3-Flash NVFP4 outside monitor, reasoning off as assistant prefill, greedy, 16384 output tokens "
-                            "(amendment 54; amendment 50's reasoning-off monitor had 4096)", **_GLM_A50))
-_register(MonitorSpec("glm5.3-flash-nvfp4-think-64k", max_tokens=65536, max_prompt_tokens=_budget(_A50_CTX, 65536),
-                      enable_thinking=True, sampling={"temperature": 0.0}, seed=0,
-                      request_extra={"skip_special_tokens": False},
-                      think_open=("<think>",), think_close=("</think>",), fail_closed_no_marker=True,
-                      notes="GLM-5.3-Flash NVFP4 outside monitor, reasoning on, greedy, 65536 output tokens "
-                            "(amendment 54; amendment 50's reasoning-on monitor had 16384)", **_GLM_A50))
+                            "greedy (temperature 0), 16384 output tokens", **_GLM_LARGE))
 
 
 def get_spec(name: str) -> MonitorSpec:
@@ -518,10 +409,9 @@ def serve_group(names: list[str]) -> list[MonitorSpec]:
 
 
 def _main(argv: list[str]) -> int:
-    """`python -m evals.reward_hacking.monitors plan|serve-env|show NAME...` (used by monitor_vllm.sbatch)."""
+    """`python -m evals.reward_hacking.monitors plan|serve-env|show NAME...`."""
     import shlex
     cmd, names = (argv[0] if argv else "show"), argv[1:]
-    yarn_env = {"0": False, "off": False, "1": True, "on": True}.get(__import__("os").environ.get("YARN", ""))
     if cmd == "plan":       # one line per server group: "<weights> <name,name,...>"
         groups: dict[str, list[str]] = {}
         for n in names:
@@ -532,7 +422,7 @@ def _main(argv: list[str]) -> int:
             print(w, ",".join(ns))
         return 0
     if cmd == "serve-env":
-        specs = [s.with_yarn(yarn_env) for s in serve_group(names[0].split(","))]
+        specs = serve_group(names[0].split(","))
         s = specs[0]
         if s.engine != "vllm" or not s.hf_id:
             raise SystemExit(f"{s.name}: not a vLLM-served Hugging Face monitor")
@@ -543,7 +433,7 @@ def _main(argv: list[str]) -> int:
         return 0
     if cmd == "show":
         for n in names or MONITORS:
-            print(json.dumps(get_spec(n).with_yarn(yarn_env).as_dict(), default=str))
+            print(json.dumps(get_spec(n).as_dict(), default=str))
         return 0
     raise SystemExit("usage: monitors.py plan|serve-env|show NAME...")
 
@@ -592,36 +482,6 @@ def _info(view, actions, events, cut, n, counter, budget, style) -> dict:
             "prompt_style": style}
 
 
-_NATIVE_ACTION_KINDS = {tj.ASSISTANT, tj.TOOL_PROPOSED, tj.TOOL_EXECUTED, tj.SUBMISSION, tj.SUBMISSION_EXECUTED}
-
-
-def native_parts(events: list[tj.Event]) -> tuple[str, str, str]:
-    """CoT-Guard's (input, cot, action) from our events; see `cotguard_native` for the mapping."""
-    problem = [e.data["text"] for e in events if e.kind == tj.USER and e.data.get("origin") == "task"]
-    if not problem:
-        problem = [e.data["text"] for e in events if e.kind == tj.USER][:1]
-    cot = [e.data["text"] for e in events if e.kind == tj.REASONING]
-    # later user messages are the harness's feedback on earlier failed attempts: legitimate history, kept in order
-    action = [e for e in events if e.kind in _NATIVE_ACTION_KINDS
-              or (e.kind == tj.USER and e.data.get("origin") != "task")]
-    return "\n\n".join(problem), "\n\n".join(cot), tj.render_view(action)
-
-
-def native_assembler(view: str):
-    def assemble(events: list[tj.Event]) -> str:
-        problem, cot, action = native_parts(events)
-        return cgn.render("cot_action" if view == tj.COT else "action_only", problem=problem, cot=cot, action=action)
-    return assemble
-
-
-def build_native_prompt(traj: tj.Trajectory, view: str, *, counter, budget_tokens: int, overhead: int = 0,
-                        actions: str = "proposed", boundary_seq: int | None = None) -> tuple[str, dict]:
-    """CoT-Guard's prompt: `action_only` for the black-box view, `cot_action` for the CoT view."""
-    events = tj.view_events(traj, view, boundary_seq=boundary_seq, actions=actions)
-    user, events, cut, n = _fit(events, view, native_assembler(view), counter, budget_tokens, overhead)
-    return user, _info(view, actions, events, cut, n, counter, budget_tokens, "cotguard_native")
-
-
 class MonitorContextError(ValueError):
     """The server rejected the prompt as longer than the slot's context (recorded as an error row)."""
 
@@ -640,8 +500,7 @@ class ChatCompletion:
 class ChatMonitorClient(llm.CompletionClient):
     """Monitor client for an OpenAI-style `/v1/chat/completions` server (llama.cpp --jinja, vLLM, ...).
 
-    The server applies ITS OWN chat template (the GGUF's embedded one for GLM); we only supply the user
-    message, which is byte-identical to the one the Qwen path renders into its prompt. Request body
+    The server applies ITS OWN chat template; we only supply the user message. Request body
     (see `request_body`): model, one user message, temperature (from MonitorConfig.sampling; greedy), seed,
     max_tokens, stream=false, `chat_template_kwargs={"enable_thinking": false}`, `reasoning_format="deepseek"`
     (any reasoning the template still emits is split off into `reasoning_content`, never scored).
@@ -784,16 +643,13 @@ def run_monitor(client: llm.CompletionClient, traj: tj.Trajectory, view: str, *,
                 instruction: str = INSTRUCTION, final_state_only: bool = False,
                 include_evaluation: bool = False) -> MonitorResult:
     """One monitor call. `counter` (CharCounter/HFTokenCounter) switches to the token-budget path used by the
-    registry's small monitors; without it the budget is the legacy character estimate (qwen, glm)."""
-    native = config.prompt_style == "cotguard_native"
+    registry monitors; without it the budget is a character estimate."""
     if include_evaluation and not final_state_only:
         raise ValueError("include_evaluation requires final_state_only")
     if final_state_only and instruction == INSTRUCTION:
         instruction = final_state_instruction(traj, include_evaluation)
-    if final_state_only and (native or view != tj.BLACK_BOX):
+    if final_state_only and view != tj.BLACK_BOX:
         raise ValueError("final-state-only requires the matched prompt and black_box view")
-    if native and instruction != INSTRUCTION:
-        raise ValueError("custom instructions are unsupported by the native CoT-Guard prompt")
     if final_state_only:
         if counter is None:
             max_chars = int(config.max_prompt_tokens * config.chars_per_token) - len(instruction)
@@ -806,13 +662,11 @@ def run_monitor(client: llm.CompletionClient, traj: tj.Trajectory, view: str, *,
             info["user_tokens"] = counter.count(user)
             if info["user_tokens"] + config.template_overhead_tokens > config.max_prompt_tokens:
                 raise ValueError("final-state record exceeds monitor token budget")
-    elif native or counter is not None:
+    elif counter is not None:
         counter = counter or CharCounter(config.chars_per_token)
-        build = build_native_prompt if native else build_prompt_fitted
-        extra = {} if native else {"instruction": instruction}
-        user, info = build(traj, view, counter=counter, budget_tokens=config.max_prompt_tokens,
-                           overhead=config.template_overhead_tokens, actions=actions, boundary_seq=boundary_seq,
-                           **extra)
+        user, info = build_prompt_fitted(traj, view, counter=counter, budget_tokens=config.max_prompt_tokens,
+                                         overhead=config.template_overhead_tokens, actions=actions,
+                                         boundary_seq=boundary_seq, instruction=instruction)
     else:
         max_chars = int(config.max_prompt_tokens * config.chars_per_token) - len(INSTRUCTION) - len(REASONING_NOTE)
         user, info = build_prompt(traj, view, actions=actions, boundary_seq=boundary_seq,
@@ -820,11 +674,7 @@ def run_monitor(client: llm.CompletionClient, traj: tj.Trajectory, view: str, *,
     user_sha = hashlib.sha256(user.encode()).hexdigest()
 
     def parse(text: str) -> float | None:
-        if not native:
-            return parse_score(text)
-        score, extra = cgn.parse_native(text)
-        info.update(extra)
-        return score
+        return parse_score(text)
 
     if isinstance(client, ChatMonitorClient):
         max_tokens = config.max_tokens
@@ -867,9 +717,6 @@ def run_monitor_per_call(client: llm.CompletionClient, traj: tj.Trajectory, view
     established terminal, once-per-rollout path is unchanged.
     """
     from evals.reward_hacking.first_violation import decision_point_records
-
-    if config.prompt_style == "cotguard_native":
-        raise ValueError("per-call scoring requires the matched prompt; native CoT-Guard prompt is terminal-only")
 
     rows = []
     for boundary in decision_point_records(traj):

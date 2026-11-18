@@ -496,35 +496,32 @@ def test_extend_from_accepts_legacy_qwen36_manifest_and_context_growth(tmp_path)
                   run_one=Recorder()) == 0
 
 
-def test_schedule_runs_each_row_with_its_composed_prompt(tmp_path):
-    from evals.reward_hacking import prompt_registry
+def test_schedule_runs_each_row_with_its_prompt(tmp_path):
+    extra = tmp_path / "prompts.json"
+    texts = {"T1": "First instruction." + tasks.INSTRUCTION_SUFFIX_TOOLS, "T2": "Second instruction." + tasks.INSTRUCTION_SUFFIX_TOOLS}
+    extra.write_text(json.dumps({k: {"text": v} for k, v in texts.items()}))
     sched = tmp_path / "s.jsonl"
-    sched_rows = [{"task_id": "lcbhard_0", "prompt_id": "H07", "k": 0}, {"task_id": "lcbhard_0", "prompt_id": "C", "k": 0},
-            {"task_id": "lcbhard_1", "prompt_id": "N07", "k": 1}]
+    sched_rows = [{"task_id": "lcbhard_0", "prompt_id": "T1", "k": 0}, {"task_id": "lcbhard_0", "prompt_id": "T2", "k": 0},
+                  {"task_id": "lcbhard_1", "prompt_id": "T1", "k": 1}]
     sched.write_text("".join(json.dumps(r) + "\n" for r in sched_rows))
     seen = {}
 
     def run_one(task, *, rollout_id, seed, client, config, meta):
-        seen[rollout_id] = (task.instruction_prompt, seed, meta.get("prompt_id"), meta.get("prompt_direction"))
+        seen[rollout_id] = (task.instruction_prompt, seed, meta.get("prompt_id"))
         t = fake_traj(task, rollout_id, seed, meta, config)
         t.meta.update({k: meta[k] for k in ("prompt_id", "prompt_direction", "prompt_sha256")})
         return t
 
-    args = make_args(tmp_path, schedule=sched)
+    args = make_args(tmp_path, schedule=sched, registry_extra=extra)
     assert rr.run(args, run_one=run_one) == 0
-    reg = prompt_registry.registry()
-    assert set(seen) == {"lcbhard_0__conflicting__H07__r0", "lcbhard_0__conflicting__C__r0",
-                         "lcbhard_1__conflicting__N07__r1"}
-    text, seed, pid, direction = seen["lcbhard_0__conflicting__C__r0"]
-    assert text == reg["C"]["text"] and text.endswith(tasks.INSTRUCTION_SUFFIX_TOOLS) and direction == "H"
-    assert seen["lcbhard_0__conflicting__H07__r0"][0] == reg["H07"]["text"]
-    assert "Modification of tests is not allowed" in reg["H07"]["text"]
-    assert seed == rr.rollout_seed(args.base_seed, "lcbhard_0:C", 0) != seen["lcbhard_0__conflicting__H07__r0"][1]
-    assert {r["prompt_id"] for r in rows(args.out)} == {"H07", "C", "N07"}
-    man = json.loads((args.out / "manifest.json").read_text())
-    assert man["prompt_schedule"]["registry_sha256"] == prompt_registry.registry_digest()
+    assert set(seen) == {"lcbhard_0__conflicting__T1__r0", "lcbhard_0__conflicting__T2__r0",
+                         "lcbhard_1__conflicting__T1__r1"}
+    text, seed, pid = seen["lcbhard_0__conflicting__T2__r0"]
+    assert text == texts["T2"] and pid == "T2"
+    assert seed == rr.rollout_seed(args.base_seed, "lcbhard_0:T2", 0) != seen["lcbhard_0__conflicting__T1__r0"][1]
+    assert {r["prompt_id"] for r in rows(args.out)} == {"T1", "T2"}
     seen.clear()
     assert rr.run(args, run_one=run_one) == 0 and not seen          # resume: nothing left
-    sched.write_text(sched.read_text() + json.dumps({"task_id": "lcbhard_2", "prompt_id": "N03", "k": 0}) + "\n")
+    sched.write_text(sched.read_text() + json.dumps({"task_id": "lcbhard_2", "prompt_id": "T2", "k": 0}) + "\n")
     with pytest.raises(SystemExit, match="schedule"):
         rr.run(args, run_one=run_one)

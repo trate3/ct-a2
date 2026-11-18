@@ -1,7 +1,7 @@
 """Declared task set for the live tap-overhead run on LiveCodeBench, chosen by a rule fixed before any measurement.
 
 Rule: the sorted intersection of the TRAIN assignments of `evals/reward_hacking/data/splits.json` (conflicting split)
-and `evals/reward_hacking/data/a32/splits_oneoff_v2.json` (oneoff split), without the three malformed tasks
+and `evals/reward_hacking/data/lcb_oneoff_schedules/splits_oneoff_v2.json` (oneoff split), without the three malformed tasks
 (lcbhard_35, lcbhard_77, lcbhard_87), has 39 tasks; take the positions round(i * 38 / 9), i = 0..9. Nothing measured
 (time, tokens, outcomes) enters the choice. The output records the ids and the sha256 of both split files.
 
@@ -17,7 +17,7 @@ from pathlib import Path
 from evals.reward_hacking import rollout, tasks
 
 SPLITS_A = tasks.SPLITS_PATH
-SPLITS_B = Path(tasks.__file__).parent / "data" / "a32" / "splits_oneoff_v2.json"
+SPLITS_B = Path(tasks.__file__).parent / "data" / "lcb_oneoff_schedules" / "splits_oneoff_v2.json"
 EXCLUDED = frozenset(rollout.MALFORMED_TASKS)
 
 

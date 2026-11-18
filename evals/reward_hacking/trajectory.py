@@ -12,8 +12,8 @@ text-stripping a transcript; they are selected from these events by type:
 
 Every tool call has a proposed form (what the model emitted) and an executed form
 (what the agent's control logic actually ran). Model-level views read proposed
-actions; agent-level views read executed actions. They differ only when a wrapper
-transforms an action (EQ3).
+actions; agent-level views read executed actions. They differ only when the control
+logic transforms an action.
 """
 
 from __future__ import annotations
@@ -79,7 +79,7 @@ class Trajectory:
         return cls(meta=d["meta"], events=[Event(**e) for e in d["events"]])
 
     def model_trace_digest(self) -> str:
-        """Hash of everything the model produced; must be unchanged by an EQ3 wrapper."""
+        """Hash of everything the model produced; must be unchanged by the control logic."""
         keep = [(e.kind, e.call_index, e.data) for e in self.events
                 if e.kind in (MODEL_CALL, REASONING, ASSISTANT, TOOL_PROPOSED)
                 or (e.kind == SUBMISSION)]

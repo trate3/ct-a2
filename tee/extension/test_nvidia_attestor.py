@@ -1,11 +1,10 @@
-"""Tests for the GPU-attestation software signer and verifier. THESE ARE MOCK TESTS (plus one replay of archived live evidence).
+"""Tests for the GPU-attestation software signer and verifier. THESE ARE MOCK TESTS.
 
 No real GPU, NVIDIA SDK, or NRAS is used. A mock NRAS (a throwaway CA, an intermediate and an
 ES384 signing key made here) issues tokens shaped like NRAS's, and the evidence and CC-state
 seams are replaced with fakes. They check the class logic (nonce binding, rejection of bad
 tokens, CC-off refusal, unreachable service, no silent fallback), not the hardware or NVIDIA's
-real service. The real thing is exercised by the live smoke test in results/tee_attestation_smoke/.
-One test replays the archived live tokens in results/tee_attestation_smoke/ offline (no GPU, no network).
+real service.
 Needs the `gcp` extra (PyJWT with cryptography); skips cleanly without it.
 """
 
@@ -341,92 +340,6 @@ def test_local_check_runs_with_the_bound_nonce_and_its_failure_is_fatal():
         _verify(nras, signer.token(), signer.verify_key(), local_check=fails)
 
 
-# ---------------------------------------------------------------- the EQ1 certified arm: no silent fallback
-
-def test_nvidia_is_never_picked_by_auto(monkeypatch):
-    from evals_runner import rq1_cost_exp as X
-    monkeypatch.setattr("os.path.exists", lambda path: False)
-    assert X.resolve_attestation("auto") == "stub"
-    monkeypatch.setattr("os.path.exists", lambda path: True)
-    assert X.resolve_attestation("auto") == "gcp"
-    assert X.resolve_attestation("nvidia") == "nvidia"
-
-
-def _certified(attestation="nvidia"):
-    from evals.basic_mocked import FIXTURE
-    from evals.basic_mocked.mocked_protocol_components import (
-        MockAgentDriver, MockTapDriver, agent_package, tap_package)
-    from evals_runner import rq1_cost_exp as X
-    from ct_core.protocol.telemetry import StageRecorder
-    from util.dynamic_test_environment import StaticEnvironment
-
-    data = str(FIXTURE)
-    recorder = StageRecorder("t")
-    out = X.certified_run(agent_package(data), tap_package(), StaticEnvironment.from_jsonl(data, 4, seed=7),
-                          (MockAgentDriver,), (MockTapDriver,), recorder, attestation=attestation)
-    return out, recorder
-
-
-def _policy_env(monkeypatch, tmp_path, policy=None):
-    policy = policy or _policy()
-    path = tmp_path / "policy.json"
-    policy.write(path)
-    monkeypatch.setenv("EQ1_GPU_POLICY_FILE", str(path))
-    monkeypatch.setenv("EQ1_GPU_POLICY_DIGEST", policy.digest)
-
-
-def test_certified_run_with_mock_gpu_attestation_says_what_it_is_and_is_not(monkeypatch, tmp_path):
-    import time
-    nras = MockNras(cert_start=time.time() - 3600)  # the verifier here uses the real clock
-    _policy_env(monkeypatch, tmp_path)
-    monkeypatch.setattr(nv, "read_cc_state", lambda: dict(CC_ON))
-    monkeypatch.setattr(nv, "collect_gpu_evidence", lambda nonce: FAKE_EVIDENCE)
-    monkeypatch.setattr(nv, "request_nras_token", lambda nonce, evidence, **kw: nras.issue(nonce, iat=time.time()))
-    monkeypatch.setattr(nv, "fetch_nras_jwks", nras.jwks)
-    out, recorder = _certified()
-    assert {"attestation_fetch", "attestation_verify"} <= {record.stage for record in recorder.records}
-    # this mode must not look like a verified, attested certificate
-    assert out["certificate_verified"] is None and out["software_signature_verified"] is True
-    info = out["attestation_info"]
-    assert info["root"] == "nvidia-gpu-only-software-signed"
-    assert info["gpu_attestation_verified"] is True and info["workload_attested"] is False
-    assert info["cpu_attested"] is False and info["full_certification"] is False
-    text = " ".join(info["not_attested"])
-    assert all(word in text for word in ("CPU", "Python code", "model files", "isolation of the signing key"))
-    assert info["policy_digest"] == _policy().digest
-    assert info["local_cc_state_not_attested"] == CC_ON and info["gpus"]["GPU-0"]["dbgstat"] == "disabled"
-    assert set(info["signer_timings"]) == {"cc_state_check_seconds", "evidence_collect_seconds", "nras_post_seconds"}
-    assert set(info["verifier_timings"]) >= {"jwks_get_seconds", "local_token_verify_seconds", "key_cache_policy"}
-    from evals_runner import rq1_cost_exp as X
-    assert X.ATTESTATION_ROOTS["nvidia"] == "nvidia-gpu-only-software-signed"
-
-
-@pytest.mark.parametrize("break_step", ["no_policy", "wrong_policy_digest", "cc_off", "no_package", "nras_down"])
-def test_certified_run_with_nvidia_fails_closed_and_runs_no_session(monkeypatch, tmp_path, break_step):
-    from evals_runner import rq1_cost_exp as X
-    ran = []
-    monkeypatch.setattr(X, "run_session", lambda *a, **k: ran.append(1))
-    if break_step == "no_policy":
-        monkeypatch.delenv("EQ1_GPU_POLICY_FILE", raising=False)
-        monkeypatch.delenv("EQ1_GPU_POLICY_DIGEST", raising=False)
-    else:
-        _policy_env(monkeypatch, tmp_path)
-    if break_step == "wrong_policy_digest":
-        monkeypatch.setenv("EQ1_GPU_POLICY_DIGEST", "sha256:" + "0" * 64)
-    monkeypatch.setattr(nv, "read_cc_state", lambda: dict(CC_ON, cc_status="OFF") if break_step == "cc_off" else dict(CC_ON))
-    if break_step == "no_package":
-        monkeypatch.setitem(sys.modules, "verifier", None)
-    else:
-        monkeypatch.setattr(nv, "collect_gpu_evidence", lambda nonce: FAKE_EVIDENCE)
-    if break_step == "nras_down":
-        def down(*args, **kwargs):
-            raise GpuAttestationError("NRAS is unreachable: mock")
-        monkeypatch.setattr(nv, "request_nras_token", down)
-    with pytest.raises((GpuAttestationError, ValueError)):
-        _certified()
-    assert ran == []  # no stub run, no certificate
-
-
 # ---------------------------------------------------------------- token validity
 
 @pytest.mark.parametrize("where, offset, ok", [
@@ -547,33 +460,6 @@ def test_discovery_runs_without_a_policy_and_says_it_is_not_certified():
     with pytest.raises(ValueError, match="nonce"):  # it still runs every token check
         nv.discover_gpu_state(nras.issue(_nonce(key)), b"\x00" * 32, fetch_jwks=nras.jwks, now=NOW)
     assert not hasattr(found, "verify")
-
-
-def test_frozen_policy_accepts_all_archived_development_tokens_offline():
-    """ARCHIVED LIVE EVIDENCE (not a mock): the 10 saved NRAS tokens from the development smoke, checked at their own
-    issue time against the saved NRAS keys, under the policy frozen from that smoke."""
-    import pathlib
-    folder = pathlib.Path(__file__).resolve().parents[2] / "results" / "tee_attestation_smoke"
-    if not (folder / "repetitions.json").exists():
-        pytest.skip("archived live tokens not shipped: the signed tokens carry a hardware identifier of the GPU "
-                    "that cannot be removed without breaking their signatures")
-    data = json.loads((folder / "gpu_policy.json").read_text())
-    policy = GpuPolicy.load(folder / "gpu_policy.json", expected_digest=data["fields_digest"])
-    claims = json.loads((folder / "claims_rep0.json").read_text())
-    assert GpuPolicy.from_verified_claims(claims["gpus"], source="x").digest == policy.digest
-    jwks = json.loads((folder / "nras_signing_keys_used.json").read_text())
-    reps = json.loads((folder / "repetitions.json").read_text())
-    assert len(reps) == 10
-    for rep in reps:
-        verifier = GpuAttestationVerifier.from_token(rep["token"], bytes.fromhex(rep["verify_key_hex"]), policy=policy,
-                                                     fetch_jwks=lambda: jwks, now=rep["token_issued_at"] + 60)
-        assert verifier.measurement() == rep["measurement"]
-    # the same real token under a policy for another driver is refused
-    other = json.loads(json.dumps(policy.fields))
-    other["gpus"][0]["driver_version"] = "999.99"
-    with pytest.raises(ValueError, match="not the accepted policy"):
-        GpuAttestationVerifier.from_token(reps[0]["token"], bytes.fromhex(reps[0]["verify_key_hex"]), policy=GpuPolicy(other),
-                                          fetch_jwks=lambda: jwks, now=reps[0]["token_issued_at"] + 60)
 
 
 # ---------------------------------------------------------------- service trust model

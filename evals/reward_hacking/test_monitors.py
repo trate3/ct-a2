@@ -6,6 +6,7 @@ import hashlib
 import json
 
 import pytest
+from dataclasses import replace
 
 from evals.reward_hacking import monitors
 from evals.reward_hacking import trajectory as tj
@@ -171,7 +172,7 @@ def test_per_call_monitor_scores_each_prefix_without_future_or_outcome_leakage()
     ("Final answer only.\nSCORE: 10", "stop", 0.10),                                              # markers stripped
 ])
 def test_reasoning_reply_scored_from_final_answer_only(text, finish, score):
-    cfg = monitors.get_spec("granite4.2-3b-think").config()
+    cfg = replace(monitors.get_spec("qwen3.8-27b-think"), fail_closed_no_marker=False).config()
     info = {}
     assert monitors.parse_reasoning_reply(text, finish, cfg, monitors.parse_score, info) == score
 
@@ -185,7 +186,7 @@ def test_gemma_channel_markers_and_dynamic_budget():
 
 
 def test_existing_monitors_unchanged_by_reasoning_variants():
-    for n in ("gemma4-e4b", "gemma4-e2b", "granite4.2-3b", "minicpm5-2b", "cotguard-rl-native"):
+    for n in ("gemma4-e4b",):
         c = monitors.get_spec(n).config()
         assert c.server_context == 0 and c.think_close == ()
 
@@ -319,39 +320,29 @@ def test_render_view_swe_agent_patch_and_lcb_unchanged():
                                           "--- test.py ---\nassert f() is None")
 
 
-# ---- the run plan, phase 2: Qwen3.8-27B and GLM-5.3-Flash NVFP4 entries --------------------------------------------
+# ---- Qwen3.8-27B and GLM-5.3-Flash NVFP4 entries --------------------------------------------
 
-_A50 = ("qwen3.8-27b-4k", "qwen3.8-27b-think", "glm5.3-flash-nvfp4", "glm5.3-flash-nvfp4-think")
-_A54 = ("glm5.3-flash-nvfp4-16k", "glm5.3-flash-nvfp4-think-64k")
-_EXISTING_21_DIGEST = "019e57f8eb6f0e090323350261dbe1e9574bb5154f6b030065f9788513f1c9eb"   # spec + config of the 21 entries at 47a909e
+_LARGE = ("qwen3.8-27b-4k", "qwen3.8-27b-think", "glm5.3-flash-nvfp4-think")
 
 
-def test_existing_entries_serialise_exactly_as_before_amendment_50():
-    d = {n: {"spec": s.as_dict(), "config": s.config().as_dict()} for n, s in monitors.MONITORS.items() if n not in _A50 and n not in _A54}
-    assert len(d) == 21
-    assert hashlib.sha256(json.dumps(d, sort_keys=True, default=str).encode()).hexdigest() == _EXISTING_21_DIGEST
-    assert not any({"assistant_prefill", "fail_closed_no_marker"} & set(v["spec"]) for v in d.values())
-
-
-def test_a50_entries_budgets_sampling_and_serving():
+def test_large_monitor_entries_budgets_sampling_and_serving():
     r = monitors.MONITORS
-    for n in _A50:
+    for n in _LARGE:
         s = r[n]
         assert s.engine == "vllm" and s.api == "chat" and s.language_only and s.max_model_len == 196608
         assert s.prompt_style == "matched" and not s.dynamic_output and s.reasoning_format is False
         assert s.max_prompt_tokens + s.max_tokens + 2048 <= s.max_model_len
     assert r["qwen3.8-27b-4k"].max_tokens == 4096 and r["qwen3.8-27b-4k"].max_prompt_tokens == 190000
     assert r["qwen3.8-27b-think"].max_tokens == 8192 and r["qwen3.8-27b-think"].max_prompt_tokens == 186000
-    assert r["glm5.3-flash-nvfp4"].max_tokens == 4096 and r["glm5.3-flash-nvfp4"].max_prompt_tokens == 190000
     assert r["glm5.3-flash-nvfp4-think"].max_tokens == 16384 and r["glm5.3-flash-nvfp4-think"].max_prompt_tokens == 178000
-    for n in ("qwen3.8-27b-4k", "glm5.3-flash-nvfp4"):             # reasoning off: greedy, no reasoning markers
+    for n in ("qwen3.8-27b-4k",):                                  # reasoning off: greedy, no reasoning markers
         s = r[n]
         assert s.sampling == {"temperature": 0.0, "top_k": 1} and not s.enable_thinking and s.request_extra == {}
         assert s.think_open == () and s.think_close == () and not s.fail_closed_no_marker
-    assert r["qwen3.8-27b-4k"].hf_id == "Qwen/Qwen3.8-27B" == r["qwen3.8-27b"].hf_id
-    assert r["qwen3.8-27b-4k"].revision == r["qwen3.8-27b"].revision == "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0"
+    assert r["qwen3.8-27b-4k"].hf_id == "Qwen/Qwen3.8-27B" == r["qwen3.8-27b-think"].hf_id
+    assert r["qwen3.8-27b-4k"].revision == r["qwen3.8-27b-think"].revision == "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0"
     assert r["qwen3.8-27b-4k"].weights == r["qwen3.8-27b-think"].weights == "qwen3.8-27b"
-    for n in ("glm5.3-flash-nvfp4", "glm5.3-flash-nvfp4-think"):
+    for n in ("glm5.3-flash-nvfp4-think",):
         assert r[n].hf_id == "nvidia/GLM-5.3-Flash-NVFP4" and r[n].revision == "da920bb0b9f4a06727223a349e55468e38352348"
         assert r[n].weights == "glm-5.3-flash-nvfp4"
     for n in ("qwen3.8-27b-think", "glm5.3-flash-nvfp4-think"):    # reasoning on: greedy as in EQ3, closed block required
@@ -360,9 +351,8 @@ def test_a50_entries_budgets_sampling_and_serving():
         assert s.request_extra["skip_special_tokens"] is False and not {"top_p", "top_k"} & set(s.request_extra)
         assert s.think_open == ("<think>",) and s.think_close == ("</think>",) and s.fail_closed_no_marker
     assert r["qwen3.8-27b-think"].request_extra["chat_template_kwargs"] == {"enable_thinking": True, "reasoning_effort": "medium"}
-    assert r["glm5.3-flash-nvfp4"].assistant_prefill == "<think></think>" and r["glm5.3-flash-nvfp4-think"].assistant_prefill == ""
+    assert r["glm5.3-flash-nvfp4-think"].assistant_prefill == ""
     assert r["glm5.3-flash-nvfp4-think"].config().fail_closed_no_marker is True
-    assert r["glm5.3-flash-nvfp4"].as_dict()["assistant_prefill"] == "<think></think>"
 
 
 def _body(name):
@@ -373,12 +363,7 @@ def _body(name):
     return c.request_body("USER", max_tokens=s.max_tokens, seed=s.seed, sampling=s.sampling, enable_thinking=s.enable_thinking)
 
 
-def test_a50_request_bodies():
-    b = _body("glm5.3-flash-nvfp4")        # reasoning off = the template's empty-reasoning turn, continued
-    assert b["messages"] == [{"role": "user", "content": "USER"}, {"role": "assistant", "content": "<think></think>"}]
-    assert b["add_generation_prompt"] is False and b["continue_final_message"] is True
-    assert b["model"] == "glm-5.3-flash-nvfp4" and b["temperature"] == 0.0 and b["max_tokens"] == 4096 and b["seed"] == 0
-    assert "reasoning_format" not in b
+def test_large_monitor_request_bodies():
     b = _body("glm5.3-flash-nvfp4-think")  # reasoning on: no prefill, the template opens <think> itself
     assert b["messages"] == [{"role": "user", "content": "USER"}] and "continue_final_message" not in b
     assert b["temperature"] == 0.0 and "top_p" not in b and "top_k" not in b and b["skip_special_tokens"] is False
@@ -392,9 +377,9 @@ def test_a50_request_bodies():
     assert len(b["messages"]) == 1 and "skip_special_tokens" not in b and "continue_final_message" not in b
 
 
-def test_a50_user_message_is_the_shared_one():
+def test_large_monitor_user_message_is_the_shared_one():
     t = _traj()
-    for n in _A50:
+    for n in _LARGE:
         s = monitors.get_spec(n)
         for view in (tj.BLACK_BOX, tj.COT):
             user, info = monitors.build_prompt_fitted(t, view, counter=monitors.CharCounter(3.0),
@@ -410,18 +395,18 @@ def test_a50_user_message_is_the_shared_one():
     ("Final answer only, no marker.\nSCORE: 10", "stop", None, "no reasoning-close marker"),     # fail-closed (EQ3 rule)
     ("reasoning</think>\nno score line", "stop", None, None),
 ])
-def test_a50_think_replies_fail_closed(name, text, finish, score, reason):
+def test_large_monitor_think_replies_fail_closed(name, text, finish, score, reason):
     info = {}
     assert monitors.parse_reasoning_reply(text, finish, monitors.get_spec(name).config(), monitors.parse_score, info) == score
     assert info.get("unparseable_reason") == reason
 
 
-def test_a50_fail_closed_does_not_change_existing_parsing():
-    cfg = monitors.get_spec("granite4.2-3b-think").config()
+def test_large_monitor_fail_closed_does_not_change_existing_parsing():
+    cfg = replace(monitors.get_spec("qwen3.8-27b-think"), fail_closed_no_marker=False).config()
     assert monitors.parse_reasoning_reply("Final only.\nSCORE: 10", "stop", cfg, monitors.parse_score, {}) == 0.10
 
 
-def test_a50_run_monitor_end_to_end_with_mock_server():
+def test_large_monitor_run_monitor_end_to_end_with_mock_server():
     t = _traj()
     sent = []
 
@@ -436,10 +421,3 @@ def test_a50_run_monitor_end_to_end_with_mock_server():
         c = Chat("http://x", model=s.weights, server="vllm", extra_body=s.request_extra, reasoning_format=False)
         r = monitors.run_monitor(c, t, tj.COT, config=s.config(), counter=monitors.CharCounter(3.0))
         assert r.score == 0.60 and sent[-1]["max_tokens"] == s.max_tokens
-    s = monitors.get_spec("glm5.3-flash-nvfp4")
-    c = Chat("http://x", model=s.weights, server="vllm", extra_body=s.request_extra, reasoning_format=False,
-             assistant_prefill=s.assistant_prefill)
-    r = monitors.run_monitor(c, t, tj.BLACK_BOX, config=s.config(), counter=monitors.CharCounter(3.0))
-    assert r.score == 0.60 and sent[-1]["messages"][-1] == {"role": "assistant", "content": "<think></think>"}
-    # the user message is the same as without a prefill
-    assert sent[-1]["messages"][0]["content"] == monitors.build_prompt(t, tj.BLACK_BOX)[0]

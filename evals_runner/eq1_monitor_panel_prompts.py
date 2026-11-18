@@ -1,6 +1,6 @@
 """Fixed, development-only sample of monitor requests for the EQ1 'monitor invocation cost' panel.
 
-    python -m evals_runner.eq1_monitor_panel_prompts --trajectories <RESULTS_DIR>/a30_T1_assembled/train \\
+    python -m evals_runner.eq1_monitor_panel_prompts --trajectories <RESULTS_DIR>/T1_train \\
         --out eq1_monitor_panel_prompts.json.gz [--manifest eq1_monitor_panel_manifest.json]
 
 The panel measures the real judge on already recorded Qwen3.8-27B LiveCodeBench T1 'conflicting' trajectories. No agent is run.
@@ -36,7 +36,7 @@ from evals.reward_hacking import trajectory as tj
 
 DEFAULT_SPLITS = pathlib.Path(__file__).resolve().parents[1] / "evals" / "reward_hacking" / "data" / "splits.json"
 VARIANT, PROMPT_ID, EPISODE, PARTITION, N_DEFAULT = "conflicting", "T1", 0, "train", 24
-# (condition, input kind, view): the same three conditions as evals_runner/eq2_rtx_throughput.py
+# (condition, input kind, view): the three conditions
 CONDITIONS = (("history_black_box", "history", tj.BLACK_BOX), ("history_reasoning", "history", tj.COT),
               ("final_code_only", "final_state", tj.BLACK_BOX))
 RULE = __doc__.split("DECLARED SAMPLE RULE")[1].split("The manifest records")[0].strip()
@@ -124,7 +124,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--trajectories", type=pathlib.Path, required=True,
                     help="directory with <task>__conflicting__T1__r<k>.json files (or its parent, with a trajectories/ subdirectory); "
-                         "the training partition: <RESULTS_DIR>/a30_T1_assembled/train on the cluster")
+                         "the training partition of the LiveCodeBench T1 runs")
     ap.add_argument("--splits", type=pathlib.Path, default=DEFAULT_SPLITS)
     ap.add_argument("--n", type=int, default=N_DEFAULT)
     ap.add_argument("--out", type=pathlib.Path, required=True)

@@ -1,36 +1,34 @@
 #!/usr/bin/env bash
-# EQ1 shared-call cost on the RTX PRO 6000: each monitor judges the SAVED generated calls (the main stage's A0 outputs) with the full available
-# trace. Run ON that machine from a repo checkout (<WORK_DIR>/repo_v4 or repo_v5), with the GPU otherwise idle. One vLLM server per monitor, started with the SAME
-# flags as the workstation throughput run (script not shipped), one request at a time, stopped before the next monitor starts.
+# EQ1 shared-call cost: each monitor judges the SAVED generated calls (the main stage's A0 outputs) with the full available
+# trace. Run from the repository root on the GPU that ran the agent, with the GPU otherwise idle. One vLLM server per monitor,
+# one request at a time, stopped before the next monitor starts.
 #   bash evals_runner/eq1_judge_saved_calls_run.sh inputs            # CPU only: the unfitted monitor inputs and their manifest (a check before any GPU use)
 #   bash evals_runner/eq1_judge_saved_calls_run.sh plan [NAME ...]   # CPU only: token counts, budgets and fitting per monitor, writes nothing
 #   bash evals_runner/eq1_judge_saved_calls_run.sh run [NAME ...]    # measure each monitor (default list below), resumable
 #   bash evals_runner/eq1_judge_saved_calls_run.sh table             # the combined table (markdown and LaTeX) over the monitor directories
-# Environment (defaults are the workstation paths of the main stage):
-#   JUDGE_OUT        <WORK_DIR>/out/eq1_judge_saved_calls
-#   JUDGE_STAGE2     <WORK_DIR>/repo_v5/results/tap_live/run2/stage2_list.json
-#   JUDGE_HISTORIES  <WORK_DIR>/repo_v5/results/tap_live/histories.json
-#   JUDGE_OUTPUTS    <WORK_DIR>/repo_v5/results/tap_live/run2/generate_calls_stage2/outputs.jsonl     (the saved A0 outputs; the main stage must have finished)
+# Environment (defaults in brackets):
+#   JUDGE_OUT        [results_regenerated/eq1_judges]
+#   JUDGE_STAGE2     [data/eq1/generation/stage2_list.json]
+#   JUDGE_HISTORIES  [data/eq1/histories.json]
+#   JUDGE_OUTPUTS    [data/eq1/generation/generate_calls_stage2/outputs.jsonl]   (the saved A0 outputs)
 #   JUDGE_MAIN       main_complete_call.json (for the composed With tap; optional, can be given later with the summary step)
-#   JUDGE_TRAJ       <WORK_DIR>/live_in/traj/trajectories (the recorded training trajectories; hashes are checked against histories.json)
+#   JUDGE_TRAJ       the recorded training trajectories (hashes are checked against histories.json)
 #   JUDGE_VIEWS      history_black_box (primary; add history_reasoning for the reasoning view)   JUDGE_INSTRUCTION  early|terminal (default early)
 #   JUDGE_LIMIT=N    smoke test (first N items; use another JUDGE_OUT)    JUDGE_PREFIX_CACHING=on|off (default on, recorded)    JUDGE_ALLOW_BUSY=1
-# Monitors (registry names): gemma4-e4b (reasoning off, 1,024 cap), gemma4-e4b-think, qwen3.8-27b-4k (off), qwen3.8-27b-think. GLM-5.3-Flash NVFP4 (about 204 GB)
-# does not fit one 96 GB card and is measured on the second machine only (deploy/second_machine/slurm/eq1_judge_saved_calls_second_machine.sbatch); here a 'not measured on this hardware'
-# record is written for it.
+#   PYTHON           Python with this repository's requirements [python3];  VLLM_VENV  venv with vLLM 0.31.0 [.venv-vllm]
+# Monitors (registry names): gemma4-e4b (reasoning off, 1,024 cap), gemma4-e4b-think, qwen3.8-27b-4k (off), qwen3.8-27b-think.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-export HF_HOME="${HF_HOME:-$HOME/ct_eq1/hf}" HF_HUB_DISABLE_TELEMETRY=1 HF_HUB_OFFLINE=1 PYTHONPATH="$PWD"
-VENV_V="$HOME/ct_eq1/venv-vllm"; PY="$HOME/ct_eq1/venv/bin/python"
-export PATH="$VENV_V/bin:/usr/local/cuda/bin:$PATH" CUDA_HOME="${CUDA_HOME:-/usr/local/cuda}"      # flashinfer JIT needs ninja and nvcc (as eq2_throughput.sh)
-OUT="${JUDGE_OUT:-$HOME/ct_eq1/out/eq1_judge_saved_calls$([ -n "${JUDGE_LIMIT:-}" ] && echo _smoke || true)}"
-STAGE2="${JUDGE_STAGE2:-$HOME/ct_eq1/repo_v5/results/tap_live/run2/stage2_list.json}"
-HISTORIES="${JUDGE_HISTORIES:-$HOME/ct_eq1/repo_v5/results/tap_live/histories.json}"
-OUTPUTS="${JUDGE_OUTPUTS:-$HOME/ct_eq1/repo_v5/results/tap_live/run2/generate_calls_stage2/outputs.jsonl}"
-TRAJ="${JUDGE_TRAJ:-$HOME/ct_eq1/live_in/traj/trajectories}"
+export HF_HUB_DISABLE_TELEMETRY=1 HF_HUB_OFFLINE=1 PYTHONPATH="$PWD"
+VENV_V="${VLLM_VENV:-$PWD/.venv-vllm}"; PY="${PYTHON:-python3}"
+export PATH="$VENV_V/bin:/usr/local/cuda/bin:$PATH" CUDA_HOME="${CUDA_HOME:-/usr/local/cuda}"      # flashinfer JIT needs ninja and nvcc
+OUT="${JUDGE_OUT:-results_regenerated/eq1_judges$([ -n "${JUDGE_LIMIT:-}" ] && echo _smoke || true)}"
+STAGE2="${JUDGE_STAGE2:-data/eq1/generation/stage2_list.json}"
+HISTORIES="${JUDGE_HISTORIES:-data/eq1/histories.json}"
+OUTPUTS="${JUDGE_OUTPUTS:-data/eq1/generation/generate_calls_stage2/outputs.jsonl}"
+TRAJ="${JUDGE_TRAJ:-trajectories}"
 VIEWS="${JUDGE_VIEWS:-history_black_box}"; INSTR="${JUDGE_INSTRUCTION:-early}"
-NAMES_DEFAULT="gemma4-e4b gemma4-e4b-think qwen3.8-27b-4k qwen3.8-27b-think glm5.3-flash-nvfp4 glm5.3-flash-nvfp4-think"
-UNFIT="glm5.3-flash-nvfp4 glm5.3-flash-nvfp4-think"
+NAMES_DEFAULT="gemma4-e4b gemma4-e4b-think qwen3.8-27b-4k qwen3.8-27b-think"
 PORT=8100; PCACHE="${JUDGE_PREFIX_CACHING:-on}"; SERVER=""
 COMMON=(--stage2-list "$STAGE2" --histories "$HISTORIES" --outputs "$OUTPUTS" --trajectories "$TRAJ" --views "$VIEWS" --instruction "$INSTR")
 [ -n "${JUDGE_MAIN:-}" ] && COMMON+=(--main-complete-call "$JUDGE_MAIN")
@@ -55,11 +53,6 @@ measure() {
   local n="$1" D="$OUT/$1"
   mkdir -p "$D"
   if [ -f "$D/summary.json" ]; then echo "[judge] $n done; skipped"; return; fi
-  case " $UNFIT " in *" $n "*)
-    "$PY" -m evals_runner.eq1_judge_saved_calls --not-measured "$n" --out-dir "$D" \
-      --reason "not measured on this hardware: the GLM-5.3-Flash NVFP4 checkpoint is about 204 GB and does not fit one 96 GB RTX PRO 6000; its cost on the saved calls is measured on the second machine and composed with the RTX agent time as two devices run one after the other"
-    return;;
-  esac
   local used; used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | head -1)
   if [ "${used:-0}" -gt 2000 ] && [ "${JUDGE_ALLOW_BUSY:-0}" != 1 ]; then echo "[judge] GPU not idle (${used} MiB in use); refusing (JUDGE_ALLOW_BUSY=1 overrides)"; exit 2; fi
   eval "$("$PY" -m evals.reward_hacking.monitors serve-env "$n")"

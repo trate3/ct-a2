@@ -1,8 +1,0 @@
-{
- "kind": "eq1_judge_saved_calls_table",
- "view": "history_black_box",
- "agent_hardware": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
- "note": "One saved A0 output per distinct prompt (24 representatives of the 30 positions, each position weighted 1/30); the monitor reads the whole recorded trace through that response (transcript view; private reasoning only in a view that explicitly provides it) and its time, prefill and generation, is measured one request at a time under its registered settings. With tap is the weighted No-tap generation time of the saved calls plus the monitor's time on them, added as two separate measurements; Tap is the monitor time. Model and tokenizer loading and any transfer of the saved output are not included. Where the agent and the monitor ran on different devices the two were run one after the other and the sum is not a same-device or end-to-end wall-clock measurement.",
- "rows": [],
- "not_measured": []
-}

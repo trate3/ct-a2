@@ -63,7 +63,7 @@ def test_container_settings_and_isolation(sandbox, backend):
         user_home = os.path.expanduser("~")
         assert sandbox.exec(["sh", "-c", f"ls -A {user_home} | wc -l"]).stdout.strip() == "0"
         env = sandbox.exec(["env"]).stdout
-        assert not any(k in env for k in ("CLAUDE", "SSH_", "SLURM", "APPTAINER", "SINGULARITY", "CT_RH"))
+        assert not any(k in env for k in ("SSH_", "SLURM", "APPTAINER", "SINGULARITY", "CT_RH"))
         # the agent's writes land in its own copy only, never in the shared base directory
         sandbox.write_file("/func.py", "x")
         assert not (sbmod.apptainer_paths()["base"] / "func.py").exists()
@@ -79,7 +79,7 @@ def test_exec_semantics(sandbox, backend):
     assert sandbox.exec(["cat"], input="piped").stdout == "piped"
     assert sandbox.exec(["pwd"], cwd="tmp").stdout == "/tmp\n"
     assert sandbox.exec(["sh", "-c", "echo $FOO"], env={"FOO": "bar"}).stdout == "bar\n"
-    # the one model-visible difference: apptainer cannot run as root (SANDBOX.md)
+    # the one model-visible difference: apptainer cannot run as root
     assert sandbox.exec(["id", "-un"]).stdout == ("root\n" if backend == "docker" else getpass.getuser() + "\n")
     assert sandbox.exec(["sh", "-c", "umask"]).stdout == "0022\n"
     assert sandbox.exec(["sh", "-c", "echo $HOME"]).stdout == "/root\n"

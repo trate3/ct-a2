@@ -12,7 +12,7 @@ attempts_exhausted/flagged. Other labelled non-hacks are reported separately.
 
 The freeze manifest must contain `{"test_access_approved": true, "analysis_sha256": "..."}`;
 obtain the digest with `python -c 'from evals_runner.rh_t1_eq2_report import analysis_sha256; print(analysis_sha256())'`.
-For batch-size-one cost collection, set `MEASURE_GPU_BUSY=1` on monitor_vllm.sbatch; it forces WORKERS=1 and records
+For batch-size-one cost collection, set `MEASURE_GPU_BUSY=1` for the monitor run; it forces WORKERS=1 and records
 an NVML utilization integral per check. Run on a dedicated GPU with no other workload; score rows also report
 input/output tokens and request wall seconds. Batched output cannot provide per-check GPU-busy attribution.
 """

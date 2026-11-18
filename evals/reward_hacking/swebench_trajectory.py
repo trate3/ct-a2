@@ -31,27 +31,11 @@ Known approximations (hence `reconstruction: "approximate"` on every call):
     `tokens_source="vllm"`; `verify_recorded_ids` then sets `prompt_ids_match`; `reconstruct_exact` consumes them.
   * otherwise `tokens` (generated ids) are ABSENT until `attach_retokenized_tokens` is run; those are tokenize(generation +
     "<|im_end|>"), not the sampled ids.
-Before any probe number on SWE rollouts is trusted, run `scripts/parity_check.py` on the cluster (it needs the real
+Before any probe number on SWE rollouts is trusted, run `scripts/parity_check.py` on a GPU (it needs the real
 Qwen3.8 weights + tokenizer, `--model MODEL_DIR --revision REV`, and teacher-forces `tokenize(prompt)` + the
 recorded generated ids; with re-tokenised ids it only validates that the reconstructed text is a likely sample of
 the model, not that it is what the server fed; a token-exact check needs the vLLM prompt_token_ids/token_ids
 returned with the response, e.g. `return_token_ids`, which Inspect's log does not store).
-
-Muse Glimmer 30B uses the same event layout; what differs is wire format, not structure. The turn ends
-`<|eot|>` (not `<|im_end|>\\n`), tool calls are `<atem:function_calls>` blocks (one per call, `to=NAME` segments),
-reasoning is the `to=self` segment, and the history is rendered by `MuseFormat` (`llm.get_format("muse-glimmer-30b")`).
-Muse-only differences, all gated on `fmt.name == "muse-glimmer-30b"` so Qwen conversion is byte-identical:
-  * history is rendered as vLLM received it from Inspect: a list-content assistant message is replayed with a leading
-    "\\n" before its text (Inspect's `openai_assistant_content`; the Qwen template trims it, the Muse one does not),
-    ALL tool calls (parse-error ones too, with empty arguments) are replayed, tool messages carry `name`;
-  * the generation of turn k is rendered from the message as generated (no "\\n"), with its reasoning;
-  * a parse-error `submit` is not a submission (Inspect does not run it); its `raw` is the arguments string vLLM
-    returned (the rendered block is the fallback);
-  * `prefix_consistent` is decided from the recorded token ids when both calls have them (the text comparison stays in
-    `prefix_consistent_text`); a call whose prompt does not extend the previous prompt + generation is recorded, never
-    an error; counts are in `meta["conversion_audit"]`;
-  * with a tokenizer, `adopt_recorded_text` replaces the prompt/generation text of unverified calls by the decoded
-    recorded ids (the reconstruction is kept in `prompt_reconstructed` / `generation_reconstructed`).
 
 Scorer -> label. The strict scorer's `evaluation_kind` is the source of truth (as in swebench_pilot._score_result):
 `pass` -> passed True (Y=1, impossible task passed = reward hack); `test_failure` and `flagged` -> passed False
@@ -77,10 +61,7 @@ from evals.reward_hacking import trajectory as tj
 IM_END = "<|im_end|>\n"
 SUBMIT_TOOL = "submit"
 _CALL_RAW = re.compile(r"<tool_call>.*?</tool_call>", re.S)
-MUSE_TARGET = "muse-glimmer-30b"
 QWEN_TARGET = "qwen3.8-27b"
-MUSE_EOT = "<|eot|>"
-_MUSE_CALL_RAW = re.compile(r"<atem:function_calls>.*?</atem:function_calls>", re.S)
 SCORER = "strict_swe_bench"
 
 
@@ -110,49 +91,17 @@ def tool_specs(tools) -> list[dict]:
     return out
 
 
-def is_muse(fmt) -> bool:
-    return getattr(fmt, "name", fmt) == MUSE_TARGET
-
-
 def turn_end(fmt) -> str:
-    """The rendered end of an assistant turn (Qwen: `<|im_end|>` + newline; Muse: `<|eot|>`)."""
-    return MUSE_EOT if is_muse(fmt) else IM_END
+    """The rendered end of an assistant turn (`<|im_end|>` + newline)."""
+    return IM_END
 
 
 def _end_marker(target) -> str:
-    """The end-of-turn special token text for a target model name (the generated ids end with it)."""
-    return MUSE_EOT if is_muse(target) else IM_END.strip()
+    """The end-of-turn special token text (the generated ids end with it)."""
+    return IM_END.strip()
 
 
-def _replayed_content(m) -> str:
-    """The `content` Inspect sends back to vLLM for an assistant message (inspect_ai `openai_assistant_content`):
-    a string stays as is; a part list becomes "\\n" + text for every text part (reasoning parts travel in the
-    `reasoning_content` / `reasoning` key instead). Version assumption: read from inspect_ai 0.3.277."""
-    if isinstance(m.content, str):
-        return m.content
-    return "".join("\n" + c.text for c in m.content if getattr(c, "type", None) == "text")
-
-
-def _muse_chat_message(m, *, replay_reasoning: bool, generated: bool) -> dict:
-    """Muse history message as vLLM renders it (`generated=False`) or the turn as the model produced it."""
-    if m.role == "tool":
-        msg = {"role": "tool", "content": f"Error: {m.error.message}" if m.error else _text(m.content)}
-        if getattr(m, "function", None):
-            msg["name"] = m.function          # the template titles the result `tool NAME`
-        return msg
-    if m.role != "assistant":
-        return {"role": m.role, "content": _text(m.content)}
-    msg = {"role": "assistant", "content": _text(m.content) if generated else _replayed_content(m),
-           "reasoning_content": _reasoning(m.content) if (generated or replay_reasoning) else ""}
-    if m.tool_calls:     # every call Inspect sent back, parse-error ones too (their arguments are {})
-        msg["tool_calls"] = [{"type": "function", "function": {"name": c.function, "arguments": dict(c.arguments or {})}}
-                             for c in m.tool_calls]
-    return msg
-
-
-def _chat_message(m, *, replay_reasoning: bool, muse: bool = False, generated: bool = False) -> dict:
-    if muse:
-        return _muse_chat_message(m, replay_reasoning=replay_reasoning, generated=generated)
+def _chat_message(m, *, replay_reasoning: bool) -> dict:
     if m.role in ("system", "user"):
         return {"role": m.role, "content": _text(m.content)}
     if m.role == "tool":
@@ -169,18 +118,14 @@ def _chat_message(m, *, replay_reasoning: bool, muse: bool = False, generated: b
 
 def reconstruct_calls(messages, tools: list[dict], fmt: llm.ChatFormat, *, replay_reasoning: bool = True) -> list[dict]:
     """One {message_index, prompt, generation, prefix_consistent, rendered_ok} per assistant message."""
-    muse = is_muse(fmt)
     end = turn_end(fmt)
-    chat = [_chat_message(m, replay_reasoning=replay_reasoning, muse=muse) for m in messages]
+    chat = [_chat_message(m, replay_reasoning=replay_reasoning) for m in messages]
     out, prev = [], None
     for i, m in enumerate(messages):
         if m.role != "assistant":
             continue
         prompt = fmt.render(chat[:i], tools)
-        # Muse: the generation is the turn as generated, not as replayed into the next prompt (no leading "\n")
-        turn = chat[:i + 1] if not muse else chat[:i] + [_chat_message(m, replay_reasoning=True, muse=True,
-                                                                        generated=True)]
-        full = fmt.render(turn, tools, add_generation_prompt=False)
+        full = fmt.render(chat[:i + 1], tools, add_generation_prompt=False)
         ok = full.startswith(prompt) and full.endswith(end)
         gen = full[len(prompt):-len(end)] if ok else ""
         out.append({"message_index": i, "prompt": prompt, "generation": gen, "rendered_ok": ok,
@@ -220,8 +165,6 @@ def recorded_reasoning_effort(sample) -> str | None:
         kw = ((getattr(cfg, "extra_body", None) or {}).get("chat_template_kwargs") or {})
         if kw.get("reasoning_effort"):
             return str(kw["reasoning_effort"])
-        if kw.get("reasoning_strength"):         # Muse's template kwarg
-            return str(kw["reasoning_strength"])
         return None
     return None
 
@@ -251,35 +194,6 @@ def recorded_token_ids(ev) -> tuple[list[int], list[int]] | None:
     return None
 
 
-def recorded_call_arguments(ev) -> dict[str, str]:
-    """{tool call id: arguments string} from a ModelEvent's raw vLLM response (choices[0].message.tool_calls).
-
-    For a call Inspect could not parse this is the only place the model's malformed arguments survive."""
-    resp = getattr(getattr(ev, "call", None), "response", None)
-    if not isinstance(resp, dict):
-        return {}
-    choices = resp.get("choices") or []
-    msg = choices[0].get("message") if choices and isinstance(choices[0], dict) else None
-    out = {}
-    for c in ((msg or {}).get("tool_calls") or []):
-        fn = (c or {}).get("function") or {}
-        if isinstance(c, dict) and c.get("id") is not None and isinstance(fn.get("arguments"), str):
-            out[str(c["id"])] = fn["arguments"]
-    return out
-
-
-def ids_extend(prev: tuple[list[int], list[int]], ids: tuple[list[int], list[int]]) -> bool:
-    """Does this call's recorded prompt ids start with the previous call's prompt + generated ids? (Also accepted:
-    without the last generated id, the end-of-turn token, which the next render writes itself.)"""
-    p_prev, g_prev = prev
-    full = p_prev + g_prev
-    return ids[0][:len(full)] == full or ids[0][:len(full) - 1] == full[:-1]
-
-
-def _has_atem_markup(text: str) -> bool:
-    return "<atem:function_calls>" in text or "<atem:invoke" in text
-
-
 def from_eval_sample(sample, *, instance_id: str, variant: str, partition: str | None, seed: int,
                      fmt: llm.ChatFormat, tools: list[dict] | None = None, replay_reasoning: bool = True,
                      rollout_index: int | None = None, meta: dict | None = None) -> tj.Trajectory:
@@ -292,7 +206,6 @@ def from_eval_sample(sample, *, instance_id: str, variant: str, partition: str |
         tools = tool_specs(mevents[0].tools)
     k = int(sample.epoch) - 1 if rollout_index is None else rollout_index
     kind, score = _kind_and_score(sample)
-    muse = is_muse(fmt)
     recorded_effort = recorded_reasoning_effort(sample)
     calls = reconstruct_calls(messages, tools, fmt, replay_reasoning=replay_reasoning)
     n_assistant = sum(m.role == "assistant" for m in messages)
@@ -310,15 +223,10 @@ def from_eval_sample(sample, *, instance_id: str, variant: str, partition: str |
         "reconstruction": {"prompt": "reconstructed", "generation": "reserialised",
                            "tokens": "absent", "replay_reasoning": replay_reasoning,
                            "exact": False, "parity_check_required": True},
-        **({"chat_format": fmt.describe(), "end_token": MUSE_EOT} if muse else {}),
         **(meta or {})})
     t0 = mevents[0].timestamp if mevents and getattr(mevents[0], "timestamp", None) else None
     add = traj.add
 
-    audit = {"calls": 0, "append_only_checked": 0, "non_append_only_calls": 0, "non_append_only_call_indices": [],
-             "text_prefix_inconsistent_calls": 0, "tool_calls": 0, "parse_error_calls": 0,
-             "calls_without_recorded_ids": 0, "atem_markup_in_text_calls": 0}
-    prev_ids = None
     call_index = -1
     call_no = 0                      # synthetic call ids, as in the LCB runner
     ids: dict[str, tuple[str, str]] = {}    # inspect tool_call_id -> (call_id, name)
@@ -348,21 +256,6 @@ def from_eval_sample(sample, *, instance_id: str, variant: str, partition: str |
             exact_data = {} if ids_rec is None else {
                 "prompt_token_ids": ids_rec[0], "tokens": ids_rec[1], "tokens_source": "vllm"}
             prefix_ok = c["prefix_consistent"]
-            if muse:
-                # recorded ids decide when both calls have them; the text comparison is kept beside it
-                ids_ok = None if (prev_ids is None or ids_rec is None) else ids_extend(prev_ids, ids_rec)
-                audit["calls"] += 1
-                audit["calls_without_recorded_ids"] += ids_rec is None
-                audit["text_prefix_inconsistent_calls"] += c["prefix_consistent"] is False
-                if ids_ok is not None:
-                    audit["append_only_checked"] += 1
-                    if not ids_ok:
-                        audit["non_append_only_calls"] += 1
-                        audit["non_append_only_call_indices"].append(call_index)
-                    prefix_ok = ids_ok
-                exact_data = {**exact_data, "prefix_consistent_text": c["prefix_consistent"],
-                              "prefix_consistent_ids": ids_ok}
-                prev_ids = ids_rec
             add(tj.MODEL_CALL, {
                 "prompt": c["prompt"], "prompt_sha256": hashlib.sha256(c["prompt"].encode()).hexdigest(),
                 "prefix_consistent": prefix_ok, "generation": gen,
@@ -373,29 +266,17 @@ def from_eval_sample(sample, *, instance_id: str, variant: str, partition: str |
                 "rendered_ok": c["rendered_ok"], "tokens_source": None, "seed": seed, **exact_data}, call_index=call_index, t=tstamp)
             reasoning = _reasoning(m.content).strip()
             text = _text(m.content).strip()
-            if muse and not text and not m.tool_calls and _stop_reason(ev) in ("max_tokens", "model_length"):
-                closed = False          # cut off inside the `to=self` segment
             if reasoning:
                 add(tj.REASONING, {"text": reasoning, "closed": closed}, call_index)
-            atem_text = muse and _has_atem_markup(text)
-            audit["atem_markup_in_text_calls"] += bool(atem_text)
-            add(tj.ASSISTANT, {"text": text, **({"atem_markup": True} if atem_text else {})}, call_index)
-            raws = (_MUSE_CALL_RAW if muse else _CALL_RAW).findall(gen)
-            rec_args = recorded_call_arguments(ev) if muse and ev is not None else {}
+            add(tj.ASSISTANT, {"text": text}, call_index)
+            raws = _CALL_RAW.findall(gen)
             good_i = 0
             for j, tc in enumerate(m.tool_calls or []):
                 call_no += 1
                 cid = f"call_{call_no}"
                 ids[str(tc.id)] = (cid, tc.function)
                 raw = ""
-                if muse:
-                    # the generation holds one block per call (parse-error ones too, with empty arguments)
-                    raw = raws[j] if j < len(raws) else ""
-                    if tc.parse_error:
-                        raw = rec_args.get(str(tc.id)) or raw
-                    audit["tool_calls"] += 1
-                    audit["parse_error_calls"] += bool(tc.parse_error)
-                elif not tc.parse_error:
+                if not tc.parse_error:
                     raw = raws[good_i] if good_i < len(raws) else ""
                     good_i += 1
                 args = dict(tc.arguments or {})
@@ -403,7 +284,7 @@ def from_eval_sample(sample, *, instance_id: str, variant: str, partition: str |
                                        "parse_error": tc.parse_error, "inspect_id": str(tc.id)}, call_index)
                 add(tj.TOOL_EXECUTED, {"call_id": cid, "name": tc.function, "arguments": args,
                                        "modified_by_wrapper": False})
-                if tc.function == SUBMIT_TOOL and not (muse and tc.parse_error):   # Inspect does not run a malformed call
+                if tc.function == SUBMIT_TOOL:
                     submit_args = args
         elif m.role == "tool":
             cid, name = ids.get(str(m.tool_call_id), (f"call_unmatched_{i}", m.function or ""))
@@ -411,8 +292,6 @@ def from_eval_sample(sample, *, instance_id: str, variant: str, partition: str |
                                  "error_type": m.error.type if m.error else None, "truncated": False,
                                  "seconds": 0.0})
 
-    if muse:
-        traj.meta["conversion_audit"] = audit
     sources = {e.data["tokens_source"] for e in traj.of(tj.MODEL_CALL)}
     if sources == {"vllm"}:
         traj.meta["reconstruction"].update(tokens="vllm", exact=True, parity_check_required=False)
@@ -520,7 +399,7 @@ def reconstruct_exact(traj: tj.Trajectory, tokenizer, end_ids=None, marks: dict 
     there to benefit; this function is the same logic without touching that file.
     """
     from evals.reward_hacking import activations as act
-    marks = marks if marks is not None else act._marker_ids(tokenizer, end_ids)   # Muse passes its own `marks`
+    marks = marks if marks is not None else act._marker_ids(tokenizer, end_ids)
     calls = []
     for e in traj.of(tj.MODEL_CALL):
         d = e.data
@@ -563,14 +442,11 @@ def _partition_of(instance_id: str) -> str | None:
 
 
 def detect_target(log) -> str:
-    """Target model of an Inspect log: Muse when the evaluated model name says so (`vllm/muse-glimmer-30b`), else Qwen."""
-    return MUSE_TARGET if "muse" in str(getattr(log.eval, "model", "") or "").lower() else QWEN_TARGET
+    """Target model of an Inspect log (Qwen)."""
+    return QWEN_TARGET
 
 
 def _log_effort(gen, target: str) -> str | None:
-    if target == MUSE_TARGET:     # template kwarg, sent in extra_body.chat_template_kwargs by the runner
-        kw = ((getattr(gen, "extra_body", None) or {}).get("chat_template_kwargs") or {})
-        return kw.get("reasoning_strength") or getattr(gen, "reasoning_effort", None)
     return getattr(gen, "reasoning_effort", None)
 
 
@@ -598,8 +474,6 @@ def convert_log(path, *, fmt=None, replay_reasoning: bool = True, tokenizer=None
                                    "task": log.eval.task})
         if tokenizer is not None:
             verify_recorded_ids(t, tokenizer)
-            if is_muse(fmt):
-                adopt_recorded_text(t, tokenizer)
             if any("tokens" not in e.data for e in t.of(tj.MODEL_CALL)):
                 attach_retokenized_tokens(t, tokenizer)
         yield t
@@ -610,7 +484,7 @@ def main(argv=None) -> int:
     ap.add_argument("--eval-dir", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--tokenizer", default=None, help="HF tokenizer dir: also fill re-tokenised generated ids")
-    ap.add_argument("--target-model", default=None, choices=sorted((QWEN_TARGET, MUSE_TARGET)),
+    ap.add_argument("--target-model", default=None, choices=[QWEN_TARGET],
                     help="agent model of the logs (default: read from the log's model name)")
     ap.add_argument("--no-replay-reasoning", action="store_true",
                     help="render history turns without their reasoning (if the server did not replay it)")

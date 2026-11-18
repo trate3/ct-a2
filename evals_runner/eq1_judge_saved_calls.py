@@ -3,8 +3,7 @@
     python -m evals_runner.eq1_judge_saved_calls --monitor gemma4-e4b --url http://127.0.0.1:8100 --out-dir OUT/gemma4-e4b \\
         --stage2-list stage2_list.json --histories histories.json --outputs generate_calls_stage2/outputs.jsonl \\
         --trajectories DIR --model-dir SNAPSHOT [--main-complete-call main_complete_call.json] [--server-log L --server-info I]
-    python -m evals_runner.eq1_judge_saved_calls --combine OUT_RTX [OUT_SECOND_MACHINE ...] --out TABLE_DIR [--agent-hardware "RTX PRO 6000"]
-    python -m evals_runner.eq1_judge_saved_calls --not-measured NAME --reason "..." --out-dir OUT/NAME
+    python -m evals_runner.eq1_judge_saved_calls --combine OUT [OUT ...] --out TABLE_DIR [--agent-hardware "RTX PRO 6000"]
 
 What is measured. For each of the 24 prompt representatives of the focused live-generation sample the monitor reads the FULL available trace through the new
 response (the recorded trajectory up to the call, plus the saved A0 output of the main stage as the proposed action; built by
@@ -21,8 +20,7 @@ no score is ever forced. Two time quantities per prompt: successful-invocation t
 Positions. Each of the 30 positions (weight 1/30, from stage2_list.json) takes its representative's judged time. Estimates: weighted mean with a
 task-clustered bootstrap (2,000 draws, seed 0; a task's positions kept together), so the reuse of a representative is counted together, not as 30 independent
 prompts. Composed With tap = the weighted No-tap (A0) mean of main_complete_call.json plus the weighted monitor mean, bootstrapped jointly over the same positions.
-Not included: model/tokenizer loading and any transfer of the saved output between devices; for a monitor run on another device than the agent the sum is of two
-measurements made one after the other, not one wall-clock run.
+Not included: model/tokenizer loading. The sum is of two measurements made one after the other on the same GPU, not one wall-clock run.
 """
 from __future__ import annotations
 
@@ -170,7 +168,7 @@ def summarize(config: dict, items: list[dict], plan: list[dict], rows: list[dict
 
 def hw_label(gpu_field: str | None) -> str:
     name = (gpu_field or "").split(",")[0].strip()
-    return "RTX PRO 6000" if "RTX PRO 6000" in name else "second machine" if "datacenter GPU" in name else (name or "unknown")
+    return "RTX PRO 6000" if "RTX PRO 6000" in name else (name or "unknown")
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -200,39 +198,31 @@ def arrangement(hw: str, agent_hw: str) -> str:
 
 
 def combine(roots: list[pathlib.Path], out: pathlib.Path, agent_hw: str, view: str = "history_black_box") -> int:
-    rows, unmeasured = [], []
+    rows = []
     for root in roots:
-        names = [d.name for d in root.iterdir() if d.is_dir() and ((d / "summary.json").exists() or (d / "not_measured.json").exists())]
+        names = [d.name for d in root.iterdir() if d.is_dir() and (d / "summary.json").exists()]
         names.sort(key=lambda n: (P.MONITOR_ORDER.index(n) if n in P.MONITOR_ORDER else len(P.MONITOR_ORDER), n))
         for n in names:
             d = root / n
-            if (d / "summary.json").exists():
-                s = json.loads((d / "summary.json").read_text())
-                v = s["views"].get(view)
-                if not v:
-                    continue
-                hw = s.get("hardware_label") or "unknown"
-                rows.append({"monitor": n, "hardware": hw, "arrangement": arrangement(hw, agent_hw), "config": P.cap_text(m.get_spec(n)),
-                             "tap": v.get("tap_s_per_call"), "with_tap": ((v.get("composed") or {}).get("with_tap_s_per_call")),
-                             "no_tap": ((v.get("composed") or {}).get("no_tap_s_per_call")), "summary_view": v, "root": str(root)})
-            else:
-                u = json.loads((d / "not_measured.json").read_text())
-                unmeasured.append({"monitor": n, "config": P.cap_text(m.get_spec(n)), "reason": u["reason"], "root": str(root)})
+            s = json.loads((d / "summary.json").read_text())
+            v = s["views"].get(view)
+            if not v:
+                continue
+            hw = s.get("hardware_label") or "unknown"
+            rows.append({"monitor": n, "hardware": hw, "arrangement": arrangement(hw, agent_hw), "config": P.cap_text(m.get_spec(n)),
+                         "tap": v.get("tap_s_per_call"), "with_tap": ((v.get("composed") or {}).get("with_tap_s_per_call")),
+                         "no_tap": ((v.get("composed") or {}).get("no_tap_s_per_call")), "summary_view": v, "root": str(root)})
     note = table_notes(rows)
     head = ["Monitor", "Monitor hardware (arrangement)", "Config", "With tap (s per call)", "Tap = monitor time (s per call)"]
     md = ["| " + " | ".join(head) + " |", "|---|---|---|---:|---:|"]
     for r in rows:
         md.append(f"| {r['monitor']} | {r['hardware']} ({r['arrangement']}) | {r['config']} | {fmt_ci(r['with_tap'])} | {fmt_ci(r['tap'])} |")
-    for u in unmeasured:
-        md.append(f"| {u['monitor']} | not measured on this hardware | {u['config']} | | |")
-    txt = "\n".join(md) + "\n\n" + note + "\n" + "".join(f"\nNot measured: {u['monitor']}: {u['reason']}\n" for u in unmeasured)
+    txt = "\n".join(md) + "\n\n" + note + "\n"
     esc = lambda s: str(s).replace("_", r"\_").replace("&", r"\&").replace("%", r"\%")
     tex = [r"\begin{table}[t]", r"\centering\footnotesize", r"\begin{tabular}{llcc}", r"\toprule",
            r"Monitor & Monitor hardware & With tap (s/call) & Tap (s/call) \\", r"\midrule"]
     for r in rows:
         tex.append(f"{esc(r['monitor'])} & {esc(r['hardware'])} & {esc(fmt_ci(r['with_tap']))} & {esc(fmt_ci(r['tap']))}" + r" \\")
-    for u in unmeasured:
-        tex.append(f"{esc(u['monitor'])} & " + r"\multicolumn{3}{l}{not measured on this hardware}" + r" \\")
     tex += [r"\bottomrule", r"\end{tabular}", r"\caption{Monitor cost on the saved generated calls. " + esc(note) + "}", r"\end{table}"]
     out.mkdir(parents=True, exist_ok=True)
     (out / "judge_table.md").write_text(txt)
@@ -241,8 +231,7 @@ def combine(roots: list[pathlib.Path], out: pathlib.Path, agent_hw: str, view: s
                                                          "rows": [{k: v for k, v in r.items() if k != "summary_view"} | {"counts": {
                                                              "n_valid_positions": r["summary_view"]["n_valid_positions"], "n_positions": r["summary_view"]["n_positions"],
                                                              "evidence_shortened": r["summary_view"]["evidence_shortened_count"],
-                                                             "responses_without_parsed_action": r["summary_view"]["responses_without_parsed_action"]}} for r in rows],
-                                                         "not_measured": unmeasured}, indent=1) + "\n")
+                                                             "responses_without_parsed_action": r["summary_view"]["responses_without_parsed_action"]}} for r in rows]}, indent=1) + "\n")
     print(txt)
     return 0
 
@@ -278,15 +267,9 @@ def main(argv=None) -> int:
     ap.add_argument("--combine", type=pathlib.Path, nargs="+")
     ap.add_argument("--out", type=pathlib.Path)
     ap.add_argument("--agent-hardware", default=AGENT_HARDWARE_DEFAULT)
-    ap.add_argument("--not-measured")
-    ap.add_argument("--reason")
     a = ap.parse_args(argv)
     if a.combine:
         return combine(a.combine, a.out or a.combine[0], a.agent_hardware)
-    if a.not_measured:
-        if not (a.out_dir and a.reason):
-            raise SystemExit("--not-measured needs --out-dir and --reason")
-        return P.not_measured(a.not_measured, a.out_dir, a.reason)
     for need in ("monitor", "out_dir", "stage2_list", "histories", "outputs", "trajectories"):
         if getattr(a, need) is None:
             raise SystemExit(f"--{need.replace('_', '-')} is required")

@@ -1,6 +1,6 @@
 """Generic stage-timing primitives used by the protocol engine.
 
-`ct_core` depends on nothing outside itself, so the RQ1 experiment's higher-level
+`ct_core` depends on nothing outside itself, so the higher-level
 records (run metadata: machine, model, tap, workload) live in
 `evals_runner/util/telemetry.py`, which imports these primitives rather than the
 other way around. What belongs here is only what `ct_core/certification.py` itself

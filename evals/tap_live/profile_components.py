@@ -42,8 +42,6 @@ Passes (each repeat runs each pass over the whole sequence; the order of A and B
 Timer overhead is measured and reported (perf_counter pair, event pair, synchronization on an idle device, a minimal
 read-back, the stand-in block call with and without the hook).
 
-The existing 256-token CUDA-event profile numbers (`profile_pass.py`) are not used or scaled.
-
   python -m evals.tap_live.profile_components --stage2-list L.json --calls calls.jsonl --artifact PROBE.json --out OUT
   python -m evals.tap_live.profile_components --out OUT --summarize-only        # recompute the tables from the raw files
 """

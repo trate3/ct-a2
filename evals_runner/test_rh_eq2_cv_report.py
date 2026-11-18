@@ -19,7 +19,7 @@ def _setup(tmp_path, *, seed=0, corrupt_test=False, with_probes=True):
     sp.write_text(json.dumps({"assignment": assign}))
     d = tmp_path / "mon"
     d.mkdir()
-    rows = {"gemma4-e4b": [], "gemma4-e2b": []}
+    rows = {"gemma4-e4b": [], "glm5.3-flash-nvfp4-think": []}
     prows = {"ema_max": [], "token_mean": []}
     meta = []
     for i in range(N_TASKS):
@@ -27,7 +27,7 @@ def _setup(tmp_path, *, seed=0, corrupt_test=False, with_probes=True):
             rid, task = f"t{i}-{k}", f"t{i}"
             y = int(rng.random() < 0.4)
             meta.append((rid, task, y))
-            for model, noise in (("gemma4-e4b", 1.0), ("gemma4-e2b", 2.0)):
+            for model, noise in (("gemma4-e4b", 1.0), ("glm5.3-flash-nvfp4-think", 2.0)):
                 for view in ("black_box", "cot"):
                     rows[model].append({"rollout_id": rid, "task_id": task, "view": view, "label": y,
                                         "score": float(y + rng.normal(0, noise)), "prompt_tokens": 1000 + k,
@@ -96,7 +96,7 @@ def test_partition_from_splits_not_row_fields(tmp_path):
     assert all(splits[r["task_id"]] == "test" for b in det.values() for r in b.values())
     n_test = sum(v == "test" for v in assign.values()) * K
     assert len(det["gemma4-e4b:cot"]) == n_test
-    assert set(det) == {f"{m}:{v}" for m in ("gemma4-e4b", "gemma4-e2b") for v in ("black_box", "cot")}
+    assert set(det) == {f"{m}:{v}" for m in ("gemma4-e4b", "glm5.3-flash-nvfp4-think") for v in ("black_box", "cot")}
 
 
 def test_train_only_never_parses_test_rows(tmp_path):
@@ -212,7 +212,7 @@ def test_full_report_contents(tmp_path):
     j = json.loads(out.read_text())
     assert (tmp_path / "rep.json.frozen.json").exists()
     t = j["test"]
-    assert set(t["detectors"]) == {"gemma4-e4b:black_box", "gemma4-e4b:cot", "gemma4-e2b:black_box", "gemma4-e2b:cot",
+    assert set(t["detectors"]) == {"gemma4-e4b:black_box", "gemma4-e4b:cot", "glm5.3-flash-nvfp4-think:black_box", "glm5.3-flash-nvfp4-think:cot",
                                    "probe:ema_max", "probe:token_mean"}
     det = t["detectors"]["probe:ema_max"]
     assert det["n"] == 30 * K and det["cost"]["d_model"] == 8
@@ -303,16 +303,16 @@ def test_primary_matches_t1_convention(tmp_path):
 
 def test_monitor_files_accept_dotted_model_names_and_skip_view_variants(tmp_path):
     from evals_runner.rh_eq2_cv_report import monitor_files
-    for n in ("monitor_scores.granite4.2-3b.jsonl", "monitor_scores.gemma4-e4b.jsonl", "monitor_scores.jsonl",
-              "monitor_scores.gemma4-e4b.executed.jsonl", "monitor_scores.granite4.2-3b.final_state.jsonl"):
+    for n in ("monitor_scores.qwen3.8-27b-think.jsonl", "monitor_scores.gemma4-e4b.jsonl", "monitor_scores.jsonl",
+              "monitor_scores.gemma4-e4b.executed.jsonl", "monitor_scores.qwen3.8-27b-think.final_state.jsonl"):
         (tmp_path / n).write_text("")
-    assert sorted(monitor_files([tmp_path])) == ["gemma4-e4b", "granite4.2-3b", "qwen"]
+    assert sorted(monitor_files([tmp_path])) == ["gemma4-e4b", "qwen3.8-27b-think"]      # an unnamed file is skipped
 
 
 def test_monitor_files_variants_opt_in(tmp_path):
     from evals_runner import rh_eq2_cv_report as R
-    for name in ("gemma4-e4b", "gemma4-e4b.final_state", "gemma4-e4b.final_state_eval", "granite4.2-3b", "gemma4-e4b.executed"):
+    for name in ("gemma4-e4b", "gemma4-e4b.final_state", "gemma4-e4b.final_state_eval", "qwen3.8-27b-think", "gemma4-e4b.executed"):
         (tmp_path / f"monitor_scores.{name}.jsonl").write_text("")
-    assert set(R.monitor_files([tmp_path])) == {"gemma4-e4b", "gemma4-e4b.final_state_eval", "granite4.2-3b"}
+    assert set(R.monitor_files([tmp_path])) == {"gemma4-e4b", "gemma4-e4b.final_state_eval", "qwen3.8-27b-think"}
     assert set(R.monitor_files([tmp_path], ("final_state",))) == {"gemma4-e4b", "gemma4-e4b.final_state",
-                                                                   "gemma4-e4b.final_state_eval", "granite4.2-3b"}
+                                                                   "gemma4-e4b.final_state_eval", "qwen3.8-27b-think"}

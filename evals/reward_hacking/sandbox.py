@@ -4,7 +4,7 @@ ImpossibleBench runs each LiveCodeBench sample in a fresh container from its
 compose.yaml (image aisiuk/inspect-tool-support, `tail -f /dev/null`, init, no
 network, 1 GB memory) through inspect_ai's docker sandbox. We drive the docker CLI
 directly, one container per rollout, and copy inspect_ai 0.3.137's exec/read/write
-semantics (see SANDBOX.md for the reference version and every deviation):
+semantics:
 
   - working directory is the image's (`/`; the image sets no WORKDIR), so func.py
     and test.py are /func.py and /test.py;
@@ -19,9 +19,9 @@ Nothing from the host is mounted. Files enter only through `docker exec`/`docker
 issued by this harness. A snapshot is the container's filesystem diff against the
 image (`docker diff`: a tar of added/changed paths plus the deleted paths), held
 in host memory; restoring starts a fresh container from the image and applies it.
-Processes are not captured. (A second backend, `ApptainerSandbox`, for clusters without Docker is at the
-end of this file; `new_sandbox()` selects it with CT_RH_SANDBOX=apptainer.) `docker commit` gives the same state but takes 5-8 s
-per snapshot on this host's containerd image store; the diff takes about 1 s.
+Processes are not captured. (A second backend, `ApptainerSandbox`, for hosts without Docker is at the
+end of this file; `new_sandbox()` selects it with CT_RH_SANDBOX=apptainer.) `docker commit` gives the same state but takes several seconds
+per snapshot; the diff takes about 1 s.
 """
 
 from __future__ import annotations
@@ -475,12 +475,12 @@ def _sha256(b: bytes) -> str:
 
 
 # =====================================================================================
-# Apptainer backend (clusters without Docker). See SANDBOX.md, "Apptainer backend".
+# Apptainer backend (hosts without Docker).
 #
 # One rollout = one writable copy of a base sandbox directory (the pinned image
 # unpacked with `apptainer build --sandbox`) running as an Apptainer instance with
-# `--net --network none --writable --containall`. Only flags verified on the target
-# cluster's setuid install are used. The container runs as the invoking user (not root).
+# `--net --network none --writable --containall`. Only flags verified on a setuid
+# install are used. The container runs as the invoking user (not root).
 # =====================================================================================
 
 ORPHAN_GRACE_SECONDS = 600   # an ownerless rollout dir younger than this may be mid-start
@@ -670,7 +670,7 @@ def _close_live_apptainer() -> None:
 class ApptainerSandbox:
     """One Apptainer instance over a private writable copy of the base sandbox directory.
 
-    Same public API as DockerSandbox. Differences are listed in SANDBOX.md ("Apptainer backend"):
+    Same public API as DockerSandbox. Differences:
     runs as the invoking user, memory is approximated with RLIMIT_DATA, no pid/cpu limits, files
     appear owned by that user. Nothing from the host is mounted (`--containall`); `/tmp` and
     `/var/tmp` are directories of the rollout's private work dir, not host paths.
@@ -1026,8 +1026,8 @@ def apptainer_cleanup_leftovers(include_live: bool = False) -> int:
             o = json.loads((d / "owner.json").read_text())
         except (OSError, ValueError):
             # No owner record: either a start() that died before writing it, or one that is
-            # writing it right now in another runner (two runners starting together raced here
-            # in S1). Only the first is garbage, so require the directory to be old.
+            # writing it right now in another runner (two runners starting together can race
+            # here). Only the first is garbage, so require the directory to be old.
             try:
                 return time.time() - d.stat().st_mtime > ORPHAN_GRACE_SECONDS
             except OSError:

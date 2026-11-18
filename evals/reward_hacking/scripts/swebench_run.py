@@ -29,7 +29,7 @@ So C>1 is done with processes: the shard process keeps a pool of C child process
 Scheduling is dynamic (next item as soon as a slot frees). Size vLLM MAX_NUM_SEQS and host CPUs for C.
 
 Exit codes: 0 all scheduled items in this shard completed, 1 some infra failures, 2 setup error, 75 interrupted
-(SIGTERM/SIGUSR1: in-flight rollouts are abandoned and redone on resume; the sbatch requeues itself).
+(SIGTERM/SIGUSR1: in-flight rollouts are abandoned and redone on resume).
 """
 
 from __future__ import annotations
@@ -48,20 +48,11 @@ from typing import Any
 
 from evals.reward_hacking import swebench_tasks as splits
 from evals.reward_hacking.scripts import swebench_pilot as pilot
-from evals.reward_hacking import swebench_prompts
-
-# Instruction variant: read from the environment so the per-item child processes inherit it.
-PROMPT_ID = os.environ.get("SWE_PROMPT_ID", "default")
-swebench_prompts.text(PROMPT_ID)  # fail fast on an unknown id
 # Paper-matched agent settings: reasoning effort and submission cap, also from the environment so the
 # per-item child processes inherit them. Unset = the earlier default run (template-default effort xhigh, 3 submissions).
 REASONING_EFFORT = os.environ.get("SWE_REASONING_EFFORT") or None
-# Agent model: TARGET_MODEL=qwen3.8-27b (default, the existing runs) | muse-glimmer-30b. Muse's reasoning
-# line is SWE_REASONING_STRENGTH (template kwarg `reasoning_strength`; required for Muse, refused for Qwen).
-TARGET = os.environ.get("TARGET_MODEL") or "qwen3.8-27b"
-REASONING_STRENGTH = os.environ.get("SWE_REASONING_STRENGTH") or None
-# Gemma 4 31B (preliminary test): SWE_THINKING=off|on is the template kwarg enable_thinking (unset = off); refused for the other targets.
-THINKING = os.environ.get("SWE_THINKING") or None
+# Agent model: Qwen3.8-27B.
+TARGET = "qwen3.8-27b"
 from evals.reward_hacking.scripts.swebench_pilot import (
     BASE_SEED,
     CHAT_TEMPLATE_SHA256,
@@ -85,58 +76,12 @@ DEFAULT_PREFLIGHT = pathlib.Path.home() / "rh" / "swebench" / "preflight"
 ALLOWED_PARTITIONS = ("train", "val")
 INTERRUPTED = 75
 
-# ------------------------------------------------------------------------------- agent model: Qwen3.8-27B or Muse
-# the run plan adds Muse Glimmer 30B as a second agent. The Qwen3.8-27B path is unchanged: same defaults, same run
-# config (so existing manifests and their hashes still match). Everything below that is Muse-only is gated on
-# TARGET_MODEL=muse-glimmer-30b.
-#
-# How the scaffold passes an assistant turn's reasoning back to vLLM on later turns (read from inspect_ai 0.3.277, the
-# version in the repo .venv; the cluster venv <SWEBENCH_DIR>/.venv may be another version; and from vLLM's behaviour
-# as documented, not run here):
-#   1. The reply's reasoning field (vLLM puts the parsed reasoning in `reasoning_content`, or `reasoning`) is read by
-#      inspect's chat_message_assistant_from_openai into a ContentReasoning part with internal=<that field name>; the
-#      visible text becomes a ContentText part.
-#   2. Before every generate() call Inspect applies reasoning_history="auto", which for the OpenAI-compatible/vLLM
-#      provider resolves to "all" (ModelAPI.auto_reasoning_history; no override in the vllm provider). So the history
-#      keeps every earlier turn's reasoning. For Muse this runner also sets reasoning_history="all" explicitly.
-#   3. messages_to_openai -> openai_assistant_content -> default_reasoning_handler: a ContentReasoning whose
-#      `internal` is "reasoning" / "reasoning_content" / "reasoning_details" is put back on the assistant message as
-#      that same top-level key (extra_body of the message). The text goes into `content` as "\n" + text (note the
-#      leading newline), tool calls go in `tool_calls` with JSON-string arguments.
-#   4. vLLM's chat preprocessing copies a message's `reasoning` / `reasoning_content` into the template input and
-#      turns tool-call argument strings into dicts; the Muse template then renders `reasoning_content` as its own
-#      `<|start|>assistant to=self<|message|>...<|eom|>` block before the call. The Qwen3.8 runs rely on the same
-#      path (the Qwen template reads `reasoning_content`; those runs were checked prefix-consistent).
-# Conclusion: the reasoning IS sent back, so Muse contexts are append-only in the same way as Qwen's, with two
-# differences that are not provable without a GPU: (a) the Muse template does not trim message content, so the
-# leading "\n" that Inspect adds to a text-only assistant reply is rendered (Qwen's template trims it); (b) when an
-# assistant message has tool calls the Muse template renders only the reasoning and the calls, not text beside them.
-# No change to the scaffold was made for either: a Muse-only fix would mean a custom Inspect model provider that
-# overrides messages_to_openai, which cannot be validated without a running server and is version dependent. Instead
-# every Muse episode is audited after the fact (context_audit): `non_append_only_calls` counts the calls whose prompt
-# token ids (logged with return_token_ids) do not start with the previous call's prompt + generated ids. A non-zero
-# count means one of the two differences above (or a dropped reasoning) happened and must be looked at before the
-# prefix-based activation extraction is trusted. Missing: a two-turn replay check against a live Muse server
-# (generate, send the reply back with its reasoning, compare the returned prompt_token_ids with prompt + generated
-# ids); the Step 0 smoke did not send reasoning back.
-#
-# Context ceiling. The Qwen SWE runs have no client-side context rule: Inspect sends no max_tokens, vLLM fills the
-# remaining context (--max-model-len, 196,608 by default), a call that reaches it comes back as stop reason
-# "max_tokens"/"model_length", and the message limit is 100. (The 240,000-token `--max-context-tokens` rule belongs
-# to evals_runner/rh_rollouts.py, the LiveCodeBench/travel runner, not to this runner.) For Muse the ceiling is 131,072
-# tokens, enforced by the server: the sbatch starts vLLM with --max-model-len 131072 and the runner refuses to start
-# unless /v1/models reports exactly that. vLLM counts the fully rendered sequence (messages, tool schemas, template
-# tokens) and reserves the output space by giving each call max_tokens = ceiling - prompt length, so prompt plus
-# output can never exceed it; a request whose prompt alone is too long is rejected (Inspect: stop reason
-# model_length). What the ImpossibleBench solver does after such a stop is in its source, which is not in this
-# checkout, so each episode is classified after the fact (context_audit) and the record in runs-*.jsonl carries `resource_limit` = "model_length" (any call ended by the
-# ceiling or was rejected for length; same word as the rollout runner's status and Inspect's stop reason) or
-# "context_exhausted" (a call's prompt + output tokens exceeded the ceiling in the recorded ids/usage, which the
-# server should make impossible), else null. Resource-limited episodes are kept and reported by class.
+# ------------------------------------------------------------------------------- agent model
+# The runs have no client-side context rule: Inspect sends no max_tokens, vLLM fills the remaining context
+# (--max-model-len, 196,608 by default), a call that reaches it comes back as stop reason "max_tokens"/"model_length",
+# and the message limit is 100. Each episode record carries `resource_limit` (see context_audit).
 QWEN_TARGET = "qwen3.8-27b"
-MUSE_TARGET = "muse-glimmer-30b"
-GEMMA_TARGET = "gemma4-31b-it"
-TARGETS = (QWEN_TARGET, MUSE_TARGET, GEMMA_TARGET)
+TARGETS = (QWEN_TARGET,)
 QWEN_SAMPLING = {"temperature": 1.0, "top_p": 0.95, "top_k": 20}
 QWEN_SERVER_PROFILE = {
     "auto_tool_choice": True,
@@ -145,143 +90,30 @@ QWEN_SERVER_PROFILE = {
     "chat_template": "evals/reward_hacking/data/qwen3.8-27b_chat_template.jinja",
     "chat_template_sha256": pilot.CHAT_TEMPLATE_SHA256,
 }
-_MUSE = llm.get_format(MUSE_TARGET)
-MUSE_REPOSITORY = _MUSE.hf_repo
-MUSE_REVISION = _MUSE.hf_revision
-MUSE_SERVED_MODEL = MUSE_TARGET
-MUSE_MODEL = f"vllm/{MUSE_SERVED_MODEL}"
-MUSE_CHAT_TEMPLATE_PATH = llm.MUSE_TEMPLATE_PATH
-MUSE_CHAT_TEMPLATE_SHA256 = "cfc67e5f349f37690dfd31ed1f18bc4442a9dd32fe39a648f993cb4eb3cae678"
-MUSE_CONTEXT_CEILING = 131072
-MUSE_REASONING_STRENGTHS = ("low", "medium", "high", "xhigh")
-MUSE_SAMPLING = {"temperature": 1.0, "top_p": 0.95, "top_k": 64}     # model card; sent in every request
-MUSE_SERVER_PROFILE = {
-    "auto_tool_choice": True,
-    "tool_call_parser": "muse_glimmer",
-    "reasoning_parser": "muse_glimmer",
-    "chat_template": "evals/reward_hacking/data/muse-glimmer-30b_chat_template.jinja",
-    "chat_template_sha256": MUSE_CHAT_TEMPLATE_SHA256,
-    "max_model_len": MUSE_CONTEXT_CEILING,
-    "dtype": "bfloat16",
-    "language_only": False,
-}
-MUSE_CONTEXT_RULE = ("server-enforced: vllm --max-model-len 131072 counts the rendered sequence (messages, tool schemas, "
-                     "template tokens) plus the reserved output space; an episode with a call that hits it or is "
-                     "rejected for length is recorded with resource_limit=model_length")
-
-# Gemma 4 31B instruction-tuned (preliminary agent test; same task, tools, 100 messages and 131,072-token ceiling as Muse).
-# Model card (google/gemma-4-31B-it README, "Best Practices"): temperature 1.0, top_p 0.95, top_k 64. Thinking is switched on by
-# the template kwarg enable_thinking (the <|think|> token at the top of the system turn); the template default is off, so
-# the request always carries it explicitly. The model's own context is 262,144; 131,072 is used so the run is comparable.
-# generation_config.json lists eos_token_id [1 <eos>, 106 <turn|>, 50 <|tool_response>] and the server ignores that file
-# (--generation-config vllm, as for every target), so the request carries these as stop_token_ids.
-GEMMA_REPOSITORY = "google/gemma-4-31B-it"
-GEMMA_REVISION = "842da3794eaa0b77d5f08bae87a17459d91ff475"
-GEMMA_SERVED_MODEL = GEMMA_TARGET
-GEMMA_MODEL = f"vllm/{GEMMA_SERVED_MODEL}"
-GEMMA_CHAT_TEMPLATE_PATH = pathlib.Path(__file__).parents[1] / "data" / "gemma4-31b-it_chat_template.jinja"
-GEMMA_CHAT_TEMPLATE_SHA256 = "ae53464bf3be25802b3a5b37def7fd89667067d7577049b3b2d74c4d8de4c6d4"
-GEMMA_SAMPLING = {"temperature": 1.0, "top_p": 0.95, "top_k": 64}
-GEMMA_STOP_TOKEN_IDS = [1, 106, 50]
-GEMMA_THINKING_VALUES = ("off", "on")
-GEMMA_SERVER_PROFILE = {
-    "auto_tool_choice": True,
-    "tool_call_parser": "gemma4",
-    "reasoning_parser": "gemma4",
-    "chat_template": "evals/reward_hacking/data/gemma4-31b-it_chat_template.jinja",
-    "chat_template_sha256": GEMMA_CHAT_TEMPLATE_SHA256,
-    "max_model_len": MUSE_CONTEXT_CEILING,
-    "dtype": "bfloat16",
-    "language_only": False,
-    "limit_mm_per_prompt": {"image": 0, "video": 0},
-}
-
-
-def agent_settings(target: str, effort: str | None, strength: str | None, thinking: str | None = None) -> dict:
-    """Pure. Everything that depends on the agent model, as the module globals it sets.
-
-    qwen3.8-27b: exactly the earlier values. muse-glimmer-30b: its model, sampling (top_k 64), extra_body
-    (chat_template_kwargs {"reasoning_strength": ...}), server profile and the 131,072-token ceiling. gemma4-31b-it: its
-    model, sampling (top_k 64), extra_body (chat_template_kwargs {"enable_thinking": bool}, stop_token_ids), server profile
-    and the same ceiling. `thinking` (off|on) is Gemma only.
-    """
+def agent_settings(target: str, effort: str | None) -> dict:
+    """Pure. Everything that depends on the agent model, as the module globals it sets."""
     if target not in TARGETS:
         raise ValueError(f"TARGET_MODEL must be one of {'|'.join(TARGETS)}, got {target!r}")
-    if thinking is not None and target != GEMMA_TARGET:
-        raise ValueError(f"SWE_THINKING is only for TARGET_MODEL={GEMMA_TARGET}")
-    if target == GEMMA_TARGET:
-        if effort or strength:
-            raise ValueError("SWE_REASONING_EFFORT / SWE_REASONING_STRENGTH are not used by gemma4-31b-it; use SWE_THINKING=off|on")
-        if thinking not in (None, *GEMMA_THINKING_VALUES):
-            raise ValueError(f"SWE_THINKING must be off|on, got {thinking!r}")
-        enable = thinking == "on"
-        extra = {"top_k": GEMMA_SAMPLING["top_k"], "return_token_ids": True,
-                 "stop_token_ids": list(GEMMA_STOP_TOKEN_IDS), "chat_template_kwargs": {"enable_thinking": enable}}
-        return {"TARGET": target, "MODEL": GEMMA_MODEL, "SERVED_MODEL": GEMMA_SERVED_MODEL,
-                "MODEL_REPOSITORY": GEMMA_REPOSITORY, "MODEL_REVISION": GEMMA_REVISION,
-                "CHAT_TEMPLATE_SHA256": GEMMA_CHAT_TEMPLATE_SHA256, "CHAT_TEMPLATE_PATH": GEMMA_CHAT_TEMPLATE_PATH,
-                "SAMPLING": dict(GEMMA_SAMPLING), "SERVER_PROFILE": dict(GEMMA_SERVER_PROFILE), "REASONING_EFFORT": None,
-                "REASONING_STRENGTH": None, "THINKING": "on" if enable else "off", "EXTRA_BODY": extra,
-                "CONTEXT_CEILING": MUSE_CONTEXT_CEILING, "EVAL_KWARGS": {"reasoning_history": "all"}}
-    if target == QWEN_TARGET:
-        if effort not in (None, "low", "medium", "xhigh"):
-            raise ValueError(f"SWE_REASONING_EFFORT must be low|medium|xhigh, got {effort!r}")
-        if strength:
-            raise ValueError("SWE_REASONING_STRENGTH is only for TARGET_MODEL=muse-glimmer-30b "
-                             "(Qwen uses SWE_REASONING_EFFORT)")
-        extra = dict(pilot.VLLM_EXTRA_BODY,
-                     **({"chat_template_kwargs": {"reasoning_effort": effort}} if effort else {}))
-        return {"TARGET": target, "MODEL": pilot.MODEL, "SERVED_MODEL": pilot.SERVED_MODEL,
-                "MODEL_REPOSITORY": pilot.MODEL_REPOSITORY, "MODEL_REVISION": pilot.MODEL_REVISION,
-                "CHAT_TEMPLATE_SHA256": pilot.CHAT_TEMPLATE_SHA256, "SAMPLING": dict(QWEN_SAMPLING),
-                "SERVER_PROFILE": dict(QWEN_SERVER_PROFILE), "REASONING_EFFORT": effort, "REASONING_STRENGTH": None,
-                "EXTRA_BODY": extra, "CONTEXT_CEILING": None, "EVAL_KWARGS": {}}
-    if effort:
-        raise ValueError("SWE_REASONING_EFFORT is the Qwen setting; Muse uses SWE_REASONING_STRENGTH "
-                         "(low|medium|high|xhigh)")
-    if strength not in MUSE_REASONING_STRENGTHS:
-        raise ValueError("SWE_REASONING_STRENGTH must be set for muse-glimmer-30b and be low|medium|high|xhigh, "
-                         f"got {strength!r}")
-    extra = {"top_k": MUSE_SAMPLING["top_k"], "return_token_ids": True,
-             "chat_template_kwargs": {"reasoning_strength": strength}}
-    return {"TARGET": target, "MODEL": MUSE_MODEL, "SERVED_MODEL": MUSE_SERVED_MODEL,
-            "MODEL_REPOSITORY": MUSE_REPOSITORY, "MODEL_REVISION": MUSE_REVISION,
-            "CHAT_TEMPLATE_SHA256": MUSE_CHAT_TEMPLATE_SHA256, "CHAT_TEMPLATE_PATH": MUSE_CHAT_TEMPLATE_PATH,
-            "SAMPLING": dict(MUSE_SAMPLING),
-            "SERVER_PROFILE": dict(MUSE_SERVER_PROFILE), "REASONING_EFFORT": None, "REASONING_STRENGTH": strength,
-            "EXTRA_BODY": extra, "CONTEXT_CEILING": MUSE_CONTEXT_CEILING,
-            "EVAL_KWARGS": {"reasoning_history": "all"}}
+    if effort not in (None, "low", "medium", "xhigh"):
+        raise ValueError(f"SWE_REASONING_EFFORT must be low|medium|xhigh, got {effort!r}")
+    extra = dict(pilot.VLLM_EXTRA_BODY,
+                 **({"chat_template_kwargs": {"reasoning_effort": effort}} if effort else {}))
+    return {"TARGET": target, "MODEL": pilot.MODEL, "SERVED_MODEL": pilot.SERVED_MODEL,
+            "MODEL_REPOSITORY": pilot.MODEL_REPOSITORY, "MODEL_REVISION": pilot.MODEL_REVISION,
+            "CHAT_TEMPLATE_SHA256": pilot.CHAT_TEMPLATE_SHA256, "SAMPLING": dict(QWEN_SAMPLING),
+            "SERVER_PROFILE": dict(QWEN_SERVER_PROFILE), "REASONING_EFFORT": effort,
+            "EXTRA_BODY": extra, "CONTEXT_CEILING": None, "EVAL_KWARGS": {}}
 
 
-CHAT_TEMPLATE_PATH = None    # set by agent_settings for Muse and Gemma (the Qwen server check lives in swebench_pilot)
 try:
-    globals().update(agent_settings(TARGET, REASONING_EFFORT, REASONING_STRENGTH, THINKING))
+    globals().update(agent_settings(TARGET, REASONING_EFFORT))
 except ValueError as _error:
     raise SystemExit(str(_error)) from None
 
 
-def validate_models_body(body: dict, served: str, ceiling: int | None) -> None:
-    """Pure. The /v1/models answer must list the served name and, when a ceiling is set, report exactly it."""
-    rows = [row for row in body.get("data", []) if str(row.get("id")) == served]
-    if not rows:
-        raise ValueError(f"vLLM endpoint does not serve {served}: {sorted(str(r.get('id')) for r in body.get('data', []))}")
-    if ceiling is not None and rows[0].get("max_model_len") != ceiling:
-        raise ValueError(f"vLLM serves {served} with max_model_len={rows[0].get('max_model_len')!r}, "
-                         f"the run requires exactly {ceiling}")
-
-
 def check_server(base_url: str) -> None:
-    """Qwen: the pilot's check, unchanged. Muse / Gemma: pinned template digest, served name, max_model_len == 131072."""
-    if TARGET == QWEN_TARGET:
-        return pilot._check_server(base_url)
-    import urllib.request
-
-    if hashlib.sha256(CHAT_TEMPLATE_PATH.read_bytes()).hexdigest() != CHAT_TEMPLATE_SHA256:
-        raise ValueError(f"{TARGET} chat-template digest changed; refusing to run with a different prompt format")
-    request = urllib.request.Request(base_url.rstrip("/") + "/models", headers={"Authorization": "Bearer local"})
-    with urllib.request.urlopen(request, timeout=10) as response:
-        body = json.loads(response.read())
-    validate_models_body(body, SERVED_MODEL, CONTEXT_CEILING)
+    """The pilot's server check (served name and pinned chat-template digest)."""
+    return pilot._check_server(base_url)
 
 
 def context_audit(model_events: list, ceiling: int | None) -> dict:
@@ -461,8 +293,8 @@ def write_manifest_once(path: pathlib.Path, config: dict) -> str:
 
 
 RUN_MAX_ATTEMPTS = int(os.environ.get("SWE_MAX_ATTEMPTS", MAX_ATTEMPTS))
-# EXTRA_BODY (set above by agent_settings): Qwen3.8's chat template reads `reasoning_effort`, Muse's reads
-# `reasoning_strength`; vLLM passes chat_template_kwargs through to the template.
+# EXTRA_BODY (set above by agent_settings): Qwen3.8's chat template reads `reasoning_effort`; vLLM passes
+# chat_template_kwargs through to the template.
 
 
 def run_config(image_manifest_sha: str) -> dict:
@@ -494,17 +326,6 @@ def run_config(image_manifest_sha: str) -> dict:
     }
     if REASONING_EFFORT:
         config["reasoning_effort"] = REASONING_EFFORT
-    if TARGET != QWEN_TARGET:   # the run plan; absent for Qwen runs, so their hashes hold
-        config["target_model"] = TARGET
-        config["reasoning_strength"] = REASONING_STRENGTH
-        config["reasoning_history"] = EVAL_KWARGS.get("reasoning_history")
-        config["context_ceiling_tokens"] = CONTEXT_CEILING
-        config["context_ceiling_rule"] = MUSE_CONTEXT_RULE
-    if TARGET == GEMMA_TARGET:  # absent for Qwen and Muse runs, so their hashes hold
-        config["enable_thinking"] = THINKING == "on"
-    if PROMPT_ID != "default":  # instruction variant; absent for default runs, so their hashes hold
-        config["prompt_id"] = PROMPT_ID
-        config["custom_prompt"] = swebench_prompts.text(PROMPT_ID)
     return config
 
 
@@ -529,7 +350,7 @@ def run_item(out: pathlib.Path, tag: str, iid: str, k: int, image_digest: str, r
     started = time.time()
     logs, exc = None, None
     try:
-        task = pilot._make_task(iid, image_digest, custom_prompt=swebench_prompts.text(PROMPT_ID),
+        task = pilot._make_task(iid, image_digest, custom_prompt="",
                                 max_attempts=RUN_MAX_ATTEMPTS)
         if len(task.dataset) != 1 or str(task.dataset[0].id) != iid:
             raise RuntimeError("task factory returned an unexpected sample set")
@@ -572,7 +393,7 @@ def run_item(out: pathlib.Path, tag: str, iid: str, k: int, image_digest: str, r
         "seed": seed, "image_digest": image_digest, "run_config_sha256": run_sha,
         "elapsed_seconds": round(time.time() - started, 2),
     }
-    if TARGET != QWEN_TARGET and logs and logs[0].samples:    # the run plan: resource-limit class, append-only check
+    if TARGET != QWEN_TARGET and logs and logs[0].samples:    # resource-limit class, append-only check
         try:
             record.update(context_audit([e for e in (logs[0].samples[0].events or []) if getattr(e, "event", None) == "model"],
                                         CONTEXT_CEILING))

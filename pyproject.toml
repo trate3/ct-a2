@@ -1,7 +1,7 @@
 [project]
 name = "certified_taps_artifact"
 version = "1.0.0"
-description = "Reproduction artifact for the Certified Taps paper: certification protocol, live tap cost (EQ1) and coding monitors (EQ2)."
+description = "Code and data for the Certified Taps paper: certification protocol, tap cost and coding monitors."
 requires-python = ">=3.11"
 dependencies = [
     "pynacl>=1.5",   # Ed25519 attestation signatures + sealed-box confidential transport
@@ -16,12 +16,12 @@ model = ["torch", "transformers>=5.15", "accelerate", "flash-linear-attention", 
 rh = ["datasets", "jinja2", "jsonschema", "requests"]
 
 [tool.pytest.ini_options]
-testpaths = ["ct_core", "util", "evals", "evals_runner", "tee", "figure4_prototype/tests"]
+testpaths = ["ct_core", "util", "evals", "evals_runner", "tee", "tests"]
 pythonpath = ["."]
 addopts = "--import-mode=importlib -p no:cacheprovider"
 
 [tool.setuptools.packages.find]
-include = ["ct_core*", "util*", "evals*", "evals_runner*", "tee*", "figure4_prototype*"]
+include = ["ct_core*", "util*", "evals*", "evals_runner*", "tee*"]
 
 [build-system]
 requires = ["setuptools>=68"]

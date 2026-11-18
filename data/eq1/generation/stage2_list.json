@@ -1,14 +1,13 @@
 {
  "mode": "all_representatives",
  "primary": true,
- "rule": "Prompt-representative design, one main stage (reviewers 178 and 180). Positions are grouped by prompt sha256 in the manifest order of histories.json; the representative of a group is its first position, its index is the group's index in that order, its seed is the stage-1 repeat-0 seed sha256('tap-live-decode:calls:<history_id>:0'). ALL groups are run uncapped (no per-call cap; natural stop or the 240,000-token total-context ceiling, recorded as context_ceiling), both arms, the arm order alternating by representative index (A0 first for even, A1 first for odd). Every position keeps its preselected weight 1 / n_positions and takes its group's representative pair. Stage-1 pairs are supporting data only. Distinct prompts are never merged.",
+ "rule": "Prompt-representative design, one main stage. Positions are grouped by prompt sha256 in the manifest order of histories.json; the representative of a group is its first position, its index is the group's index in that order, its seed is the stage-1 repeat-0 seed sha256('tap-live-decode:calls:<history_id>:0'). ALL groups are run uncapped (no per-call cap; natural stop or the 240,000-token total-context ceiling, recorded as context_ceiling), both arms, the arm order alternating by representative index (A0 first for even, A1 first for odd). Every position keeps its preselected weight 1 / n_positions and takes its group's representative pair. Stage-1 pairs are supporting data only. Distinct prompts are never merged.",
  "rule_sha256": "044e30e2807ed222bc91c8b0092d83c92750003cb7bbe5f7c7a8010b52babd64",
  "arm_order_rule": "alternating by representative index: A0 first for even index, A1 first for odd index",
  "n_positions": 30,
  "weight_per_position": 0.03333333333333333,
  "representative_seed_reuse_note": "representative_seed_reuse: the position reuses its prompt group's representative seed and representative A0/A1 pair; it never denotes a mismatch between A0 and A1 or between the timed generation and the output a monitor will judge (both are the representative A0 call).",
- "histories_file": "results/tap_live/histories.json",
- "histories_sha256": "77d9445fc5dbdd613b1da5d7041d5cf368c07067ff775f6d361ee0c641a9df35",
+ "histories_sha256": "3c522bd173b8cd526f783bc7e693b805f20b99b8cd581c10760cbfd0b8fd4b69",
  "positions": [
   {
    "history_id": "lcbhard_101@0.25",

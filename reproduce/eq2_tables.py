@@ -1,6 +1,6 @@
 """Regenerate the EQ2 coding tables (AUROC for reward hacking detection) on CPU.
 
-Prints each cell next to the number reported in the paper draft.
+Prints each cell next to the number reported in the paper.
 
 Where each cell comes from:
   SWE-bench conflicting, SWE-bench one-off: every cell is recomputed from shipped
@@ -9,8 +9,8 @@ Where each cell comes from:
       thresholds on the training partition.
   LiveCodeBench, all monitors and both probes: recomputed from shipped per-episode scores with
       the repository's AUROC and task-clustered bootstrap (evals/reward_hacking/metrics.py).
-  LiveCodeBench conflicting, Gemma E4B given only the final code (2 cells of the appendix
-      table): read from the shipped aggregate report; their per-episode scores are not shipped.
+  LiveCodeBench conflicting, Gemma E4B given only the final code (2 cells of the EQ3
+      table): read from the aggregate report in data/eq2/reports.
 
 Usage: python reproduce/eq2_tables.py [--out DIR] [--skip-swe]
 """
@@ -32,7 +32,7 @@ DATA = ROOT / "data" / "eq2"
 REP = DATA / "reports"
 PAPER = json.loads((ROOT / "reproduce" / "paper_numbers.json").read_text())
 COLS = PAPER["columns"]
-QG = ["gemma4-e4b", "gemma4-e4b-think", "qwen3.8-27b-4k", "qwen3.8-27b-think", "glm5.3-flash-nvfp4", "glm5.3-flash-nvfp4-think"]
+QG = ["gemma4-e4b", "gemma4-e4b-think", "qwen3.8-27b-think", "glm5.3-flash-nvfp4-think"]
 
 
 def jl(path):
@@ -81,7 +81,7 @@ POP = {}
 
 def lcb_recompute(suffix=""):
     """Monitor cells for both LiveCodeBench populations (suffix '.final_state' for final code).
-    A monitor whose per-episode file is not shipped is skipped (its cell then comes from a report)."""
+    A monitor without a per-episode file is skipped (its cell then comes from a report)."""
     res = {}
     status = json.loads((DATA / "lcb_conflicting" / "t1_val_test_labels_status.json").read_text())["test"]
     # primary T1 population: positives, plus negatives that used all attempts or were flagged
@@ -143,7 +143,7 @@ def lcb_probes():
 
 
 def from_reports():
-    """LiveCodeBench cells whose per-episode scores are not shipped."""
+    """LiveCodeBench cells read from the aggregate reports."""
     res = {}
     t1 = json.loads((REP / "lcb_conflicting_monitors_report.json").read_text())["terminal"]
     main = json.loads((REP / "lcb_conflicting_main_report.json").read_text())["probe_terminal"]
@@ -188,7 +188,7 @@ def swe(name, out_dir):
     shipped = json.loads((REP / f"{name}_report.json").read_text())
     for k in ("monitor_thresholds", "probe_thresholds", "probe_artifact_digests"):
         a, b = rep["frozen_before_test"][k], shipped["frozen_before_test"][k]
-        common = sorted(set(a) & set(b))  # the original also froze two monitors that are not shipped
+        common = sorted(set(a) & set(b))
         same = len(common) == len(a) and all(a[c] == b[c] for c in common)
         print(f"  frozen {k} identical to the original run ({len(common)} detectors): {same}")
     pop = rep["test"]["population"]

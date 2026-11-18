@@ -11,13 +11,9 @@ import torch
 
 from evals.reward_hacking import activations as act
 from evals.reward_hacking import tap as tapmod
-from evals.tap_live import correctness_trial as ct
 from evals.tap_live import decode_bench as db
 from evals.tap_live import decode_core as dc
-from evals.tap_live import export_phase_table as ex
-from evals.tap_live import length_check as lc
 from evals.tap_live import live_tap as lt
-from evals.tap_live import profile_pass as pp
 from evals.tap_live import select_histories as sh
 from evals.tap_live import select_tasks, summarize_decode as sd
 from evals.tap_live import tiny_model as tm
@@ -169,34 +165,6 @@ def test_natural_stop_is_honoured_and_excluded_from_pooling(model, tok, fmt, his
     assert not r2["stopped_naturally"] and len(r2["gen_ids"]) == 5 and r2["decisions"][0]["n_tokens"] == 5
 
 
-def test_correctness_trial_against_the_offline_scorer(model, tok, fmt, histories, artifact, tmp_path):
-    inject = {"model": model, "tokenizer": tok, "fmt": fmt}
-    args = ["--model", "tiny", "--histories", str(histories[0]), "--artifact", str(artifact), "--device", "cpu", "--dtype", "float32",
-            "--out", str(tmp_path / "c.json"), "--max-new-tokens", "24", "--prefill-chunk", "16"]
-    assert ct.main(args, inject=inject) == 0
-    res = json.loads((tmp_path / "c.json").read_text())
-    assert len(res["histories"]) == 2 and res["declared_tolerance_abs_score"] == 1e-4 and res["all_declared_checks_pass"]
-    for x in res["histories"]:
-        assert x["a1_arithmetic_on_tap_states"]["pass"] and x["a2_full_forward_pass"]["pass"]
-        assert x["a2_full_forward_pass"]["max_abs_state_diff_vs_tap_buffer"] < 1e-4
-        assert x["a1_arithmetic_on_tap_states"]["tap"]["eligible_tokens"] == x["a1_arithmetic_on_tap_states"]["offline"]["eligible_tokens"]
-        assert x["b_cached_vs_fresh"]["identical_token_streams"] and x["b_cached_vs_fresh"]["max_abs_first_logits_diff"] < 1e-4
-        assert x["c_A0_vs_A1"]["identical_token_streams"]
-        assert x["d_chunked_vs_single_prefill"]["identical_token_streams"] and x["d_chunked_vs_single_prefill"]["max_abs_first_logits_diff"] < 1e-4
-
-
-def test_correctness_trial_with_a_forced_stop(model, tok, fmt, histories, artifact, tmp_path):
-    stop = tok.convert_tokens_to_ids("<|im_end|>")
-    body = tok.encode(" the user wants me", add_special_tokens=False)
-    inject = {"model": model, "tokenizer": tok, "fmt": fmt, "logits_processor": force(body, stop)}
-    args = ["--model", "tiny", "--histories", str(histories[0]), "--artifact", str(artifact), "--device", "cpu", "--dtype", "float32",
-            "--out", str(tmp_path / "c.json"), "--n-histories", "1"]
-    ct.main(args, inject=inject)
-    x = json.loads((tmp_path / "c.json").read_text())["histories"][0]
-    assert x["a2_full_forward_pass"]["tap"]["eligible_tokens"] == len(body) == x["a2_full_forward_pass"]["offline"]["eligible_tokens"]
-    assert x["a1_arithmetic_on_tap_states"]["pass"] and x["a2_full_forward_pass"]["pass"]
-
-
 # ---- the benchmark: rows, order, provenance, resume ---------------------------------------------------------------------
 
 def argv(histories, artifact, out, extra=()):
@@ -217,7 +185,7 @@ def test_bench_rows_order_and_provenance(bench_out, histories):
     cfg = json.loads((bench_out / "run_config.json").read_text())
     assert {r["config_sha256"] for r in rows} == {cfg["config_sha256"]} and db.config_hash(cfg["config"]) == cfg["config_sha256"]
     c = cfg["config"]
-    assert set(c["code_sha256"]) >= {"decode_bench.py", "live_tap.py", "podman_shim/docker"} and c["histories_sha256"] == db.sha256_file(histories[0])
+    assert set(c["code_sha256"]) >= {"decode_bench.py", "live_tap.py"} and c["histories_sha256"] == db.sha256_file(histories[0])
     assert c["repeats"] == 2 and c["max_new_tokens"] == 12 and c["sampling"]["top_k"] == 20 and c["artifact"]["heads"]
     assert next(iter(c["artifact"]["heads"].values()))["sha256"] and "torch" in c["environment"] and (bench_out / "environment.json").exists()
     for r in rows:                                          # the same start state for both arms; order alternates with the repeat
@@ -288,24 +256,6 @@ def test_summary_of_a_real_tiny_run(bench_out):
     assert s["capture_s"] is None
     sd.main([str(bench_out)])
     assert (bench_out / "decode_summary.md").exists()
-
-
-# ---- separate passes ------------------------------------------------------------------------------------------------------
-
-def test_profile_pass_and_length_check_run(model, tok, fmt, histories, artifact, tmp_path, monkeypatch):
-    inject = {"model": model, "tokenizer": tok, "fmt": fmt}
-    common = ["--model", "tiny", "--histories", str(histories[0]), "--artifact", str(artifact), "--device", "cpu", "--dtype", "float32"]
-    pp.main([*common, "--out", str(tmp_path / "p"), "--n-histories", "2", "--repeats", "2", "--max-new-tokens", "8"], inject=inject)
-    s = json.loads((tmp_path / "p" / "profile_summary.json").read_text())
-    assert set(s["arms"]) == {"A0", "A1"} and s["arms"]["A1"]["capture_s"] > 0 and s["arms"]["A1"]["score_wall_s"] > 0
-    assert s["arms"]["A0"]["decode_step_ms"]["n"] > 0 and "not an overhead estimate" in s["note"]
-    monkeypatch.setattr(lt, "INITIAL_ROWS", 4)
-    lc.main([*common, "--out", str(tmp_path / "l"), "--n-histories", "2", "--repeats", "2", "--budgets", "6,12,20"], inject=inject)
-    ls = json.loads((tmp_path / "l" / "length_summary.json").read_text())
-    assert set(k for k in ls if k.isdigit()) == {"6", "12", "20"}
-    assert ls["20"]["A1"]["max_generated"] <= 20 and ls["20"]["tap_buffer_rows_after"] >= ls["20"]["A1"]["max_generated"]
-    assert ls["12"]["tap_buffer_grew_in_runs"] + ls["20"]["tap_buffer_grew_in_runs"] > 0
-    assert ls["12"]["identical_streams_A0_A1"] == 4
 
 
 # ---- summary statistics -------------------------------------------------------------------------------------------------------
@@ -414,226 +364,3 @@ def test_empty_identical_subset_is_stated(tmp_path):
     s = synth(tmp_path, rows, histories=("a@0.25", "b@0.5"), repeats=1)
     assert s["identical_streams"]["empty"] and s["identical_streams"]["n_diverging_clean_pairs"] == 2
     assert "This subset is empty" in sd.to_markdown(s)
-
-
-# ---- phase-table export ------------------------------------------------------------------------------------------------------
-
-TEMPLATE = Path(__file__).resolve().parents[2] / "review_exchange" / "eq1_phases_live_table.tex"
-
-
-def synth_decode_dir(d: Path, budget=256):
-    d.mkdir()
-    heads = {"token_mean": {"sha256": "ab" * 32, "layer": 48, "pooling": "token_mean", "threshold": 0.52}}
-    cfg = {"config_sha256": "y" * 64, "config": {"history_ids": ["a@0.25", "b@0.5"], "repeats": 2, "max_new_tokens": budget,
-                                                  "artifact": {"heads": heads}}}
-    (d / "run_config.json").write_text(json.dumps(cfg))
-    rows = []
-    for h in ("a@0.25", "b@0.5"):
-        for rep in (0, 1):
-            rows += [{**mk(h, rep, "A0", 10.0, gen=200), "budget": budget}, {**mk(h, rep, "A1", 10.05, gen=200), "budget": budget}]
-    (d / "decode.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
-    (d / "setup.jsonl").write_text(json.dumps({"session": "s1", "model_load_s": 100.0, "artifact_load_s": 0.5, "warmup_s": 3.0}) + "\n")
-
-
-@pytest.mark.skipif(not TEMPLATE.exists(), reason="review_exchange table skeleton not present")
-def test_phase_table_export_keeps_the_skeleton_and_fills_only_the_row(tmp_path):
-    synth_decode_dir(tmp_path / "dec")
-    ldir = tmp_path / "len"
-    ldir.mkdir()
-    lrows = []
-    for b in (256, 1024, 4096):
-        for h in ("a@0.25", "b@0.5"):
-            lrows += [{**mk(h, 0, "A0", 20.0 + b / 1000), "budget": b}, {**mk(h, 0, "A1", 20.1 + b / 1000), "budget": b}]
-    (ldir / "length.jsonl").write_text("".join(json.dumps(r) + "\n" for r in lrows))
-    ex.main(["--decode-dir", str(tmp_path / "dec"), "--length-dir", str(ldir), "--out-dir", str(tmp_path / "o"), "--template", str(TEMPLATE)])
-    doc = json.loads((tmp_path / "o" / "eq1_phase_row.json").read_text())
-    r0 = doc["rows"][0]
-    assert [r["block_budget_tokens"] for r in doc["rows"]] == [256, 1024, 4096]              # not merged
-    assert r0["setup"]["setup_s"] == pytest.approx(100.5) and r0["setup"]["warmup_s_reported_separately"] == 3.0
-    assert r0["all_attempt"]["no_tap_s_mean"] == pytest.approx(10.0) and r0["all_attempt"]["with_tap_s_mean"] == pytest.approx(10.05)
-    assert r0["all_attempt"]["tap_ms_per_call_mean_paired"] == pytest.approx(50.0) and r0["clean"]["n_pairs"] == 4
-    assert r0["all_attempt"]["mean_generated_per_call"] == {"A0": 200, "A1": 200} and r0["block_budget_tokens"] == 256
-    assert r0["attestation_s"] is None and r0["total_certification_s"] is None and r0["tap"] == "Probe: mean"
-    assert doc["rows"][1]["setup"] is None and "unit" in doc and "generation call" in doc["unit"]
-    assert "mean elapsed seconds per timed call" in doc["aggregation"] and "caption_note" in r0
-    tex = (tmp_path / "o" / "eq1_phase_table.tex").read_text()
-    assert "\n" + doc["caption_latex"] in tex
-    tex = tex.replace("\n" + doc["caption_latex"], "", 1)                 # the caption additions are the only other change
-    orig = TEMPLATE.read_text()
-    head = orig[:orig.index("\\midrule") + len("\\midrule\n")]
-    tail = orig[orig.index("\n%", len(head)) + 1:]            # from the first comment line after the data rows
-    assert tex.startswith(head) and tex.endswith(tail)                                      # skeleton verbatim
-    body = tex[len(head):-len(tail)]
-    rows = [x for x in body.split("\\\\\n") if x.strip()]
-    assert len(rows) == 3 and all(x.rstrip().endswith("-- & --") or "-- & --" in x for x in rows)
-    assert "100.50" in rows[0] and "10.000" in rows[0] and "10.050" in rows[0] and "+50.00" in rows[0] and "256-token budget" in rows[0]
-    assert "1{,}024-token budget" in rows[1] and "21.024" in rows[1] and "& -- & 21.024" in " ".join(rows[1].split())
-    assert "Probe: mean" in rows[0] and "Qwen3.8-27B & \\shortstack[l]{LiveCodeBench" in rows[0]
-    assert (tmp_path / "o" / "eq1_phase_rows.tex").read_text().count("Qwen3.8-27B") == 3
-
-
-@pytest.mark.skipif(not TEMPLATE.exists(), reason="review_exchange table skeleton not present")
-def test_phase_table_from_a_real_tiny_run(bench_out, tmp_path):
-    ex.main(["--decode-dir", str(bench_out), "--out-dir", str(tmp_path / "o")] + (["--template", str(TEMPLATE)] if TEMPLATE.exists() else []))
-    doc = json.loads((tmp_path / "o" / "eq1_phase_row.json").read_text())
-    r = doc["rows"][0]
-    assert r["all_attempt"]["n_pairs"] == 6 and r["setup"]["setup_s"] > 0 and r["tap_artifacts"]
-    assert re.search(r"Probe: mean", (tmp_path / "o" / "eq1_phase_rows.tex").read_text())
-
-
-def test_phase_row_uses_one_weighting_with_unequal_history_counts(tmp_path):
-    d = tmp_path / "dec"
-    synth_decode_dir(d)
-    rows = [json.loads(x) for x in (d / "decode.jsonl").read_text().splitlines()]
-    # history a@0.25 loses its repeat 1 (failed A1) and history c@0.5 (another task) is added with a larger overhead
-    rows = [r for r in rows if not (r["history_id"] == "a@0.25" and r["repeat"] == 1 and r["arm"] == "A1")]
-    for rep in (0, 1, 2):
-        rows += [{**mk("c@0.5", rep, "A0", 12.0, gen=150), "budget": 256}, {**mk("c@0.5", rep, "A1", 12.4, gen=150), "budget": 256}]
-    cfg = json.loads((d / "run_config.json").read_text())
-    cfg["config"]["history_ids"] = ["a@0.25", "b@0.5", "c@0.5"]
-    cfg["config"]["histories_summary"] = {"n_tasks": 3, "n_histories": 3, "n_fallback_to_earlier_call": 0, "fallback_history_ids": []}
-    (d / "run_config.json").write_text(json.dumps(cfg))
-    (d / "decode.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
-    doc, _ = ex.build(d)
-    a = doc["rows"][0]["all_attempt"]
-    assert a["n_pairs"] == 6 and a["n_histories"] == 3 and a["n_tasks"] == 3
-    # the displayed difference is the with-tap mean minus the no-tap mean of the same pairs, and lies inside the interval
-    assert a["tap_ms_per_call_mean_paired"] == pytest.approx(1000 * (a["with_tap_s_mean"] - a["no_tap_s_mean"]))
-    est = a["estimand_pair_weighted_abs_ms"]
-    assert est["mean_paired_difference_ms"] == pytest.approx(a["tap_ms_per_call_mean_paired"]) and est["weighting"].startswith("pair-weighted")
-    assert a["ci95_ms"][0] <= a["tap_ms_per_call_mean_paired"] <= a["ci95_ms"][1] and a["ci95_ms"] == est["ci95_ms"]
-    # the equal-weight-per-history estimand differs when the counts are unequal, and is labelled as another estimand
-    hw = a["estimand_history_weighted_abs_ms"]
-    assert hw["weighting"].startswith("equal weight per history") and hw["mean_paired_difference_ms"] != pytest.approx(est["mean_paired_difference_ms"])
-    assert "absolute" in est["quantity"] and "fraction" in a["relative_overhead_fraction"]["quantity"]
-    assert doc["rows"][0]["selection_coverage"]["unique_tasks"] == 3 and a["normalized_cost_per_100_tokens"]["n_used"] == 6
-    assert "bootstrap" in est and "task" in est["bootstrap"]["unit"]
-
-
-@pytest.mark.skipif(not TEMPLATE.exists(), reason="review_exchange table skeleton not present")
-def test_caption_note_and_length_rows_carry_range_not_interval(tmp_path):
-    synth_decode_dir(tmp_path / "dec")
-    ldir = tmp_path / "len"
-    ldir.mkdir()
-    lrows = []
-    for h in ("a@0.25", "b@0.5", "c@0.75"):
-        for rep in (0, 1, 2):
-            lrows += [{**mk(h, rep, "A0", 20.0), "budget": 1024}, {**mk(h, rep, "A1", 20.0 + 0.01 * (rep + 1)), "budget": 1024}]
-    (ldir / "length.jsonl").write_text("".join(json.dumps(r) + "\n" for r in lrows))
-    doc, cells = ex.build(tmp_path / "dec", ldir)
-    note = doc["rows"][0]["caption_note"]
-    for frag in ("generation block", "not a complete agent turn", "historical prefix is excluded".replace("historical prefix", "prefill of the historical prefix"),
-                 "natural stops", "up to 256 newly generated tokens", "mean 200 generated tokens", "resamples whole tasks"):
-        assert frag in note
-    L = doc["rows"][1]["all_attempt"]
-    assert L["ci95_ms"] is None and "no population interval" in L["interval_note"] and L["n_tasks"] == 3
-    assert L["paired_diff_ms_raw_range"] == [pytest.approx(10.0), pytest.approx(30.0)] and "estimand_pair_weighted_abs_ms" not in L
-    line = ex.latex_row(*cells[1])
-    assert "range [+10.00, +30.00]" in line and "$^{\\dagger}$" in line and "3 tasks" in line and "natural stops" in ex.latex_row(*cells[0]) and "mean 200 tok." in ex.latex_row(*cells[0])
-
-
-def test_length_check_summary_gives_the_raw_paired_range():
-    rows = []
-    for h in ("a@0.25", "b@0.5"):
-        for rep in (0, 1):
-            for arm, el in (("A0", 5.0), ("A1", 5.0 + 0.01 * (rep + 1))):
-                rows.append({"history_id": h, "budget": 256, "repeat": rep, "arm": arm, "status": "ok", "elapsed_s": el, "n_generated": 256,
-                             "stopped_naturally": False, "token_hash": "t", "buffer_rows_after": 256})
-    s = lc.summarize(rows)["256"]
-    assert s["paired_diff_ms"]["n_pairs"] == 4 and s["paired_diff_ms"]["min"] == pytest.approx(10.0) and s["paired_diff_ms"]["max"] == pytest.approx(20.0)
-    assert s["task_coverage"]["unique_tasks"] == 2 and "population interval" in s["task_coverage"]["note"]
-
-
-def test_significant_figures_keep_small_uncertainties_visible():
-    assert sd.fmt_sig(0.0020643691) == "0.0021" and sd.fmt_sig(0.0000123) == "0.000012" and sd.fmt_sig(0.5) == "0.50" and sd.fmt_sig(12.3456) == "12.35"
-    assert sd.fmt_sig(-0.0637, True) == "-0.064" and sd.fmt_sig(0.14, True) == "+0.14" and sd.fmt_sig(0) == "0" and sd.fmt_sig(None) == "-"
-    assert sd._pct(0.000020643691) == "+0.0021%" and sd._pct(-0.2) == "-20.00%"
-    pairs = [(mk(f"{t}@0.25", 0, "A0", 10.0), mk(f"{t}@0.25", 0, "A1", 10.0 + d)) for t, d in (("a", 0.0001), ("b", 0.0002), ("c", 0.0003))]
-    e = sd.rel_estimand(pairs)
-    line = sd._estimand_lines("x", e)[0]
-    assert "percentage points" in line and "0.00 percentage" not in line and re.search(r"half-width 0\.00\d+ percentage points", line)
-    assert ex.cell_num(-0.0637) == "-0.06" and ex.cell_num(0.1371) == "+0.14" and ex.cell_num(-0.2832) == "-0.28" and ex.cell_num(0.0021) == "+0.0021"
-
-
-@pytest.mark.skipif(not TEMPLATE.exists(), reason="review_exchange table skeleton not present")
-def test_main_row_shows_estimate_and_asymmetric_interval_with_an_unresolved_note(tmp_path):
-    d = tmp_path / "dec"
-    synth_decode_dir(d)
-    rows = [json.loads(x) for x in (d / "decode.jsonl").read_text().splitlines()]
-    # tasks a and b: A1 slightly slower or faster, so the task bootstrap interval is asymmetric about a small negative estimate
-    for r in rows:
-        if r["arm"] == "A1":
-            r["elapsed_s"] = 10.0 + (-0.0004 if r["task"] == "a" else 0.0001)
-    (d / "decode.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
-    ex.main(["--decode-dir", str(d), "--out-dir", str(tmp_path / "o"), "--template", str(TEMPLATE)])
-    doc = json.loads((tmp_path / "o" / "eq1_phase_row.json").read_text())
-    a = doc["rows"][0]["all_attempt"]
-    lo, hi = a["ci95_ms"]
-    assert lo < 0 < hi and a["interval_statement"].startswith("interval includes zero (unresolved)") and "not a speedup finding" in a["interval_statement"]
-    assert "interval includes zero (unresolved)" in doc["rows"][0]["caption_note"].replace("The interval includes zero (unresolved)", "interval includes zero (unresolved)")
-    assert "unresolved at" not in doc["rows"][0]["caption_note"] and "±" not in doc["rows"][0]["caption_note"]
-    tex = (tmp_path / "o" / "eq1_phase_rows.tex").read_text()
-    est = ex.cell_num(a["tap_ms_per_call_mean_paired"])
-    assert f"{{{est}\\\\{{\\scriptsize [{ex.cell_num(lo)}, {ex.cell_num(hi)}]}}}}" in tex.replace("\\\\", "\\\\") or f"[{ex.cell_num(lo)}, {ex.cell_num(hi)}]" in tex
-
-
-def test_length_rows_count_tasks_from_the_history_ids_and_carry_a_dagger(tmp_path):
-    synth_decode_dir(tmp_path / "dec")
-    ldir = tmp_path / "len"
-    ldir.mkdir()
-    lrows = []
-    for h in ("lcbhard_101@0.25", "lcbhard_55@0.75", "lcbhard_99@0.75"):
-        for rep in (0, 1):
-            lrows += [{**mk(h, rep, "A0", 20.0), "budget": 1024}, {**mk(h, rep, "A1", 20.0 + 0.01 * (rep + 1)), "budget": 1024}]
-    (ldir / "length.jsonl").write_text("".join(json.dumps(r) + "\n" for r in lrows))
-    doc, cells = ex.build(tmp_path / "dec", ldir)
-    L = doc["rows"][1]["all_attempt"]
-    assert L["n_tasks"] == 3 and L["n_histories"] == 3 and "not an interval; few tasks" in L["interval_note"]
-    assert "3 unique task(s)" in doc["rows"][0]["caption_note"] and "$^{\\dagger}$" in doc["rows"][0]["caption_note"]
-    assert "range [" in ex.latex_row(*cells[1]) and "$^{\\dagger}$" in ex.latex_row(*cells[1]) and "$^{\\dagger}$" not in ex.latex_row(*cells[0])
-    rows = [{"history_id": h, "budget": 256, "repeat": 0, "arm": arm, "status": "ok", "elapsed_s": 5.0, "n_generated": 10, "stopped_naturally": False,
-             "token_hash": "t", "buffer_rows_after": 256} for h in ("lcbhard_101@0.25", "lcbhard_55@0.75", "lcbhard_99@0.75") for arm in ("A0", "A1")]
-    cov = lc.summarize(rows)["256"]["task_coverage"]
-    assert cov["unique_tasks"] == 3 and cov["task_ids"] == ["lcbhard_101", "lcbhard_55", "lcbhard_99"]
-
-
-@pytest.mark.skipif(not TEMPLATE.exists(), reason="review_exchange table skeleton not present")
-def test_caption_additions_reach_the_exported_tex_and_it_compiles(tmp_path):
-    import shutil
-    import subprocess
-    import tempfile
-    synth_decode_dir(tmp_path / "dec")
-    rows = [json.loads(x) for x in (tmp_path / "dec" / "decode.jsonl").read_text().splitlines()]
-    for r in rows:                                           # an interval that includes zero
-        if r["arm"] == "A1":
-            r["elapsed_s"] = 10.0 + (-0.0004 if r["task"] == "a" else 0.0001)
-    (tmp_path / "dec" / "decode.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
-    ldir = tmp_path / "len"
-    ldir.mkdir()
-    lrows = []
-    for h in ("lcbhard_101@0.25", "lcbhard_55@0.75", "lcbhard_99@0.75"):
-        for rep in (0, 1):
-            lrows += [{**mk(h, rep, "A0", 20.0), "budget": 1024}, {**mk(h, rep, "A1", 20.0 + 0.01 * (rep + 1)), "budget": 1024}]
-    (ldir / "length.jsonl").write_text("".join(json.dumps(r) + "\n" for r in lrows))
-    ex.main(["--decode-dir", str(tmp_path / "dec"), "--length-dir", str(ldir), "--out-dir", str(tmp_path / "o"), "--template", str(TEMPLATE)])
-    tex = (tmp_path / "o" / "eq1_phase_table.tex").read_text()
-    doc = json.loads((tmp_path / "o" / "eq1_phase_row.json").read_text())
-    cap = tex[tex.index("\\caption{"):tex.index("\\label{")]
-    orig = TEMPLATE.read_text()
-    owner_cap = orig[orig.index("\\caption{") + 9:orig.index("\n\\label")].rstrip("}")
-    assert owner_cap in cap and "\\label{tab:eq1-phases}" in tex                                      # owner wording and label kept
-    for frag in ("generation blocks, not complete agent turns", "the prefill of the historical prefix excluded", "95\\% bootstrap interval that resamples whole tasks",
-                 "observed paired range$^{\\dagger}$", "Raw paired range, not an interval (few tasks)", "the interval includes zero (unresolved)",
-                 "is not evidence of a speedup", "natural stops kept", "3 unique tasks", "Attestation and total certification were not measured"):
-        assert frag in cap, frag
-    assert cap.count("{") == cap.count("}") and doc["caption_latex"] in cap
-    pdflatex, base = shutil.which("pdflatex"), Path(tempfile.gettempdir())
-    if pdflatex is None or not base.is_dir():
-        pytest.skip("pdflatex or the job tmp directory is not available")
-    work = Path(tempfile.mkdtemp(dir=base))
-    try:
-        (work / "t.tex").write_text("\\documentclass{article}\n\\usepackage{booktabs,amsmath}\n\\begin{document}\n" + tex + "\n\\end{document}\n")
-        r = subprocess.run([pdflatex, "-interaction=nonstopmode", "-halt-on-error", "t.tex"], cwd=work, capture_output=True, text=True, timeout=120)
-        assert r.returncode == 0 and (work / "t.pdf").exists(), r.stdout[-1500:]
-    finally:
-        shutil.rmtree(work, ignore_errors=True)

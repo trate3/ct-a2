@@ -6,12 +6,12 @@
 Output (production): `<out-root>/<dir-name>/<rollout_id>.npz` per input directory, where `out-root`
 defaults to `<RH_HOME>/activations` (code default `~/rh/activations`) and `dir-name` is the directory's own name (for a `.../<run>/trajectories`
 directory, the run's name). `--out DIR` instead writes one explicit directory (single input directory only).
-Layers default to the pre-registered candidates {10, 20, 30} (hidden_states-tuple convention of
-`activations`, valid 1..num_hidden_layers-1), stored as float32 (Qwen3.6 hidden states exceed the float16 range: cluster parity run, overflow in cast).
+Layers default to {10, 20, 30} (hidden_states-tuple convention of
+`activations`, valid 1..num_hidden_layers-1), stored as float32 (Qwen3.6 hidden states exceed the float16 range).
 
 Resumable and preemption-safe: a `<rollout_id>.npz` is written atomically (tmp + rename) once per rollout and
 existing files are skipped; stale `*.tmp` files are deleted at start. SIGTERM/SIGUSR1 finish the rollout in
-flight (when it fits in the grace window of the Slurm wrapper) and exit 75 so the job is requeued/rerun.
+flight (when it fits in the grace window of the batch scheduler) and exit 75 so the job is requeued/rerun.
 Per-run files: `manifest.<i>of<n>.json` (a resume with a different model/revision/layers/dtype is refused),
 `progress.<i>of<n>.jsonl` (one record per rollout: tokens, seconds, tokens/s, peak GPU memory) and
 `throughput.<i>of<n>.json` (cumulative totals, rewritten after every rollout).
@@ -19,14 +19,6 @@ Per-run files: `manifest.<i>of<n>.json` (a resume with a different model/revisio
 Sizing: one sequence at a time (the hybrid gated-delta-net cache has no padded batching), prefilled in
 `--chunk-tokens` chunks (default 16384; weights of the bf16 35B-A3B are ~70 GB, a large GPU has far more). A CUDA
 out-of-memory error halves the chunk size (floor 1024) and retries the rollout, so the default errs large.
-Muse Glimmer 30B (`--target-model muse-glimmer-30b`, layers 13 26 39 of 52): the checkpoint is the multimodal
-wrapper `MuseGlimmerForConditionalGeneration` (`--model-class conditional`, the default; there is no
-AutoModelForCausalLM mapping for `muse_glimmer`). It is loaded whole in bf16, as generation uses it; the
-vision tower stays idle because only `input_ids` are passed, and `find_decoder_layers` hooks the 52 blocks of
-`model.language_model.layers` (not the 50 vision blocks). Prefill chunks run through the sliding-window and
-global (NoPE) layers with the same cache. The Muse channel markers (reasoning / tool-call delimiters) are not
-the Qwen ones: with `--target-model muse-glimmer-30b` the channels come from `activations.muse_marks` (ATEM
-segments: recipient self = reasoning, tool = tool_call, user = visible; see the `activations` docstring).
 Run unchanged on CPU with a tiny model (`--model` a local dir, `--dtype float32`) or on a GPU with bf16.
 
 For the real model install `flash-linear-attention` and `causal-conv1d` first: without them
@@ -72,8 +64,8 @@ def add_model_args(ap: argparse.ArgumentParser) -> None:
     ap.add_argument("--tokenizer-revision", default=None)
     ap.add_argument("--model-class", default="conditional", choices=["conditional", "auto"],
                     help="conditional: AutoModelForImageTextToText, the checkpoint's native layout (Qwen3_5Moe"
-                         "ForConditionalGeneration, MuseGlimmerForConditionalGeneration; loads the vision tower "
-                         "too, idle for token-id input; the only option for Muse); auto: AutoModelForCausalLM "
+                         "ForConditionalGeneration; loads the vision tower "
+                         "too, idle for token-id input); auto: AutoModelForCausalLM "
                          "(text-only class; check for missing-key warnings)")
     ap.add_argument("--target-model", choices=sorted(llm.FORMATS), default=llm.DEFAULT_FORMAT,
                     help="agent model the trajectories came from: selects the default --layers (25/50/75 %% depth); "
@@ -202,8 +194,6 @@ def extract_dir(paths, out: pathlib.Path, model, tok, man: dict, a, *, ex=None, 
     (out / f"manifest.{i}of{n}.json").write_text(json.dumps(man, indent=1))
     own = ex is None
     ex = ex or act.CallExtractor(model, man["layers"], chunk_tokens=a.chunk_tokens)
-    marks = act.channel_marks(tok, getattr(a, "target_model", None))     # None (Qwen default) unless Muse
-    extra = {} if marks is None else {"marks": marks}
     cuda = a.device.startswith("cuda")
     tput = Throughput(out / f"throughput.{i}of{n}.json")
     if cuda:
@@ -225,8 +215,7 @@ def extract_dir(paths, out: pathlib.Path, model, tok, man: dict, a, *, ex=None, 
                     continue
                 t0 = time.perf_counter()
                 res = with_oom_backoff(ex, lambda: act.extract(model, tok, traj, man["layers"],
-                                                               store_dtype=a.store_dtype, extractor=ex,
-                                                               **extra))
+                                                               store_dtype=a.store_dtype, extractor=ex))
                 if cuda:
                     torch.cuda.synchronize()
                 dt = time.perf_counter() - t0
@@ -256,7 +245,7 @@ def main(argv=None):
     add_model_args(ap)
     ap.add_argument("--layers", type=int, nargs="+", default=None,
                     help="hidden_states-tuple layers (default: the --target-model's probe layers: "
-                         "qwen3.6 10 20 30, qwen3.8-27b 16 32 48, muse-glimmer-30b 13 26 39)")
+                         "qwen3.6 10 20 30, qwen3.8-27b 16 32 48)")
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--out", default=None, help="one explicit output directory (single input directory)")
     g.add_argument("--out-root", default=DEFAULT_OUT_ROOT, help="<out-root>/<dir-name>/ per input directory")

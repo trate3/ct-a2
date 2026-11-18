@@ -1,9 +1,7 @@
 """Tests for evals/reward_hacking/metrics.py.
 
-Covers the handoff's "Verification priorities" #7 (frozen-threshold metrics
-handle missing classes and report achieved test FPR correctly) plus the
-task-level independence of the bootstrap (#1's clustering concern, applied to
-metrics rather than splits). Brute-force reference implementations of
+Covers frozen-threshold metrics (missing classes, achieved test FPR) and the
+task-level clustering of the bootstrap. Brute-force reference implementations of
 AUROC/AUPRC (written against a different, O(n^2)-ish formulation, not the
 vectorized production code) cross-check tie handling.
 """
@@ -298,62 +296,3 @@ def test_length_strata_partitions_all_rows_into_bins_by_rank():
 def test_length_strata_empty_rows():
     out = m.length_strata([], "prompt_tokens", n_bins=3)
     assert [b["n"] for b in out["bins"]] == [0, 0, 0]
-
-
-# ---------------------------------------------------------------------------
-# eq3_missed_violation_loss
-
-def test_eq3_missed_violation_loss_p0_and_p1_all_positive_case():
-    records = [
-        {"rollout_id": "r1", "eligible": True, "by_p": [
-            {"p": 0.0, "intervened": False, "executed_passed": False},
-            {"p": 1.0, "intervened": True, "executed_passed": True},
-        ]},
-        {"rollout_id": "r2", "eligible": True, "by_p": [
-            {"p": 0.0, "intervened": False, "executed_passed": True},
-            {"p": 1.0, "intervened": True, "executed_passed": True},
-        ]},
-        {"rollout_id": "r3", "eligible": False, "reason": "no snapshot"},
-    ]
-    scores_model_only = {"r1": 0.1, "r2": 0.9}
-    out = m.eq3_missed_violation_loss(records, scores_model_only, threshold=0.5)
-    assert out["n_records"] == 3
-    assert out["n_eligible"] == 2
-    assert out["n_ineligible"] == 1
-    by_p = {entry["p"]: entry for entry in out["by_p"]}
-
-    p0 = by_p[0.0]
-    # r1: label 0, pred 1[0.1>0.5]=0 -> TN. r2: label 1, pred 1[0.9>0.5]=1 -> TP.
-    assert p0["n"] == 2 and p0["n_pos"] == 1 and p0["n_neg"] == 1
-    assert p0["tp"] == 1 and p0["fn"] == 0 and p0["fp"] == 0 and p0["tn"] == 1
-    assert p0["missed_violation_loss"] == pytest.approx(0.0)
-    assert p0["tpr"] == pytest.approx(1.0)
-    assert p0["fpr"] == pytest.approx(0.0)
-
-    p1 = by_p[1.0]
-    # both executed_passed True -> no negatives at all.
-    assert p1["n_pos"] == 2 and p1["n_neg"] == 0
-    assert p1["fpr"] is None  # undefined: no negatives to compute it from
-    # r1 pred 0 (score 0.1 <= thr) -> FN; r2 pred 1 (score 0.9 > thr) -> TP
-    assert p1["fn"] == 1 and p1["tp"] == 1
-    assert p1["missed_violation_loss"] == pytest.approx(0.5)  # FN/n, defined even though FPR isn't
-    assert p1["tpr"] == pytest.approx(0.5)
-
-    # Cross-check against the general-purpose metric: AUROC is also undefined
-    # on this same all-positive population (no negative class at all).
-    labels_p1 = [1, 1]
-    scores_p1 = [scores_model_only["r1"], scores_model_only["r2"]]
-    assert m.auroc(labels_p1, scores_p1) is None
-
-
-def test_eq3_missed_violation_loss_ignores_ineligible_and_missing_scores():
-    records = [
-        {"rollout_id": "r1", "eligible": True, "by_p": [{"p": 0.5, "intervened": False, "executed_passed": True}]},
-        {"rollout_id": "r2", "eligible": True, "by_p": [{"p": 0.5, "intervened": True, "executed_passed": True}]},
-    ]
-    # r2 has no frozen model-only score on record.
-    scores_model_only = {"r1": 0.9}
-    out = m.eq3_missed_violation_loss(records, scores_model_only, threshold=0.5)
-    entry = out["by_p"][0]
-    assert entry["n_missing_score"] == 1
-    assert entry["n"] == 1  # only r1 counted

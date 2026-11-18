@@ -187,20 +187,5 @@ def test_valid_signature_with_unpinned_reference_measurement_is_rejected():
 def test_separate_process_arguments_reach_the_workload():
     from evals_runner.protocol_integrity_exp import _component_args
 
-    common = {"data": DATA, "monitor_model": None, "detector": None,
-              "threshold": 0.25, "device": "cpu", "max_new_tokens": 17}
-    confidence = SimpleNamespace(
-        **common, case="confidence", program_model="program", dtype="float32",
-        model="unused")
-    financial = SimpleNamespace(
-        **common, case="financial", program_model="unused", dtype="auto",
-        model="financial-model")
-    assert _component_args(confidence) == [
-        "--program-model", "program", "--dtype", "float32",
-        "--device", "cpu", "--max-new-tokens", "17",
-    ]
-    assert _component_args(financial, "probe.npz") == [
-        "--model", "financial-model", "--dtype", "auto", "--threshold", "0.25",
-        "--detector", "probe.npz", "--device", "cpu",
-        "--max-new-tokens", "17",
-    ]
+    assert _component_args(SimpleNamespace(data=DATA, case="mock")) == ["--data", DATA]
+

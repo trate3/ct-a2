@@ -1,1 +1,1 @@
-"""Planned extension; not part of the measured results."""
+"""GPU-only attestation with a software-held signing key."""

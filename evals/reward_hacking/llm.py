@@ -139,15 +139,6 @@ def assistant_message(turn: ParsedTurn) -> dict:
 # forwards to them, so Qwen prompts, parses and manifests are byte-identical to before.
 
 QWEN38_TEMPLATE_PATH = pathlib.Path(__file__).parent / "data" / "qwen3.8-27b_chat_template.jinja"
-GLM_TEMPLATE_PATH = pathlib.Path(__file__).parent / "data" / "glm-5.3-flash_chat_template.jinja"
-MUSE_TEMPLATE_PATH = pathlib.Path(__file__).parent / "data" / "muse-glimmer-30b_chat_template.jinja"
-# Unsloth's GGUF embeds a minja-friendly variant of the official template; llama-server's /props and
-# /apply-template reflect THAT file, so it is the server-side pin (render-parity is tested offline).
-GLM_GGUF_TEMPLATE_PATH = (pathlib.Path(__file__).parent / "data"
-                          / "glm-5.3-flash_unsloth_gguf_chat_template.jinja")
-# GLM-5.3-Flash generation_config.json eos_token_id = [<|endoftext|>, <|user|>, <|observation|>]
-GLM_STOP_TOKEN_IDS = (154820, 154827, 154829)
-GLM_BOUNDARY = {154820: "<|endoftext|>", 154827: "<|user|>", 154829: "<|observation|>"}
 
 
 def _sha256_file(path: pathlib.Path) -> str:
@@ -155,7 +146,7 @@ def _sha256_file(path: pathlib.Path) -> str:
 
 
 class ChatFormat:
-    """Per-model prompt/parse behaviour. Subclasses: QwenFormat, GLMFormat."""
+    """Per-model prompt/parse behaviour. Subclasses: QwenFormat, Qwen38Format."""
 
     name = ""
     think_close = THINK_CLOSE
@@ -163,7 +154,7 @@ class ChatFormat:
     sampling: dict = {}      # the model card's thinking-mode preset, llama.cpp names (see rollout.SAMPLING)
     reasoning_efforts: tuple[str, ...] = ()   # values the template accepts for `reasoning_effort`
     default_effort = ""                       # what the template does when none is passed
-    # official checkpoint (activations come from transformers on it; vLLM serves it) -- deploy/second_machine/pins.env
+    # official checkpoint (activations come from transformers on it; vLLM serves it)
     hf_repo = ""
     hf_revision = ""
     local_dir = ""                            # <MODELS_DIR>/<local_dir>; also the served model name
@@ -210,7 +201,7 @@ class ChatFormat:
 
 
 class QwenFormat(ChatFormat):
-    """Qwen3.6-35B-A3B (the pilot's target): the module-level functions, byte for byte."""
+    """Qwen3.6-35B-A3B format: the module-level functions, byte for byte."""
     name = "qwen3.6"
     hf_repo, hf_revision = "Qwen/Qwen3.6-35B-A3B", "995ad96eacd98c81ed38be0c5b274b04031597b0"
     local_dir, num_hidden_layers, probe_layers = "qwen3.6-35b-a3b", 40, (10, 20, 30)
@@ -236,135 +227,6 @@ class QwenFormat(ChatFormat):
     def expected_next_prefix(self, prompt, comp):
         # the next render must extend this: generation plus the end-of-turn token
         return prompt + comp.text + "<|im_end|>\n"
-
-
-# GLM-5.3-Flash. Rendered by the official template: `[gMASK]<sop><|system|>Reasoning Effort: Max` first
-# (the default effort is "max" when `reasoning_effort` is not passed; recorded, not changed), tools in the
-# system turn, then `<|user|>text`, `<|assistant|><think>reasoning</think>text<tool_call>...`, and tool
-# results as ONE `<|observation|>` followed by consecutive `<tool_response>text</tool_response>`.
-# There is no end-of-turn string: a turn ends with the token that begins the next role (`<|observation|>`
-# after tool calls, `<|user|>` otherwise; `<|endoftext|>` also stops), and the template has NO whitespace
-# between segments. Thinking is always on: the generation prompt is `<|assistant|><think>`. A history turn
-# without reasoning renders `<think></think>`; our non-thinking prompt (enable_thinking=False) closes the
-# think block the same way: `<|assistant|><think></think>`. That one is our extension, not the template's.
-_GLM_CALL = re.compile(r"<tool_call>(.*?)</tool_call>", re.S)
-_GLM_ARG = re.compile(r"<arg_key>(.*?)</arg_key>\s*<arg_value>(.*?)</arg_value>", re.S)
-
-
-def _schema_types(schema: dict | None) -> set[str]:
-    """JSON types a parameter schema allows (`type`, or the union of `anyOf`/`oneOf` branches)."""
-    if not schema:
-        return set()
-    kind = schema.get("type")
-    if isinstance(kind, str):
-        return {kind}
-    if isinstance(kind, list):
-        return set(kind)
-    out: set[str] = set()
-    for branch in schema.get("anyOf", []) + schema.get("oneOf", []):
-        out |= _schema_types(branch)
-    return out
-
-
-def _glm_coerce(value: str, schema: dict | None):
-    """GLM's template writes string arguments raw and everything else as JSON; invert that with the schema.
-
-    Unknown schema (e.g. an enum without `type`) stays text. A union containing "string" stays text unless
-    the value is exactly `null` and null is allowed."""
-    types = _schema_types(schema)
-    if not types or types == {"string"}:
-        return value
-    if "string" in types and not (value.strip() == "null" and "null" in types):
-        return value
-    try:
-        return json.loads(value)
-    except (json.JSONDecodeError, ValueError):
-        return value
-
-
-class GLMFormat(ChatFormat):
-    name = "glm-5.3-flash"
-    reasoning_efforts, default_effort = ("low", "high", "max"), "max"
-    hf_repo, hf_revision = "zai-org/GLM-5.3-Flash", "46a050bec13002ad29ee795c16e61cf4fa3c4a9c"
-    local_dir, num_hidden_layers, probe_layers = "glm-5.3-flash", 45, (11, 22, 34)
-    stop_token_ids = GLM_STOP_TOKEN_IDS
-    # generation_config.json: temperature 1.0, top_p 0.95 and no top_k (top_k=0 disables llama.cpp's default 40)
-    sampling = {"temperature": 1.0, "top_p": 0.95, "top_k": 0, "min_p": 0.0,
-                "presence_penalty": 0.0, "repeat_penalty": 1.0}
-
-    def template_path(self):
-        return GLM_TEMPLATE_PATH
-
-    def server_template_digests(self):
-        return (self.template_digest(), _sha256_file(GLM_GGUF_TEMPLATE_PATH))
-
-    def describe(self):
-        return {**super().describe(), "gguf_template_sha256": _sha256_file(GLM_GGUF_TEMPLATE_PATH)}
-
-    def render(self, messages, tools, add_generation_prompt=True, enable_thinking=True, *, template=None):
-        import jinja2
-        from jinja2.ext import loopcontrols
-        from jinja2.sandbox import ImmutableSandboxedEnvironment
-
-        def raise_exception(msg):
-            raise jinja2.TemplateError(msg)
-
-        env = ImmutableSandboxedEnvironment(trim_blocks=True, lstrip_blocks=True, extensions=[loopcontrols])
-        env.globals["raise_exception"] = raise_exception
-        env.filters["tojson"] = lambda v, **kw: json.dumps(v, ensure_ascii=kw.get("ensure_ascii", False))
-        kw = {} if self.reasoning_effort is None else {"reasoning_effort": self.reasoning_effort}
-        text = env.from_string((template or GLM_TEMPLATE_PATH).read_text()).render(
-            messages=messages, tools=tools, add_generation_prompt=add_generation_prompt, **kw)
-        if add_generation_prompt and not enable_thinking:
-            text += "</think>"
-        return text
-
-    def parse_generation(self, text, tools):
-        """Split a generation (continuing after `<think>`) into reasoning and visible turn."""
-        if THINK_CLOSE in text:
-            reasoning, visible = text.split(THINK_CLOSE, 1)
-            closed = True
-        else:
-            reasoning, visible, closed = text, "", False
-        props = {t["function"]["name"]: t["function"]["parameters"].get("properties", {}) for t in tools}
-        calls = []
-        for m in _GLM_CALL.finditer(visible):
-            body = m.group(1)
-            head, _, _ = body.partition("<arg_key>")
-            name = head.strip()
-            args = {k.strip(): _glm_coerce(v, props.get(name, {}).get(k.strip()))
-                    for k, v in _GLM_ARG.findall(body)}
-            if not name or (body.count("<arg_key>") != len(args)):
-                calls.append(ToolCall(name=name, arguments=args, raw=m.group(0),
-                                      parse_error="malformed <tool_call> (name or <arg_key>/<arg_value> pairs)"))
-            else:
-                calls.append(ToolCall(name=name, arguments=args, raw=m.group(0)))
-        content = _GLM_CALL.sub("", visible)
-        if "<tool_call>" in content:   # unterminated: visible output the model meant as an action
-            start = content.index("<tool_call>")
-            calls.append(ToolCall(name="", arguments={}, raw=content[start:],
-                                  parse_error="unterminated or malformed <tool_call>"))
-            content = content[:start]
-        return ParsedTurn(reasoning=reasoning.strip(), content=content.strip(), tool_calls=tuple(calls),
-                          reasoning_closed=closed, reasoning_raw=reasoning)
-
-    def assistant_message(self, turn):
-        # the template renders reasoning_content verbatim (no strip), so keep the raw text
-        msg = {"role": "assistant", "content": turn.content,
-               "reasoning_content": turn.reasoning if turn.reasoning_raw is None else turn.reasoning_raw}
-        good = [c for c in turn.tool_calls if c.parse_error is None]
-        if good:
-            msg["tool_calls"] = [{"type": "function", "function": {"name": c.name, "arguments": c.arguments}}
-                                 for c in good]
-        return msg
-
-    def expected_next_prefix(self, prompt, comp):
-        # prompt + generation text, then the token that ended the turn (the server drops its text from
-        # `content`): the next render starts the next role with <|observation|> / <|user|>. Stopped at the
-        # token limit there is no end token, and nothing follows.
-        last = comp.tokens[-1] if comp.tokens else None
-        boundary = GLM_BOUNDARY.get(last, "") if comp.stop_type != "limit" else ""
-        return prompt + comp.text + boundary
 
 
 # Qwen3.8-27B (Qwen/Qwen3.8-27B, dense, Apache-2.0). Same `<think>\n` generation prompt, `<|im_end|>` turn end
@@ -395,36 +257,7 @@ class Qwen38Format(QwenFormat):
                       template=template or QWEN38_TEMPLATE_PATH, reasoning_effort=self.reasoning_effort)
 
 
-class MuseFormat(ChatFormat):
-    """Muse Glimmer 30B. Registry entry for the pinned checkpoint, sampling and probe layers
-    (activation extraction and the parity check use these); the prompt rendering and the generation parser
-    are written separately and raise until then."""
-    name = "muse-glimmer-30b"
-    reasoning_efforts, default_effort = ("low", "medium", "high", "xhigh"), "high"
-    hf_repo, hf_revision = "meta-models/Muse-Glimmer-30B", "cec94fcfd6512f2cfe708138c32533b346ea4f69"
-    local_dir, num_hidden_layers, probe_layers = "muse-glimmer-30b", 52, (13, 26, 39)
-    # model card: temperature 1.0, top_p 0.95, top_k 64 (Qwen used top_k 20)
-    sampling = {"temperature": 1.0, "top_p": 0.95, "top_k": 64, "min_p": 0.0,
-                "presence_penalty": 0.0, "repeat_penalty": 1.0}
-
-    def template_path(self):
-        return MUSE_TEMPLATE_PATH
-
-    def render(self, messages, tools, add_generation_prompt=True, enable_thinking=True):
-        raise NotImplementedError("MuseFormat.render is not written yet (a separate piece of work)")
-
-    def parse_generation(self, text, tools):
-        raise NotImplementedError("MuseFormat.parse_generation is not written yet (a separate piece of work)")
-
-    def assistant_message(self, turn):
-        raise NotImplementedError("MuseFormat.assistant_message is not written yet (a separate piece of work)")
-
-    def expected_next_prefix(self, prompt, comp):
-        raise NotImplementedError("MuseFormat.expected_next_prefix is not written yet (a separate piece of work)")
-
-
-FORMATS = {"qwen3.6": QwenFormat, "qwen3.8-27b": Qwen38Format, "glm-5.3-flash": GLMFormat,
-           "muse-glimmer-30b": MuseFormat}
+FORMATS = {"qwen3.6": QwenFormat, "qwen3.8-27b": Qwen38Format}
 DEFAULT_FORMAT = "qwen3.6"
 
 
@@ -432,9 +265,6 @@ def get_format(name: str | None = None, **kw) -> ChatFormat:
     name = name or DEFAULT_FORMAT
     if name not in FORMATS:
         raise ValueError(f"unknown target model {name!r}; expected one of {sorted(FORMATS)}")
-    if name == "muse-glimmer-30b":     # the working format lives in muse_format.py (it imports this module: no top-level import here)
-        from evals.reward_hacking import muse_format
-        return muse_format.MuseFormat(**kw)
     return FORMATS[name](**kw)
 
 
@@ -619,7 +449,7 @@ class VLLMCompletionClient(CompletionClient):
                  model: str | None = None, stop_token_ids=QWEN_STOP_TOKEN_IDS, token_mode: str = "token_ids",
                  fmt: "ChatFormat | None" = None):
         super().__init__(url, timeout, retries)
-        if fmt is not None:          # the target model's own turn-end ids (GLM: <|endoftext|>/<|user|>/<|observation|>)
+        if fmt is not None:          # the target model's own turn-end ids
             stop_token_ids = fmt.stop_token_ids
         assert token_mode in ("token_ids", "logprobs")
         self.model = model

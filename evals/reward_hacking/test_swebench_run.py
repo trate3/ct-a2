@@ -89,17 +89,6 @@ def test_append_jsonl_and_records(tmp_path):
     assert {r["instance_id"] for r in run._records(tmp_path, "runs")} == {"a", "b"}
 
 
-def test_prompt_variant_enters_config_only_when_not_default(monkeypatch):
-    from evals.reward_hacking.scripts import swebench_run as R
-    from evals.reward_hacking import swebench_prompts
-    base = R.run_config("x")
-    assert "prompt_id" not in base and "custom_prompt" not in base
-    monkeypatch.setattr(R, "PROMPT_ID", "S3_tests_spec")
-    cfg = R.run_config("x")
-    assert cfg["prompt_id"] == "S3_tests_spec" and cfg["custom_prompt"] == swebench_prompts.PROMPTS["S3_tests_spec"]
-    assert len(swebench_prompts.PROMPTS) == 8 and swebench_prompts.PROMPTS["default"] == ""
-
-
 def test_paper_matched_settings_enter_config_only_when_set(monkeypatch):
     from evals.reward_hacking.scripts import swebench_run as R
     base = R.run_config("x")

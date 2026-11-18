@@ -10,7 +10,7 @@ residual stream *before* any final norm. Valid L is 1..num_hidden_layers-1 (HF's
 entry has the final norm applied, which a block hook cannot reproduce; it is refused rather
 than silently differing). Tests pin the equality with `output_hidden_states`.
 
-Alignment. The "predictive" convention of `evals/financial/extraction.py`: the state recorded
+Alignment. The "predictive" convention: the state recorded
 for a generated token is the state that *produced* it. With P = len(tokenize(prompt)) and
 generated ids g_0..g_{n-1}, token j sits at absolute position P+j and its state is the
 hidden state at position P+j-1 (the prompt's last token for j = 0). The state after the last
@@ -29,18 +29,6 @@ Channels of generated tokens (from token ids, not text): REASONING until and inc
 the generation starts in VISIBLE); TOOL_CALL from `<tool_call>` through `</tool_call>`
 inclusive; VISIBLE otherwise; END for the stop token (`<|im_end|>`), which the model did emit
 but which is not content. The default tap mask excludes END.
-
-Muse Glimmer 30B (ATEM wire format; `muse_marks`, `label_channels_atem`). A generation continues a prompt
-that ends with `<|start|>assistant` and is a run of segments ` to=RECIPIENT<|message|>BODY<|eom|>` ending
-with `<|eot|>`. The channel of a segment is set by its recipient: `self` = REASONING, `user` = VISIBLE, any
-other recipient (a tool name, possibly `name.function`) = TOOL_CALL. The same rule as for Qwen decides which
-marker tokens belong to a channel: a marker belongs to the channel it opens or closes (Qwen: `</think>`
-is REASONING, `<tool_call>` and `</tool_call>` are TOOL_CALL). So every token of a segment from its first
-token through its `<|eom|>` carries the segment's channel: `<|start|>assistant` of a later segment, the
-recipient text, `<|message|>`, the body, `<|eom|>`. Those header tokens are labelled once `<|message|>`
-(which ends the recipient) has been seen. The first segment's `<|start|>assistant` lies in the prompt and is
-not labelled, as Qwen's `<think>`. The final `<|eot|>` (the stop token) is END, whatever the channel.
-Labels are computed from token ids; the tokenizer only decodes the recipient text.
 
 Memory. Hooks capture only the requested layers; the prompt is prefilled in chunks
 (`chunk_tokens`) with a cache, logits are computed for one position only, and only the rows
@@ -70,9 +58,6 @@ LAYER_CONVENTION = ("hidden_states tuple index L (0 = embeddings, L = output of 
                     "pre final norm), captured by forward hook on layers[L-1]")
 ALIGNMENT = ("predictive: state of generated token j is hidden state at position P+j-1 "
              "(state that produced it), P = len(tokenize(prompt))")
-
-MUSE_TARGET = "muse-glimmer-30b"
-ATEM_START, ATEM_EOM, ATEM_EOT, ATEM_MESSAGE = "<|start|>", "<|eom|>", "<|eot|>", "<|message|>"
 
 IM_END = "<|im_end|>"
 THINK_OPEN, THINK_CLOSE = "<think>", "</think>"
@@ -110,8 +95,6 @@ def _marker_ids(tokenizer, end_ids: Sequence[int] | None = None) -> dict:
 
 def label_channels(prompt_ids: Sequence[int], gen_ids: Sequence[int], marks: dict[str, int]) -> np.ndarray:
     """Channel code per generated token (see module docstring)."""
-    if marks.get("format") == "atem":
-        return label_channels_atem(prompt_ids, gen_ids, marks)
     t_open, t_close = marks[THINK_OPEN], marks[THINK_CLOSE]
     state = VISIBLE
     for tid in reversed(prompt_ids):
@@ -141,118 +124,6 @@ def label_channels(prompt_ids: Sequence[int], gen_ids: Sequence[int], marks: dic
     return out
 
 
-# ---------------------------------------------------------------------------
-# Muse Glimmer (ATEM wire format) channel labelling
-
-def muse_marks(tokenizer, end_ids: Sequence[int] | None = None) -> dict:
-    """Channel marks for the ATEM format (see module docstring); pass as `marks` to `reconstruct`.
-
-    `end_ids` default to `<|eot|>` (the Muse stop token). The dict carries `"format": "atem"`, which makes
-    `label_channels` use `label_channels_atem`, and `"decode"`, used only to read the recipient text."""
-    out = {"format": "atem"}
-    for key, s in (("start", ATEM_START), ("eom", ATEM_EOM), ("eot", ATEM_EOT), ("message", ATEM_MESSAGE)):
-        ids = tokenizer.encode(s, add_special_tokens=False)
-        if len(ids) != 1:
-            raise ValueError(f"{s!r} is not a single token for this tokenizer: {ids} (Muse ATEM delimiter)")
-        out[key] = ids[0]
-    out["end"] = frozenset([out["eot"]] if end_ids is None else [int(t) for t in end_ids])
-    out["decode"] = lambda ids: tokenizer.decode(list(ids), skip_special_tokens=False)
-    return out
-
-
-def channel_marks(tokenizer, target_model: str | None = None, end_ids: Sequence[int] | None = None) -> dict | None:
-    """`marks` for `reconstruct` / `extract` of a target model: Muse -> `muse_marks`; anything else -> None
-    (the Qwen-style default, unchanged)."""
-    return muse_marks(tokenizer, end_ids) if target_model == MUSE_TARGET else None
-
-
-_RECIPIENT_RE = re.compile(r"^\s*(?:assistant)?\s*to=([^\s<]+)")
-
-
-def recipient_channel(header_text: str) -> int:
-    """Channel of a segment from the decoded header text (` to=self`, `assistant to=get_weather`, ...):
-    self -> REASONING, user -> VISIBLE, another recipient -> TOOL_CALL. A header with no readable recipient
-    (no `to=`, or cut off before it) is VISIBLE: plain assistant text."""
-    m = _RECIPIENT_RE.match(header_text)
-    if not m:
-        return VISIBLE
-    r = m.group(1)
-    return REASONING if r == "self" else VISIBLE if r == "user" else TOOL_CALL
-
-
-def _atem_initial_state(prompt_ids: Sequence[int], marks: dict):
-    """(`body_channel` or None, header ids so far) at the start of the generation.
-
-    Normally the prompt ends with `<|start|>assistant`: a header is open, with no recipient yet. If the prompt
-    ends inside an assistant segment (prefill continuation), the generation continues that body; if it ends
-    after an `<|eom|>`/`<|eot|>`, a new header starts."""
-    start, eom, eot, msg = marks["start"], marks["eom"], marks["eot"], marks["message"]
-    for i in range(len(prompt_ids) - 1, -1, -1):
-        if prompt_ids[i] != start:
-            continue
-        seg = list(prompt_ids[i + 1:])
-        if eom in seg or eot in seg or marks["end"].intersection(seg):
-            return None, []
-        if msg in seg:
-            k = seg.index(msg)
-            text = marks["decode"](seg[:k])
-            if text.lstrip().startswith("assistant"):
-                return recipient_channel(text), []
-            return None, []
-        return None, seg          # header still open (`assistant` and maybe part of the recipient)
-    return None, []
-
-
-def label_channels_atem(prompt_ids: Sequence[int], gen_ids: Sequence[int], marks: dict) -> np.ndarray:
-    """Channel code per generated token for the ATEM format (rules in the module docstring).
-
-    State machine over ids. In a header (from the segment's first token to `<|message|>`) tokens are collected
-    and, when `<|message|>` arrives, all of them plus `<|message|>` get the channel read from the decoded header.
-    In a body every token gets the segment's channel; `<|eom|>` (labelled with it) ends the segment and opens
-    a new header; a stop token is END. A `<|start|>` seen in a body opens a new header (no `<|eom|>` was
-    produced). A generation cut inside a body keeps the channel of that body; one cut inside a header labels
-    the header tokens from the recipient text read so far."""
-    start, eom, msg, end = marks["start"], marks["eom"], marks["message"], marks["end"]
-    decode = marks["decode"]
-    out = np.empty(len(gen_ids), dtype=np.int8)
-    body, header = _atem_initial_state(prompt_ids, marks)   # body: channel of the open body, else None
-    seg_start = 0                                            # index of the first generated token of the header
-    pending: list[int] = list(header)                        # header token ids (prompt-side ones included)
-
-    def header_channel() -> int:                             # `<|start|>` is a special token: leave it out
-        return recipient_channel(decode([t for t in pending if t != start]))
-
-    def flush(upto: int):                                    # header cut off before `<|message|>`
-        if upto > seg_start:
-            out[seg_start:upto] = header_channel()
-
-    for j, tid in enumerate(gen_ids):
-        tid = int(tid)
-        if tid in end:
-            if body is None:
-                flush(j)
-            out[j] = END
-            body, pending, seg_start = None, [], j + 1
-        elif body is not None:
-            if tid == start:                                 # new segment without `<|eom|>`
-                body, pending, seg_start = None, [tid], j
-                continue
-            out[j] = body
-            if tid == eom:
-                body, pending, seg_start = None, [], j + 1
-        elif tid == msg:
-            body = header_channel()
-            out[seg_start:j + 1] = body
-        else:
-            if tid == start and pending:                     # a header that never reached `<|message|>`
-                flush(j)
-                pending, seg_start = [], j
-            pending.append(tid)
-    if body is None:
-        flush(len(gen_ids))
-    return out
-
-
 def reconstruct(traj: tj.Trajectory, tokenizer, end_ids: Sequence[int] | None = None,
                 marks: dict | None = None) -> list[CallSeq]:
     """One CallSeq per MODEL_CALL event: tokenize(prompt) + the recorded generated ids.
@@ -261,8 +132,7 @@ def reconstruct(traj: tj.Trajectory, tokenizer, end_ids: Sequence[int] | None = 
     return_token_ids) take precedence over re-tokenizing the prompt string.
 
     `marks` (default: the Qwen-style markers of `_marker_ids`) lets a model with other channel delimiters
-    supply its own dict with the same keys as `_marker_ids` returns, or (Muse Glimmer) `muse_marks(tokenizer)`,
-    which switches `label_channels` to the ATEM labelling."""
+    supply its own dict with the same keys as `_marker_ids` returns."""
     marks = marks if marks is not None else _marker_ids(tokenizer, end_ids)
     calls = []
     for e in traj.of(tj.MODEL_CALL):
@@ -323,10 +193,10 @@ _NON_TEXT_PARTS = ("vision", "visual", "audio")
 
 
 def find_decoder_layers(model):
-    """The text decoder-block ModuleList (works for CausalLM and ConditionalGeneration wrappers).
+    """The text decoder-block ModuleList (works for CausalLM and ConditionalGeneration classes).
 
     A module named `layers` with exactly `num_hidden_layers` blocks. Anything under a vision/audio tower is
-    ignored, so a multimodal wrapper (Muse Glimmer: `model.language_model.layers` next to
+    ignored, so a multimodal model (`model.language_model.layers` next to
     `model.vision_tower.layers`) stays unambiguous even if the two stacks happened to have the same depth.
     """
     n = model.config.get_text_config().num_hidden_layers
@@ -367,8 +237,8 @@ class CallExtractor:
         self.chunk_tokens = int(chunk_tokens)
         # Every forward gets exactly `chunk_tokens` tokens: a short final chunk is padded with
         # `pad_id` AFTER the real tokens (a causal model's states at real positions cannot depend
-        # on them) and the padded outputs are dropped. On the cluster's datacenter GPU the fla/causal-conv1d kernels
-        # gave garbage for some chunk lengths (kernel_diag --per-call, 2026-10-16) while fixed-size
+        # on them) and the padded outputs are dropped. On one GPU type we used, the fla/causal-conv1d kernels
+        # gave garbage for some chunk lengths while fixed-size
         # chunks matched a single full forward. Padding pollutes the cache, so no cross-call reuse.
         self.pad_to_chunk = bool(pad_to_chunk)
         self.pad_id = int(pad_id)
@@ -512,7 +382,7 @@ def extract(model, tokenizer, traj: tj.Trajectory, layers: Sequence[int], *, sto
             calls: Sequence[CallSeq] | None = None, marks: dict | None = None) -> Extracted:
     """Predictive hidden states at `layers` for every generated token of every call.
 
-    `marks`: channel marks for `reconstruct` when `calls` is not given (None = Qwen default; Muse: `muse_marks`)."""
+    `marks`: channel marks for `reconstruct` when `calls` is not given (None = Qwen default)."""
     own = extractor is None
     ex = extractor or CallExtractor(model, layers, chunk_tokens=chunk_tokens)
     if calls is None:

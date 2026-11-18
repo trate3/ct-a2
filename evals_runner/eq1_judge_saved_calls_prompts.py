@@ -131,17 +131,18 @@ def unfitted_user(traj: tj.Trajectory, boundary: int, view: str, instruction: st
     return m._matched_assembler(view, instruction)(events)
 
 
-def load_world(stage2_list: pathlib.Path, histories: pathlib.Path, outputs: pathlib.Path, trajectories: pathlib.Path) -> dict:
-    """Checks every identity and returns the 24 representatives with their trajectory, output and history."""
-    sel = json.loads(stage2_list.read_text())
-    hist_bytes = histories.read_bytes()
+def check_inputs(stage2_list: pathlib.Path, histories: pathlib.Path, outputs: pathlib.Path):
+    """The stage-2 list, the histories it was made from and the saved A0 outputs: file hash, per-run prompt hashes and
+    output identities. Returns (selection, histories bytes, [(run, history, output)]); raises SystemExit on a mismatch."""
+    sel = json.loads(pathlib.Path(stage2_list).read_text())
+    hist_bytes = pathlib.Path(histories).read_bytes()
     if sel.get("histories_sha256") and sha256_bytes(hist_bytes) != sel["histories_sha256"]:
         raise SystemExit("the histories file differs from the one the stage-2 list was made from")
     hist = {h["history_id"]: h for h in json.loads(hist_bytes)["histories"]}
     outs = {}
     for r in read_jsonl(outputs):
         outs.setdefault(r["run_key"], r)       # the first record of a run key (outputs are written once per key)
-    reps = []
+    matched = []
     for run in sel["runs"]:
         h = hist[run["history_id"]]
         if h["prompt_sha256"] != run["prompt_sha256"]:
@@ -151,6 +152,15 @@ def load_world(stage2_list: pathlib.Path, histories: pathlib.Path, outputs: path
             raise SystemExit(f"no saved A0 output for run {run['history_id']} ({run['run_key'][:12]}); the main stage has not finished it")
         if out.get("prompt_sha256") != h["prompt_sha256"] or out.get("history_id") != h["history_id"]:
             raise SystemExit(f"the saved output of {run['history_id']} was generated for another prompt")
+        matched.append((run, h, out))
+    return sel, hist_bytes, matched
+
+
+def load_world(stage2_list: pathlib.Path, histories: pathlib.Path, outputs: pathlib.Path, trajectories: pathlib.Path) -> dict:
+    """Checks every identity and returns the 24 representatives with their trajectory, output and history."""
+    sel, hist_bytes, matched = check_inputs(stage2_list, histories, outputs)
+    reps = []
+    for run, h, out in matched:
         src = find_trajectory_file(trajectories, h["source_file"])
         if src is None:
             raise SystemExit(f"trajectory file {h['source_file']} not found under {trajectories}")

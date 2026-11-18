@@ -1,8 +1,7 @@
 """Mock program and taps for the basic (GPU-free) evaluation.
 
 These make the whole protocol runnable and the separation reproducible without any
-model. They are stand-ins for the phenomenon, NOT evidence of it -- the real
-behavior comes from evals/confidence (Gemma) and evals/financial (Apollo probe).
+model. They are stand-ins for the phenomenon, NOT evidence of it.
 The test *items* they run on are real TreeCut problems (labels drive the behavior).
 """
 

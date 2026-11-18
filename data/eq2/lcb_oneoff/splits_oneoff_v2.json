@@ -1,7 +1,7 @@
 {
  "salt": "certified-taps/eq2/splits-v2",
  "test_fraction": 0.2,
- "applies_to": "a32 LCB-oneoff",
+ "applies_to": "LCB-oneoff",
  "note": "task ids are shared with LCB-conflicting, whose split differs; do not evaluate conflicting-trained probes on oneoff tasks that were in conflicting train",
  "assignment": {
   "lcbhard_0": "test",

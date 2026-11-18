@@ -1,8 +1,7 @@
 # Trusted-workload container for a Confidential Space deployment.
 #
 # Runs `serve_session` behind the mock case's static-TreeCut environment as a
-# cheap, GPU-free rehearsal of the real attestation path (see tee/CONFIDENTIAL_SPACE.md).
-# A GPU-enabled image with model weights is not provided.
+# GPU-free run of the attestation path.
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -12,7 +11,6 @@ COPY util util
 COPY evals evals
 COPY evals_runner evals_runner
 COPY tee tee
-COPY figure4_prototype figure4_prototype
 
 RUN pip install --no-cache-dir -e ".[gcp]"
 

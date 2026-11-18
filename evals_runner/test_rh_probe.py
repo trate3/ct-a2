@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import pathlib
 import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -383,17 +384,9 @@ def test_artifact_digest_stable_across_runs_and_roundtrip(world, tmp_path):
 
 
 def test_registered_in_cli():
-    p = subprocess.run([str(ROOT / ".venv/bin/python"), "-m", "evals_runner", "rh-probe", "score", "--help"],
+    p = subprocess.run([sys.executable, "-m", "evals_runner", "rh-probe", "score", "--help"],
                        capture_output=True, text=True, cwd=ROOT)
     assert p.returncode == 0 and "--include-test" in p.stdout
-
-
-def test_probe_sbatch_is_cpu_only_and_valid():
-    path = ROOT / "deploy/second_machine/slurm/probe.sbatch"
-    subprocess.run(["bash", "-n", str(path)], check=True)
-    head = "\n".join(line for line in path.read_text().splitlines() if line.startswith("#SBATCH"))
-    assert "--gres" not in head and "--mem=128G" in head and "--cpus-per-task=32" in head
-    assert "rh-probe" in path.read_text()
 
 
 # ---- train-cv ----------------------------------------------------------------------------------

@@ -336,26 +336,21 @@ def test_combine_rows_hardware_and_notes(world, tmp_path):
     mf = main_file(world, tmp_path)
     stub = Stub(max_ctx=131072)
     _, d1 = run_judge(world, stub, tmp_path, name="gemma4-e4b", out="rtx/gemma4-e4b", main_file=mf)
-    _, d2 = run_judge(world, stub, tmp_path, name="gemma4-e4b", out="second_machine/gemma4-e4b", main_file=mf)
     stub.close()
-    for d, hw in ((d1, "RTX PRO 6000"), (d2, "second machine")):
-        s = json.loads((d / "summary.json").read_text())
-        s["hardware_label"] = hw
-        (d / "summary.json").write_text(json.dumps(s))
-    J.main(["--not-measured", "glm5.3-flash-nvfp4", "--out-dir", str(tmp_path / "rtx" / "glm5.3-flash-nvfp4"), "--reason", "weights do not fit the 96 GB card"])
+    s = json.loads((d1 / "summary.json").read_text())
+    s["hardware_label"] = "RTX PRO 6000"
+    (d1 / "summary.json").write_text(json.dumps(s))
     out = tmp_path / "table"
-    assert J.main(["--combine", str(tmp_path / "rtx"), str(tmp_path / "second_machine"), "--out", str(out)]) == 0
+    assert J.main(["--combine", str(tmp_path / "rtx"), "--out", str(out)]) == 0
     md = (out / "judge_table.md").read_text()
     lines = md.splitlines()
     assert lines[0].startswith("| Monitor | Monitor hardware (arrangement) | Config | With tap (s per call) | Tap = monitor time (s per call) |")
     assert "| gemma4-e4b | RTX PRO 6000 (agent and monitor on RTX PRO 6000, run one after the other) |" in md
-    assert "| gemma4-e4b | second machine (agent on RTX PRO 6000, monitor on second machine; two devices, run one after the other) |" in md
-    assert "not measured on this hardware" in md and "do not fit" in md and "not same-device or end-to-end" not in md.split("\n\n")[0]
-    assert "Model and tokenizer loading and any transfer of the saved output are not included" in md and "not a same-device or end-to-end wall-clock measurement" in md
+    assert "Model and tokenizer loading and any transfer of the saved output are not included" in md
     summ = json.loads((out / "judge_summary.json").read_text())
-    assert len(summ["rows"]) == 2 and summ["rows"][0]["with_tap"]["estimate"] > summ["rows"][0]["tap"]["estimate"] and len(summ["not_measured"]) == 1
+    assert len(summ["rows"]) == 1 and summ["rows"][0]["with_tap"]["estimate"] > summ["rows"][0]["tap"]["estimate"]
     tex = (out / "judge_table.tex").read_text()
-    assert r"\toprule" in tex and "second machine" in tex
+    assert r"\toprule" in tex and "RTX PRO 6000" in tex
 
 
 def test_weighted_estimate_and_bootstrap_are_task_clustered():

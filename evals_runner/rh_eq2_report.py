@@ -1,4 +1,4 @@
-"""Reward hacking EQ2 report: black-box (LLM monitor) vs white-box (probe) taps (the run plan sec 3, 4, 7).
+"""Reward hacking EQ2 report: black-box (LLM monitor) vs white-box (probe) taps.
 
     python -m evals_runner rh-eq2-report \
         --dev-rollouts <RESULTS_DIR>/dev --splits evals/reward_hacking/data/splits.json \
@@ -260,7 +260,7 @@ def _gate(c, min_pos, min_neg) -> dict:
 
 
 def statement(diff: dict, gate: dict, label_a: str, label_b: str) -> str:
-    """the run plan sec 7 rule: CI includes 0 and width < 0.20 -> 'no resolved advantage'; wider -> 'underpowered'."""
+    """Rule: CI includes 0 and width < 0.20 -> 'no resolved advantage'; wider -> 'underpowered'."""
     if not gate["met"]:
         return (f"no comparative statement (interpretability gate not met: {gate['have_pos_tasks']} positive-bearing "
                 f"/ {gate['have_neg_tasks']} negative-bearing tasks, need >= {gate['need_pos_tasks']} / "

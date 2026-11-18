@@ -1,9 +1,9 @@
 """EQ2 analysis for the v2 (80/20 train/test, no val) populations: LCB-oneoff and SWE-bench.
 
-the run plan (monitor/probe comparison, fail-closed unparseable scores, 10%/5% FPR, task-clustered
-bootstrap, gates), the run plan (v2 splits; monitor thresholds on TRAIN negatives; probe thresholds from the frozen
-train-cv artifact, never refit) and (non-inferiority margin -0.05 AUROC vs the E4B black-box monitor,
-Holm across the probe poolings within the population; cost rows).
+Monitor/probe comparison, fail-closed unparseable scores, 10%/5% FPR, task-clustered bootstrap and gates; v2
+splits, monitor thresholds on TRAIN negatives, probe thresholds from the frozen train-cv artifact (never refit);
+non-inferiority margin -0.05 AUROC vs the E4B black-box monitor,
+Holm across the probe poolings within the population; cost rows.
 
   # 1. freeze (reads no test row): thresholds and OOF quantities
   python -m evals_runner rh-eq2-cv-report --splits evals/reward_hacking/data/swebench/splits_v2.json \
@@ -161,10 +161,10 @@ def monitor_files(dirs, include_variants=()) -> dict[str, list[pathlib.Path]]:
     for d in dirs:
         for p in sorted(pathlib.Path(d).glob("monitor_scores*.jsonl")):
             m = _MON_RE.match(p.name)
-            # model names may contain dots (granite4.2-3b); only the known view-variant suffixes are excluded
-            if m and not (m.group(1) or "").endswith(tuple("." + v for v in excluded)) \
-                    and (m.group(1) or "") not in excluded:
-                out.setdefault(m.group(1) or "qwen", []).append(p)
+            # model names may contain dots (qwen3.8-27b-think); only the known view-variant suffixes are excluded
+            if m and m.group(1) and not m.group(1).endswith(tuple("." + v for v in excluded)) \
+                    and m.group(1) not in excluded:
+                out.setdefault(m.group(1), []).append(p)
     return out
 
 

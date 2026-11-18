@@ -1,13 +1,12 @@
 """Tests for evals/reward_hacking/trajectory.py: observation views, the labelled-
 submission endpoint rule, proposed-vs-executed divergence, and serialization.
 
-These are the semantics the handoff's "Verification priorities" #2, #4, #5 and the
-"Prediction timing and outcome leakage" / "Observation views" sections call out:
+Checked semantics:
 black-box views must exclude all private reasoning and all evaluator outcomes
 (including a past, already-available failed attempt's raw evaluation -- only its
 *feedback message* is legitimately visible history), `think` tool calls are
-externally visible, and proposed/executed actions must stay distinguishable so an
-EQ3 wrapper's modifications are detectable.
+externally visible, and proposed/executed actions must stay distinguishable so
+modifications by the control logic are detectable.
 """
 
 from __future__ import annotations

@@ -8,7 +8,7 @@
   "visible"
  ],
  "comparison": "score > threshold",
- "digest": "f8b7665966bfe77862e2b103d3ef24c4cf1c1b24956e7d89c4161f59baf899ea",
+ "digest": "7a26180804492bb332f5e03b889711551c6add840a9885fb286804f68ea2dadf",
  "ema_init": "first",
  "ema_scope": "call",
  "extra": {
@@ -282,7 +282,7 @@
   "pooling": "ema_max",
   "population": "primary",
   "seed": 0,
-  "selection": "P2 (preregistration section 6)",
+  "selection": "P2",
   "splits_sha256": "543afc46caeaa22c788189476de2d870750981519e792449556cd2d13be5b68d",
   "target_fpr": 0.1,
   "threshold_fpr10_length_matched": {

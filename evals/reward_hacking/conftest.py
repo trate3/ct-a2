@@ -42,12 +42,11 @@ def backend(request, monkeypatch):
 
 # tests marked with this run once per available backend, without taking a `sandbox` argument
 requires_sandbox = pytest.mark.usefixtures("backend")
-requires_docker = requires_sandbox       # historical name
 
 
 def _data(name: str) -> dict:
-    # Fixtures quoting dataset task text stay out of git (the HF dataset declares no
-    # license); regenerate them locally, see SANDBOX.md.
+    # Fixtures quoting dataset task text are built locally from the pinned dataset
+    # (the HF dataset declares no license).
     path = DATA / name
     if not path.exists():
         pytest.skip(f"{name} not present (uncommitted dataset-derived fixture)")
@@ -70,11 +69,11 @@ _DIRVIEW = "Here are the files and directories up to 2 levels deep in "
 
 
 def backend_normalize(text: str, backend: str) -> str:
-    """Blank out the ONLY outputs that legitimately differ under apptainer (SANDBOX.md, deviations 1, 4 and 7):
+    """Blank out the ONLY outputs that legitimately differ under apptainer (user, login-shell PATH, file listings):
     the user in `id`, the login-shell PATH, owner/group and the host-timezone mtime in `ls -l`, and
     `ls -l` directory sizes and `total` block counts, and the entry order of the text_editor
-    directory view (all depend on the host filesystem under the rollout copy: on the cluster's XFS
-    /scratch a directory is 41 bytes, `total 0`, and `find` returns a different readdir order).
+    directory view (all depend on the host filesystem under the rollout copy: on XFS a directory is
+    41 bytes, `total 0`, and `find` returns a different readdir order).
     Applied to both sides of a golden comparison; anything else must be byte-identical."""
     if backend != "apptainer" or not isinstance(text, str):
         return text
