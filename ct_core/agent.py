@@ -85,7 +85,7 @@ class Agent:
 
     @classmethod
     def model_only(cls, model: ProgramRunner) -> Agent:
-        """Construct the deliberate model-only case used by the mock and CoT evaluations."""
+        """Construct the deliberate model-only case used by the protocol demo."""
         return cls(model, ModelOnlyControl(), ToolManifest())
 
     def generate(self, x: str, capture_layers: list[int] | None = None) -> Generation:

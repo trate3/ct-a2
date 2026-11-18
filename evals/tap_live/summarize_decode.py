@@ -4,7 +4,7 @@
 
 Estimand: the mean paired relative overhead (A1 - A0) / A0 of the elapsed time of the timed region, over the selected
 history/depth set: for each history (a task at one depth) the relative overhead is averaged over its repeats, then averaged over
-histories (equal weight per history). The UNIT OF RESAMPLING IS THE TASK: the depths of one task come from one trajectory, so the
+histories (equal weight per history). The unit of resampling is the task: the depths of one task come from one trajectory, so the
 descriptive interval is a percentile bootstrap over tasks (2,000 draws with replacement, seed 0); each resampled task brings all
 its depths and repeats. The achieved 95 % half-width is given in percentage points of baseline elapsed time. When the interval
 contains zero the result is "unresolved at the achieved precision". Also reported: the absolute paired difference in

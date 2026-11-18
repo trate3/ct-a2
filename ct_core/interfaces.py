@@ -1,8 +1,8 @@
 """The seams the Certified Taps engine talks to.
 
 The certification path is written purely against these interfaces, so a program,
-a monitor (tap), or a test environment can be a mock, a real Gemma model, or an
-Apollo probe without the protocol code changing. Concrete implementations live in
+a monitor (tap), or a test environment can be swapped for another implementation
+without the protocol code changing. Concrete implementations live in
 `evals/` (purpose-specific) or `util/` (shared).
 """
 

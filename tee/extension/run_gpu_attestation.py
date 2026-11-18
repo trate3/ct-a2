@@ -1,15 +1,15 @@
-"""GPU-attestation diagnostic (policy required, split timings).
+"""GPU attestation run (policy required, split timings).
 
 GPU attestation of a software-held signing key.
 
   python run_gpu_attestation.py collect OUT_DIR --policy-file gpu_policy.json --policy-digest sha256:... \
          [--repetitions 10] [--key-cache cold|warm] [--local-check]
-  python run_gpu_attestation.py discover OUT_DIR       (no policy; output is marked NOT CERTIFIED; for freezing a policy only)
+  python run_gpu_attestation.py discover OUT_DIR       (no policy; output is marked not certified; used to freeze a policy)
   python run_gpu_attestation.py reverify OUT_DIR --policy-file ... --policy-digest ...   (offline, saved tokens and keys)
 
 `collect` records, per repetition: the outer attestation_fetch and attestation_verify wall times (network included) and the
 parts: local CC-state check, GPU evidence collection, NRAS POST, JWKS GET, local token verification (and, if asked, NVIDIA's
-local GPU check, timed apart). The summary reports medians and means of each part and of the per-repetition SUM of fetch and
+local GPU check, timed apart). The summary reports medians and means of each part and of the per-repetition sum of fetch and
 verify (not a sum of medians), and the key-cache policy. Needs the confidential GPU and network access to NVIDIA's attestation service.
 """
 

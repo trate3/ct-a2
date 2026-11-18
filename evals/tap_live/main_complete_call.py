@@ -1,6 +1,6 @@
 """Main complete-call table inputs: stage 1 (repeat 0) plus stage 2, one paired realization per position, never a selected faster or shorter one.
 
-  python -m evals.tap_live.main_complete_call --stage1 DIR --stage2 DIR --stage2-list stage2_list.json --out OUT_DIR
+  python -m evals.tap_live.main_complete_call --stage2 DIR --stage2-list stage2_list.json --out OUT_DIR [--stage1 DIR]
 
 Per position (30, each with the preselected weight 1 / 30 and its task): the A0 and A1 times of ONE paired realization, that of the position's prompt group
 representative (prompt-representative design): the stage-1 repeat-0 pair if both calls ended naturally, otherwise the stage-2 natural-completion pair (positions that
@@ -48,8 +48,8 @@ def weighted_estimates(items: list[dict]) -> dict:
     return out
 
 
-def build(stage1: Path, stage2: Path | None, sel: dict) -> dict:
-    s1 = {(r["history_id"], r["repeat"], r["arm"]): r for r in load(stage1 / "calls.jsonl")}
+def build(stage1: Path | None, stage2: Path | None, sel: dict) -> dict:
+    s1 = {(r["history_id"], r["repeat"], r["arm"]): r for r in load(stage1 / "calls.jsonl")} if stage1 else {}
     s2 = {(r["run_key"], r["arm"]): r for r in load(stage2 / "calls.jsonl")} if stage2 else {}
     rows, items, groups = [], [], {}
     for p in sel["positions"]:
@@ -86,7 +86,7 @@ def build(stage1: Path, stage2: Path | None, sel: dict) -> dict:
                            "positions keep their preselected weights; uncertainty resamples tasks, so reuse within a task is counted together and the 30 positions "
                            "are not 30 independent prompts"),
            "representative_seed_reuse_note": sel.get("representative_seed_reuse_note"),
-           "stage1": str(stage1), "stage2": str(stage2) if stage2 else None, "stage1_run_config_sha256": (sel.get("stage1") or {}).get("run_config_sha256"),
+           "stage1": str(stage1) if stage1 else None, "stage2": str(stage2) if stage2 else None, "stage1_run_config_sha256": (sel.get("stage1") or {}).get("run_config_sha256"),
            "stage2_rule_sha256": sel["rule_sha256"], "n_positions": len(rows), "n_valid_positions": len(valid_rows),
            "complete": len(valid_rows) == len(rows), "missing_positions": [r["history_id"] for r in rows if not r["valid"]],
            "distinct_prompts": len(groups), "unique_tasks": len({r["task"] for r in rows}),
@@ -188,7 +188,7 @@ def to_markdown(r: dict) -> str:
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--stage1", type=Path, required=True)
+    ap.add_argument("--stage1", type=Path, default=None, help="folder with stage-1 calls.jsonl, if a stage 1 was run")
     ap.add_argument("--stage2", type=Path, default=None)
     ap.add_argument("--stage2-list", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)

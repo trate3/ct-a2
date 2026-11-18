@@ -1,0 +1,8 @@
+{
+ "seconds_launch_to_health_ok": {
+  "gemma4-e4b": 65.062003374,
+  "gemma4-e4b-think": 65.067328691,
+  "qwen3.8-27b-4k": 40.043068171,
+  "qwen3.8-27b-think": 40.042318821
+ }
+}

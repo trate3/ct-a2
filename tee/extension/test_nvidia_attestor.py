@@ -1,4 +1,4 @@
-"""Tests for the GPU-attestation software signer and verifier. THESE ARE MOCK TESTS.
+"""Tests for the GPU-attestation software signer and verifier, run against a mock NRAS.
 
 No real GPU, NVIDIA SDK, or NRAS is used. A mock NRAS (a throwaway CA, an intermediate and an
 ES384 signing key made here) issues tokens shaped like NRAS's, and the evidence and CC-state

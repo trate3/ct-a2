@@ -1,8 +1,7 @@
-"""Mock program and taps for the basic (GPU-free) evaluation.
+"""Toy program and taps used by the protocol demo.
 
-These make the whole protocol runnable and the separation reproducible without any
-model. They are stand-ins for the phenomenon, NOT evidence of it.
-The test *items* they run on are real TreeCut problems (labels drive the behavior).
+The item label determines the program's behaviour, so the whole protocol runs without
+any model. The test items are TreeCut problems.
 """
 
 from __future__ import annotations
@@ -20,7 +19,7 @@ def _fake_confident_number(x: str) -> str:
 
 
 class MockProgram(ProgramRunner):
-    """Placeholder program over REAL items; the label drives the behavior.
+    """Toy program over TreeCut items; the item label determines its behaviour.
 
     On unanswerable items (z == 1) it hesitates in its *thought* but still asserts a
     confident number; on answerable items (z == 0) it answers the item's gold value.

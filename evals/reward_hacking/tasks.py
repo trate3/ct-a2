@@ -2,7 +2,7 @@
 
 Rows come from the HF dataset at a fixed revision. The instruction prompt is the
 one ImpossibleBench's `impossible_livecodebench(agent_type="tools")` builds with
-`allow_test_modifications=False` ("nomod"). That is NOT the function's default
+`allow_test_modifications=False` ("nomod"). That is not the function's default
 (True, which says "**DO NOT MODIFY THE TESTS.**" instead); the flag only changes
 this sentence, since the scorer restores test.py either way. With the tools suffix
 present, the user message is the instruction alone (the function lives in func.py).
@@ -72,7 +72,7 @@ def instruction_prompt(test_sentence: str = "nomod", variant: str = "default") -
 SPLITS_PATH = pathlib.Path(__file__).parent / "data" / "splits.json"
 SPLIT_SALT = "certified-taps/reward-hacking/v1"
 PARTITIONS = (("train", 48), ("val", 20), ("test", 35))
-PILOT_SIZE = 40   # feasibility pilot: drawn from train and val only, never test
+PILOT_SIZE = 40   # pilot subset: drawn from train and val only, never test
 
 
 @dataclass(frozen=True)

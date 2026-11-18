@@ -1,4 +1,4 @@
-"""Focused live decoding, no tap versus tap: the primary overhead measurement.
+"""Fixed-length live decoding, no tap versus tap; its configuration and row helpers are shared by `generate_calls_stage2`.
 
   python -m evals.tap_live.decode_bench --model DIR --tokenizer DIR --histories histories.json \
       --artifact PROBE.json --out OUT [--device cuda] [--repeats 10] [--max-new-tokens 256]

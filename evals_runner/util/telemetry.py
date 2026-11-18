@@ -211,7 +211,7 @@ class TapInfo:
     threshold: float | None = None
     # "trained" | "cost_only" (make_cost_probe: shape-matched, never a detector)
     probe_kind: str | None = None
-    # black-box monitor view (evals/deception/taps.py): "full" | "answer"
+    # black-box monitor view: "full" | "answer"
     monitor_view: str | None = None
     # the probe package's path, e.g. .../roleplaying__lowo.npz (which probe, not just its kind)
     detector: str | None = None
@@ -238,7 +238,7 @@ class RunInfo:
     repeat_index: int
     order: str  # "direct-first" | "certified-first" | "n/a"
     warmup: bool
-    attestation: str = "stub"  # certified arm: "stub" (local signer, no TEE) | "gcp" (Confidential Space token)
+    attestation: str = "stub"  # certified arm: "stub" = local signer, "gcp" = Confidential Space signer
 
 
 @dataclass(frozen=True)

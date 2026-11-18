@@ -1,9 +1,8 @@
 """Component microbenchmark of the Qwen mean-probe tap: what the tap itself executes per agent call.
 
-THIS IS A COMPONENT MICROBENCHMARK AT THE ACTUAL MAIN-CALL SHAPES, WITHOUT MODEL GENERATION. It is not a paired
-A0/A1 generation run, it does not measure added end-to-end latency, and it does not use the model: the decoder
-block's output is replaced by a stand-in bf16 tensor [1, 1, d] (values drawn from the probe's own mean/sigma), so
-nothing here depends on, or says anything about, how the real model's kernels overlap with the tap's work.
+It replays the tap's work at the main-call shapes without model generation: the decoder block's output is replaced
+by a stand-in bf16 tensor [1, 1, d] (values drawn from the probe's own mean/sigma). It measures the tap's own work per
+call, not end-to-end latency.
 
 What is replayed (no change to any tap code, `live_tap.LiveProbeTap` is used as it is):
   * the 24 distinct main-stage calls (stage-2 list, in the order the main stage ran them), each with the

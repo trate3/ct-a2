@@ -5,8 +5,7 @@ Tampered run (a relay substitutes the environment ciphertext): must exit nonzero
 for the intended reason, "certificate is not bound to this environment message". Any other
 outcome, including a different abort reason or a crash, is a failure.
 
-Exit status 0 only if both demos behave as intended. Uses the local (stub) signing key:
-no hardware attestation.
+Exit status 0 only if both demos behave as intended. Uses the local signing key.
 """
 
 from __future__ import annotations

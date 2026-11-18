@@ -3,7 +3,7 @@
     python -m evals_runner.eq1_judge_saved_calls --monitor gemma4-e4b --url http://127.0.0.1:8100 --out-dir OUT/gemma4-e4b \\
         --stage2-list stage2_list.json --histories histories.json --outputs generate_calls_stage2/outputs.jsonl \\
         --trajectories DIR --model-dir SNAPSHOT [--main-complete-call main_complete_call.json] [--server-log L --server-info I]
-    python -m evals_runner.eq1_judge_saved_calls --combine OUT [OUT ...] --out TABLE_DIR [--agent-hardware "RTX PRO 6000"]
+    python -m evals_runner.eq1_judge_saved_calls --combine OUT [OUT ...] --out TABLE_DIR [--agent-hardware NAME]
 
 What is measured. For each of the 24 prompt representatives of the focused live-generation sample the monitor reads the FULL available trace through the new
 response (the recorded trajectory up to the call, plus the saved A0 output of the main stage as the proposed action; built by
@@ -38,7 +38,7 @@ from evals_runner import eq1_monitor_panel as P
 from evals_runner import eq1_monitor_panel_retry as R
 
 DEFAULT_TIMEOUT = 7200.0
-AGENT_HARDWARE_DEFAULT = "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+AGENT_HARDWARE_DEFAULT = "agent GPU"
 NOTE_UNIT = ("One saved A0 output per distinct prompt (24 representatives of the 30 positions, each position weighted 1/30); the monitor reads the whole recorded "
              "trace through that response (transcript view; private reasoning only in a view that explicitly provides it) and its time, prefill and generation, is "
              "measured one request at a time under its registered settings.")
@@ -168,7 +168,7 @@ def summarize(config: dict, items: list[dict], plan: list[dict], rows: list[dict
 
 def hw_label(gpu_field: str | None) -> str:
     name = (gpu_field or "").split(",")[0].strip()
-    return "RTX PRO 6000" if "RTX PRO 6000" in name else (name or "unknown")
+    return name or "unknown"
 
 
 # ---------------------------------------------------------------------------------------------------------------------

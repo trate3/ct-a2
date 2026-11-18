@@ -1,6 +1,6 @@
 """An Agent commits three components (model + control-logic + tools), not just the model.
 
-GPU-free: a fake ProgramRunner stands in for the model, so these run in CI.
+Uses a fake ProgramRunner in place of the model.
 """
 
 from __future__ import annotations

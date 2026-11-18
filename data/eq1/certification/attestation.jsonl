@@ -1,0 +1,15 @@
+{"config": "probe", "attestation_fetch_s": 0.3237126950007223, "attestation_verify_s": 0.2188051019984414}
+{"config": "e4b", "attestation_fetch_s": 0.15622788399923593, "attestation_verify_s": 0.16747409899835475}
+{"config": "qwen", "attestation_fetch_s": 0.2524813099989842, "attestation_verify_s": 0.24556310499974643}
+{"config": "e4b", "attestation_fetch_s": 0.1541311270011647, "attestation_verify_s": 0.2392437360031181}
+{"config": "qwen", "attestation_fetch_s": 0.14974717999939458, "attestation_verify_s": 0.20815857200068422}
+{"config": "probe", "attestation_fetch_s": 0.1456785119989945, "attestation_verify_s": 0.1899524710024707}
+{"config": "qwen", "attestation_fetch_s": 0.14775243300027796, "attestation_verify_s": 0.19370775899733417}
+{"config": "probe", "attestation_fetch_s": 0.1416158499996527, "attestation_verify_s": 0.21303876299862168}
+{"config": "e4b", "attestation_fetch_s": 0.13912196900128038, "attestation_verify_s": 0.2058642720003263}
+{"config": "probe", "attestation_fetch_s": 0.15069109899923205, "attestation_verify_s": 0.25154196699804743}
+{"config": "e4b", "attestation_fetch_s": 0.14988648099824786, "attestation_verify_s": 0.18906475999756367}
+{"config": "qwen", "attestation_fetch_s": 0.14176296700316016, "attestation_verify_s": 0.21028935900176293}
+{"config": "e4b", "attestation_fetch_s": 0.15212850800162414, "attestation_verify_s": 0.21132230999864987}
+{"config": "qwen", "attestation_fetch_s": 0.41862410500107217, "attestation_verify_s": 0.21952805000182707}
+{"config": "probe", "attestation_fetch_s": 0.24086938700202154, "attestation_verify_s": 0.25007399400055874}

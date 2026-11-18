@@ -1,4 +1,4 @@
-"""Fixed, development-only sample of monitor requests for the EQ1 'monitor invocation cost' panel.
+"""Fixed sample of monitor requests built from recorded training-partition trajectories (EQ1 monitor request helpers).
 
     python -m evals_runner.eq1_monitor_panel_prompts --trajectories <RESULTS_DIR>/T1_train \\
         --out eq1_monitor_panel_prompts.json.gz [--manifest eq1_monitor_panel_manifest.json]

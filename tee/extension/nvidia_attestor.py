@@ -1,27 +1,22 @@
-"""A GPU-attestation diagnostic plus a software signature, for machines with no CPU attestation.
+"""GPU attestation with a software-held signing key.
 
-READ THIS FIRST. This is NOT an attested-workload signer and it is NOT a Confidential Space
-substitute. It sits behind the ``EnclaveSigner`` / ``AttestationVerifier`` interfaces only so the
-certify and verify code can run unchanged. What it does:
+Attests the GPU state with NVIDIA's attestation service and binds it to a software-held signing
+key. It does not attest the CPU side or the workload image.
+
+It implements the ``EnclaveSigner`` / ``AttestationVerifier`` interfaces so the certify and verify
+code runs unchanged:
 
 * ``GpuAttestedSoftwareSigner`` makes an ephemeral Ed25519 key in an ordinary process and asks an
   NVIDIA GPU for an attestation whose nonce is ``sha256(verify_key)``. NVIDIA's service (NRAS)
   evaluates the GPU evidence and returns a signed token. The signatures the key makes are ordinary
   software signatures.
-* ``GpuAttestationVerifier`` checks the NRAS token against a REQUIRED, preselected GPU-state policy
+* ``GpuAttestationVerifier`` checks the NRAS token against a required, preselected GPU-state policy
   and pins ``(verify_key, measurement)``. ``measurement()`` names the attested GPU state
-  (firmware, driver, hardware model, security flags). It is not a workload or image measurement.
+  (firmware, driver, hardware model, security flags), not a workload or image measurement.
 
 What is attested: one real NVIDIA GPU in confidential-compute mode ran NVIDIA-signed firmware and
 driver measurements that matched NVIDIA's reference values and were un-revoked, with secure boot on
 and debug off, and the report was freshly bound to the hash of this key.
-
-What is NOT attested: the CPU side (memory encryption, VM boot chain, host access), the Python
-code, the model files, the workload image, and the isolation of the signing key. A host that runs
-this signer can request genuine GPU evidence for a key hash of its own choosing and then sign any
-invented payload with that key; the GPU token would still verify. So a result signed this way is
-not an attested execution of the certification program. Nothing built on this pair may be called a
-workload-attested or fully certified result; run records say so (see ``attestation_record``).
 
 Trust model for the NRAS token. The trust anchor is HTTPS to the fixed official NRAS origin and the
 signing keys it publishes (JWKS). The certificate chain in a key entry is only checked for internal
@@ -33,14 +28,13 @@ Policy. A verifier cannot be built without an accepted-GPU policy (``GpuPolicy``
 of the specified fields (GPU count, hardware model, driver and VBIOS versions, secure boot, debug
 state, the required security claims). The policy is chosen before the run from verified claims
 and kept in a file with its hash. The only code that runs without a policy is
-``discover_gpu_state``, a distinctly named diagnostic whose output says it is not certified.
+``discover_gpu_state``, whose output is marked not certified.
 
-Every failure raises. There is no fallback to a stub, and a skipped check is never reported as a
+Every failure raises. There is no fallback to a local signer, and a skipped check is never reported as a
 pass. Import needs only the standard library and PyNaCl; the NVIDIA verifier package
 (``nv-local-gpu-verifier``) is imported only when evidence is collected, and PyJWT with
 ``cryptography`` (the ``gcp`` extra) only when a token is verified. The NVIDIA Python packages are
-past their end of support (2026-09-15); this is a historical research diagnostic, not maintained
-production code. The SDK's own ``Attestation`` wrapper swallows errors, so the nvtrust verifier
+past their end of support (2026-09-15). The SDK's own ``Attestation`` wrapper swallows errors, so the nvtrust verifier
 (``verifier.cc_admin``) is called directly.
 """
 
@@ -211,7 +205,7 @@ def fetch_nras_jwks(*, url: str = NRAS_JWKS_URL, timeout: float = 30.0) -> dict:
 
 
 class JwksCache:
-    """A warm key cache with provenance and expiry. Without one, every verification fetches (cold)."""
+    """Caches the NRAS signing keys, with provenance and expiry."""
 
     def __init__(self, ttl_seconds: float = 300.0) -> None:
         self.ttl_seconds = ttl_seconds
@@ -369,7 +363,7 @@ class GpuPolicy:
 class GpuAttestedSoftwareSigner(EnclaveSigner):
     """A software signer whose ephemeral key hash is the nonce of a real NVIDIA GPU attestation.
 
-    NOT an attested-workload signer (see the module docstring). The key lives in an ordinary
+    The key lives in an ordinary
     process's memory. ``sha256(verify_key)`` is the nonce of a GPU attestation report that NRAS turns
     into a signed token (``token()``). ``measurement()`` is the attested GPU state, not a workload.
 
@@ -611,9 +605,8 @@ class GpuAttestationVerifier(StubAttestationVerifier):
 
 
 def discover_gpu_state(token: str, verify_key: bytes, *, fetch_jwks=None, now: float | None = None) -> dict:
-    """DISCOVERY DIAGNOSTIC, NOT A VERIFIER. Runs every token check except the policy and reports what
-    state the token shows, so a policy can be frozen from a development run. The output is marked
-    not certified and must never be used to accept a final run."""
+    """Run every token check except the policy and report the state the token shows, so a policy
+    can be frozen from a development run. The output is marked not certified."""
     overall, gpus, _ = _verify_token(token, verify_key, fetch_jwks=fetch_jwks, jwks_cache=None, now=now)
     fields = policy_fields(gpus)
     return {"certified": False, "diagnostic": "discovery: no policy was applied; do not use to accept a run",
@@ -622,8 +615,7 @@ def discover_gpu_state(token: str, verify_key: bytes, *, fetch_jwks=None, now: f
 
 
 def attestation_record(verifier: GpuAttestationVerifier, signer: GpuAttestedSoftwareSigner | None = None) -> dict:
-    """What a run record says about this mode. It is a GPU attestation plus a software signature; it is
-    never a workload-attested or fully certified result."""
+    """What a run record says about this mode. It is a GPU attestation plus a software signature."""
     claims = verifier.verified_claims() or {"overall": {}, "gpus": {}}
     policy = verifier.policy()
     record = {

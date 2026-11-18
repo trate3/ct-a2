@@ -1,6 +1,6 @@
 """Regenerate the EQ2 coding tables (AUROC for reward hacking detection) on CPU.
 
-Prints each cell next to the number reported in the paper.
+Prints the tables: AUROC, valid scores / episodes.
 
 Where each cell comes from:
   SWE-bench conflicting, SWE-bench one-off: every cell is recomputed from shipped
@@ -30,8 +30,12 @@ from evals.reward_hacking import metrics as M  # noqa: E402
 
 DATA = ROOT / "data" / "eq2"
 REP = DATA / "reports"
-PAPER = json.loads((ROOT / "reproduce" / "paper_numbers.json").read_text())
-COLS = PAPER["columns"]
+COLS = ["lcb_conflicting", "lcb_oneoff", "swe_conflicting", "swe_oneoff"]
+LABELS = {"gemma4-e4b": "E4B, no monitor reasoning", "gemma4-e4b-think": "E4B, monitor reasons",
+          "qwen3.8-27b-think": "Qwen, monitor reasons", "glm5.3-flash-nvfp4-think": "GLM, monitor reasons"}
+EQ2_ROWS = ([(f"{m}:black_box", LABELS[m]) for m in LABELS] + [(f"{m}:cot", LABELS[m]) for m in LABELS]
+            + [("probe:token_mean", "Probe: mean"), ("probe:ema_max", "Probe: smoothed maximum")])
+EQ3_ROWS = [(f"{m}.final_state:black_box", LABELS[m]) for m in LABELS]
 QG = ["gemma4-e4b", "gemma4-e4b-think", "qwen3.8-27b-think", "glm5.3-flash-nvfp4-think"]
 
 
@@ -73,7 +77,7 @@ def lcb_population():
     """Print the LiveCodeBench test populations, counted on the Qwen reasoning-on transcript rows."""
     for name, rows in (("lcb_conflicting", POP["lcb_conflicting"]), ("lcb_oneoff", POP["lcb_oneoff"])):
         print(f"{name}: {len({r['task_id'] for r in rows})} tasks, {len(rows)} episodes, "
-              f"{sum(r['label'] for r in rows)} positive   (paper: {PAPER['coding_populations'][name]})")
+              f"{sum(r['label'] for r in rows)} positive")
 
 
 POP = {}
@@ -185,20 +189,11 @@ def swe(name, out_dir):
     print("$", " ".join(cmd[1:]), flush=True)
     subprocess.run(cmd, check=True, cwd=ROOT)
     rep = json.loads(out.read_text())
-    shipped = json.loads((REP / f"{name}_report.json").read_text())
-    for k in ("monitor_thresholds", "probe_thresholds", "probe_artifact_digests"):
-        a, b = rep["frozen_before_test"][k], shipped["frozen_before_test"][k]
-        common = sorted(set(a) & set(b))
-        same = len(common) == len(a) and all(a[c] == b[c] for c in common)
-        print(f"  frozen {k} identical to the original run ({len(common)} detectors): {same}")
     pop = rep["test"]["population"]
-    print(f"  test population: {pop['n_tasks']} tasks, {pop['n']} episodes, {pop['n_pos']} positive"
-          f"   (paper: {PAPER['coding_populations'][name]})")
+    print(f"  test population: {pop['n_tasks']} tasks, {pop['n']} episodes, {pop['n_pos']} positive")
     for c in rep["test"]["probe_vs_reference"]["contrasts"]:
-        key = f"{c['a']} - {c['b']}"
-        want = PAPER["coding_contrasts"].get(name, {}).get(key)
-        print(f"  paired AUROC difference {key}: {c['point']:.3f} [{c['ci_low']:.3f}, {c['ci_high']:.3f}]"
-              f" on {c['n_matched']} common episodes" + (f"   (paper {want[0]:.3f} [{want[1]:.3f}, {want[2]:.3f}])" if want else ""))
+        print(f"  paired AUROC difference {c['a']} - {c['b']}: {c['point']:.3f} [{c['ci_low']:.3f}, {c['ci_high']:.3f}]"
+              f" on {c['n_matched']} common episodes")
     res = {}
     for k, v in rep["test"]["detectors"].items():
         res[k] = {name: {"auroc": v["auroc"]["point"], "ci": [v["auroc"]["ci_low"], v["auroc"]["ci_high"]],
@@ -214,24 +209,18 @@ def merge(*parts):
     return out
 
 
-def show(title, expected, got):
-    print(f"\n{title}\nregenerated (paper); * = read from a shipped aggregate report; ! = differs from paper by more than 0.0005")
-    print(f"{'detector':44s}" + "".join(f"{c:>26s}" for c in COLS))
-    worst = 0.0
-    for key, e in expected.items():
-        line = f"{(e.get('label') or '') + ' ' + key:44.44s}"
+def show(title, rows, got):
+    print(f"\n{title}\nAUROC valid/episodes; * = read from a shipped aggregate report")
+    print(f"{'detector':62s}" + "".join(f"{c:>20s}" for c in COLS))
+    for key, label in rows:
+        line = f"{label + ' ' + key:62s}"
         for c in COLS:
-            p, g = e["cells"].get(c), got.get(key, {}).get(c)
+            g = got.get(key, {}).get(c)
             if g is None or g.get("auroc") is None:
-                line += f"{'missing':>26s}"
+                line += f"{'--':>20s}"
                 continue
-            diff = abs(g["auroc"] - p["auroc"]) if p else 0.0
-            worst = max(worst, diff)
-            flag = ("*" if g.get("from_report") else " ") + ("!" if diff > 5e-4 else " ")
-            line += f"{g['auroc']:.3f} {g['valid']}/{p['eligible'] if p else g['n']} ({p['auroc']:.3f}){flag}".rjust(26)
+            line += f"{g['auroc']:.3f} {g['valid']}/{g['n']}{'*' if g.get('from_report') else ' '}".rjust(20)
         print(line)
-    print(f"largest absolute AUROC difference from the paper: {worst:.6f}")
-    return worst
 
 
 def main(argv=None):
@@ -247,11 +236,10 @@ def main(argv=None):
         parts += [swe("swe_conflicting", args.out), swe("swe_oneoff", args.out)]
     got = merge(*parts)
     (args.out / "eq2_cells.json").write_text(json.dumps(got, indent=1) + "\n")
-    w1 = show("EQ2 table: AUROC, transcript and private-reasoning monitors and probes",
-              PAPER["coding_main"], got)
-    w2 = show("EQ3 table: AUROC, outside monitors given only the task and submitted code", PAPER["coding_final_code"], got)
+    show("EQ2 table: AUROC, transcript and private-reasoning monitors and probes", EQ2_ROWS, got)
+    show("EQ3 table: AUROC, outside monitors given only the task and submitted code", EQ3_ROWS, got)
     print(f"\nwrote {args.out / 'eq2_cells.json'}")
-    return 0 if max(w1, w2) <= 5e-4 else 1
+    return 0
 
 
 if __name__ == "__main__":

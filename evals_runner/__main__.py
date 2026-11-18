@@ -18,8 +18,6 @@ def main() -> int:
          "Reward hacking: complete agent rollouts on Impossible-LiveCodeBench (resumable)"),
         ("rh-monitor", "rh_monitor",
          "Reward hacking: matched black-box and CoT monitor scores for finished rollouts"),
-        ("rh-eq2-report", "rh_eq2_report",
-         "Reward hacking EQ2: black-box vs white-box taps, paired contrasts, early detection"),
         ("rh-eq2-cv-report", "rh_eq2_cv_report",
          "Reward hacking EQ2: split monitors vs train-cv probes, non-inferiority, cost"),
         ("rh-t1-eq2-report", "rh_t1_eq2_report",

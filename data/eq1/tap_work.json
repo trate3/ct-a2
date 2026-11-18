@@ -1,0 +1,25 @@
+{
+ "unit": "ms per call, weighted over the 30 positions, 95% task-bootstrap interval",
+ "tap_work_ms": {
+  "estimate": 84.74379019251865,
+  "ci95": [
+   16.606366684783534,
+   177.68362565152103
+  ]
+ },
+ "hook_calls_ms": {
+  "estimate": 83.36496182147737,
+  "ci95": [
+   16.10302896263764,
+   175.18339983966482
+  ]
+ },
+ "end_of_call_scoring_ms": {
+  "estimate": 0.7853652346311719,
+  "ci95": [
+   0.33885781019963973,
+   1.4018911022837073
+  ]
+ },
+ "weighted_mean_generated_tokens": 7949.966666666666
+}

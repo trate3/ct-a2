@@ -25,7 +25,7 @@ EARLIER MODE `representative` (capped-only reruns; kept behind --mode), a disclo
 `representative_seed_reuse` marks a position that reuses its group's representative seed (and pair). It never denotes a mismatch between A0 and A1,
 or between the timed generation and the output that a monitor will judge: both come from the same representative A0 call.
 
-SENSITIVITY MODE `position_seed` (NOT primary): every position keeps its own seed and its own repeat-0 pair; positions with the same (prompt sha256, seed)
+Sensitivity mode `position_seed` (not primary): every position keeps its own seed and its own repeat-0 pair; positions with the same (prompt sha256, seed)
 share one run; a position needs stage 2 iff its own repeat-0 A0 or A1 call hit the cap or failed.
 
 The output prints the number of distinct prompts, the number of representatives to rerun and an expected token total (see `expected_tokens`).
@@ -284,7 +284,7 @@ def main(argv=None) -> None:
     ap.add_argument("--consistency-out", type=Path, default=None, help="default mode: write the stage-1 consistency info (separate from the list)")
     ap.add_argument("--mode", choices=("all_representatives", "representative", "position_seed"), default="all_representatives",
                     help="all_representatives: the main stage (default); representative: capped-only reruns (earlier); position_seed: every position keeps its own seed "
-                         "(sensitivity, NOT primary)")
+                         "(sensitivity, not primary)")
     ap.add_argument("--recorded-lengths", type=Path, default=None, help="optional JSON {history_id: tokens of the originally recorded call} for the token estimate")
     ap.add_argument("--tok-per-s", type=float, default=24.4)
     a = ap.parse_args(argv)

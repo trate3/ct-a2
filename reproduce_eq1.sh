@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
-# EQ1: time for the phases of certified-tap evaluation (the paper's EQ1 table).
+# EQ1: time for the phases of certified-tap evaluation.
 #
-#   bash reproduce_eq1.sh            CPU: recompute every cell of the table from the shipped raw export (seconds)
-#   bash reproduce_eq1.sh gpu-plan   print the full GPU re-run commands (nothing is executed)
-#   bash reproduce_eq1.sh gpu        run the live generation (needs one 96 GB GPU and the Qwen3.8-27B weights)
+#   bash reproduce_eq1.sh            CPU: recompute the EQ1 rows from the numeric records in data/eq1 and print them (seconds)
+#   bash reproduce_eq1.sh gpu-plan   print the GPU re-run commands (nothing is executed)
+#   bash reproduce_eq1.sh gpu        run the live generation (needs the Qwen3.8-27B weights and about 80 GiB of GPU memory)
 #
 # What the GPU path measures: one generation per distinct prompt (24) without the tap (A0) and with the mean probe (A1),
 # same seed, natural stop, single sequence, Transformers BF16, the probe scoring at the call boundary inside the timer.
-# Software: torch 2.15.0+cu132, transformers 5.23.0, Python 3.12. Generation takes about 2 GPU-hours (48 calls), plus loading.
+# Software: torch 2.15.0+cu132, transformers 5.23.0, Python 3.12.
 # Monitor rows: each monitor judges the 24 saved A0 responses through a vLLM 0.31.0 server, one request at a time.
-# The isolated tap execution time (Tap cell) comes from a separate CPU/GPU microbenchmark without the model:
-#   python -m evals.tap_live.profile_components --stage2-list ... --calls ... --artifact ... --out DIR  (GPU, about 8 minutes)
 set -euo pipefail
 cd "$(dirname "$0")"
 PY="${PYTHON:-python3}"
@@ -18,52 +16,43 @@ export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}" PYTHONDONTWRITEBYTECODE=1
 
 QWEN_REPO=Qwen/Qwen3.8-27B
 QWEN_REV=1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0
+E4B_REPO=google/gemma-4-E4B-it
+E4B_REV=ee0ef6023621cff504d758262d4e04895a5af4a2
 OUT="${OUT:-results_regenerated/eq1_gpu}"
 D=data/eq1
 
 plan() {
 cat <<EOF
-# 0. Weights (about 51 GiB in BF16). Set MODEL_DIR to the snapshot directory.
+# 0. Weights (about 51 GiB in BF16 for Qwen3.8-27B). Set MODEL_DIR and E4B_DIR to the snapshot directories.
 huggingface-cli download $QWEN_REPO --revision $QWEN_REV
+huggingface-cli download $E4B_REPO --revision $E4B_REV
 # 1. Selection (CPU; its outputs are in data/eq1). Rebuilding the histories needs recorded development trajectories
 #    (python -m evals_runner rh-rollouts):
 #    $PY -m evals.tap_live.select_tasks --out tasks.json
 #    $PY -m evals.tap_live.select_histories --trajectories TRAJ_DIR --tokenizer \$MODEL_DIR --out histories.json
 #    $PY -m evals.tap_live.select_stage2 --histories histories.json --out stage2_list.json
-# 2. Live generation, both arms, natural stop, 240,000-token context ceiling (GPU, about 2 hours):
-$PY -m evals.tap_live.generate_calls_stage2 --model \$MODEL_DIR --tokenizer \$MODEL_DIR --model-revision $QWEN_REV \\
-    --histories $D/histories.json --artifact $D/probe/tap_p2_logistic_mean.json \\
-    --stage2-list $D/generation/stage2_list.json --out $OUT/generate_calls_stage2 --device cuda --dtype bfloat16
-# 3. Summary of the new run (CPU):
-$PY -m evals.tap_live.main_complete_call --stage1 $OUT/generate_calls_stage2 --stage2 $OUT/generate_calls_stage2 \\
-    --stage2-list $D/generation/stage2_list.json --out $OUT/main_complete_call
-# 4. Monitor judging of the saved A0 responses (GPU, vLLM 0.31.0; see the header of the script for its settings):
-JUDGE_OUT=$OUT/judges JUDGE_STAGE2=$D/generation/stage2_list.json JUDGE_HISTORIES=$D/histories.json \\
-JUDGE_OUTPUTS=$OUT/generate_calls_stage2/outputs.jsonl JUDGE_TRAJ=TRAJ_DIR \\
-    bash evals_runner/eq1_judge_saved_calls_run.sh run gemma4-e4b gemma4-e4b-think qwen3.8-27b-4k qwen3.8-27b-think
-# 5. Point reproduce/eq1_table.py at the new directories (edit GEN and MONITORS at its top) and run it.
+# 2. Main stage: live generation, both arms, natural stop, 240,000-token context ceiling, then the weighted means (GPU):
+OUT=$OUT MODEL_DIR=\$MODEL_DIR bash reproduce/eq1_gpu.sh main
+# 3. Monitor judging of the saved A0 responses (GPU, vLLM 0.31.0; settings in evals_runner/eq1_judge_saved_calls_run.sh):
+OUT=$OUT JUDGE_TRAJ=TRAJ_DIR bash reproduce/eq1_gpu.sh monitors
+# 4. Certification sessions with GPU attestation under the GPU policy (GPU in confidential-compute mode):
+OUT=$OUT MODEL_DIR=\$MODEL_DIR E4B_DIR=\$E4B_DIR EQ1_GPU_POLICY_DIGEST=sha256:... bash reproduce/eq1_gpu.sh certification
+# 5. Isolated tap work per call at the new run's call lengths (GPU, no model):
+OUT=$OUT bash reproduce/eq1_gpu.sh tap-work
+# 6. Table builder: checks the outputs, writes them like data/eq1 to $OUT/table and prints the table (CPU):
+OUT=$OUT bash reproduce/eq1_gpu.sh table
 EOF
 }
 
 case "${1:-cpu}" in
   cpu)
-    echo "== EQ1: recompute the phase table from the shipped export (paper values from reproduce/paper_numbers.json)"
-    "$PY" reproduce/eq1_table.py --out results_regenerated/eq1
-    echo "== The run's own summary code on the same export (probe row only)"
-    "$PY" -m evals.tap_live.main_complete_call --stage1 "$D/generation/generate_calls_stage2" \
-      --stage2 "$D/generation/generate_calls_stage2" --stage2-list "$D/generation/stage2_list.json" \
-      --out results_regenerated/eq1/main_complete_call > /dev/null
-    "$PY" -c "import json; p=json.load(open('results_regenerated/eq1/main_complete_call/main_complete_call.json'))['primary']; print('  no tap %.6f s, with probe %.6f s, paired difference %.6f ms %s' % (p['no_tap_mean_s_per_call']['estimate'], p['with_probe_mean_s_per_call']['estimate'], p['paired_difference_ms_per_call']['estimate'], [round(x, 6) for x in p['paired_difference_ms_per_call']['ci95']]))"
+    "$PY" reproduce/eq1_table.py
     ;;
   gpu-plan) plan ;;
   gpu)
     : "${MODEL_DIR:?set MODEL_DIR to the Qwen3.8-27B snapshot at revision $QWEN_REV}"
-    "$PY" -m evals.tap_live.generate_calls_stage2 --model "$MODEL_DIR" --tokenizer "$MODEL_DIR" --model-revision "$QWEN_REV" \
-      --histories "$D/histories.json" --artifact "$D/probe/tap_p2_logistic_mean.json" \
-      --stage2-list "$D/generation/stage2_list.json" --out "$OUT/generate_calls_stage2" --device cuda --dtype bfloat16
-    "$PY" -m evals.tap_live.main_complete_call --stage1 "$OUT/generate_calls_stage2" --stage2 "$OUT/generate_calls_stage2" \
-      --stage2-list "$D/generation/stage2_list.json" --out "$OUT/main_complete_call"
-    echo "Generation done. Run the monitor step printed by 'bash reproduce_eq1.sh gpu-plan' (step 4) on a GPU with vLLM."
+    OUT="$OUT" MODEL_REVISION="$QWEN_REV" bash reproduce/eq1_gpu.sh main
+    echo "Generation done. Run steps 3 to 6 printed by 'bash reproduce_eq1.sh gpu-plan' on a GPU."
     ;;
   *) echo "usage: bash reproduce_eq1.sh [cpu|gpu-plan|gpu]"; exit 2 ;;
 esac

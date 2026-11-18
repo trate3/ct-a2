@@ -103,20 +103,6 @@ def test_scan_and_score_use_the_labelled_submission_cutoff_for_both_classes(tmp_
     assert RP.score_rollout(art, by_id["negative"])["n_scored"] == 4
 
 
-def test_dom_validation_grid_uses_the_same_terminal_cutoff(tmp_path):
-    ex = act.Extracted(np.array([0, 0, 1, 1], np.int32), np.arange(4, dtype=np.int32),
-                       np.zeros(4, np.int32), np.full(4, act.REASONING, np.int8),
-                       {LAYERS[0]: np.array([[2] + [0] * (D - 1), [2] + [0] * (D - 1),
-                                             [100] + [0] * (D - 1), [100] + [0] * (D - 1)], np.float32)}, {})
-    path = tmp_path / "val.npz"
-    act.save_extracted(path, ex)
-    sample = P.RolloutSample("val", "task", 1, "val", 1, str(path))
-    art = T.TapArtifact(layer=LAYERS[0], w=np.r_[1.0, np.zeros(D - 1)], b=0.0, mu=None, sigma=None,
-                        alpha=1.0, threshold=0.0)
-    scores = RP._val_S_grid([sample], {(LAYERS[0], 1.0): art}, workers=1)
-    assert scores[(LAYERS[0], 1.0)] == pytest.approx([2.0])
-
-
 def make_ex(rng, label, signal_dirs, n=120, calls=4, strength=4.0):
     h = {}
     for L in LAYERS:
@@ -131,7 +117,7 @@ def make_ex(rng, label, signal_dirs, n=120, calls=4, strength=4.0):
 
 
 class World:
-    """tmp dirs: acts/, traj/, splits.json, dom fit dir."""
+    """tmp dirs: acts/, traj/, splits.json."""
 
     def __init__(self, tmp, specs, signal_dirs, seed=0):
         """specs: list of (rollout_id, task, partition, label, has_acts)."""
@@ -146,19 +132,6 @@ class World:
                 act.save_extracted(self.acts / f"{rid}.npz", make_ex(rng, label, signal_dirs))
         self.splits = tmp / "splits.json"
         self.splits.write_text(json.dumps({"assignment": assign}))
-        self.fit = tmp / "fit"
-        self.fit.mkdir()
-
-    def write_dom(self, dirs, holdout_auroc):
-        rep = {"layers": {}}
-        for L in LAYERS:
-            w = dirs[L]
-            art = T.TapArtifact(layer=L, w=w, b=0.0, mu=np.zeros(D), sigma=np.ones(D), alpha=0.05, threshold=0.0,
-                                channels=("tool_call", "visible"), method="dom")
-            art.save(self.fit / f"tap_dom_L{L}.json")
-            np.savez(self.fit / f"dom_L{L}.npz", w=w, b=np.float64(0.0), mu=np.zeros(D), sigma=np.ones(D))
-            rep["layers"][str(L)] = {"holdout": {"auroc_S_alpha0.05": holdout_auroc[L], "auroc_mean_score": holdout_auroc[L]}}
-        (self.fit / "dom_fit.json").write_text(json.dumps(rep))
 
     def args(self, *extra):
         return ["--acts", str(self.acts), "--rollouts", str(self.traj), "--splits", str(self.splits), *extra]
@@ -181,67 +154,10 @@ def run(argv):
     return RP.main(argv)
 
 
-@pytest.fixture
-def world(tmp_path):
-    w = World(tmp_path, specs_for(), {2: U, 3: U})
-    w.write_dom({2: U, 3: U}, {2: 0.6, 3: 0.9})
-    return w
-
-
-# ---- P1 -------------------------------------------------------------------------------------------------------
-
-def test_select_dom_picks_best_val_auroc_and_calibrates_on_val_negatives(tmp_path):
-    w = World(tmp_path, specs_for(), {2: V, 3: U})        # only layer 3 carries the signal at U
-    w.write_dom({2: U, 3: U}, {2: 0.9, 3: 0.5})           # held-out pair AUROC would prefer layer 2 (must not be used)
-    out = tmp_path / "p1"
-    assert run(["select-dom", "--fit", str(w.fit), "--layers", "2", "3", *w.args("--out", str(out))]) == 0
-    rep = json.loads((out / "select_p1_report.json").read_text())
-    art = T.TapArtifact.load(out / "tap_p1_dom.json")
-    assert rep["rule"] == "val_auroc_of_S" and rep["chosen"]["layer"] == 3 and art.layer == 3
-    assert len(rep["grid"]) == 2 * 4
-    aucs = {(g["layer"], g["alpha"]): g["val_auroc"] for g in rep["grid"]}
-    assert max(aucs.values()) == aucs[(3, rep["chosen"]["alpha"])] and aucs[(3, rep["chosen"]["alpha"])] > aucs[(2, 0.02)]
-    assert art.channels == ("reasoning", "tool_call", "visible") and art.ema_init == "first"
-    assert art.digest == rep["digest"]
-    # threshold = threshold_at_fpr on val NEGATIVES' S only (recomputed independently)
-    neg = []
-    for rid in [r for r in (p.stem for p in w.traj.glob("*.json")) if r.startswith(("vn", "vm"))]:
-        neg.append(T.score_extracted(art, act.load_extracted(w.acts / f"{rid}.npz")).S)
-    assert art.threshold == metrics.threshold_at_fpr(neg, 0.10) == rep["threshold_fpr10"]
-    assert rep["threshold_fpr5"] == metrics.threshold_at_fpr(neg, 0.05)
-    assert art.extra["target_fpr"] == 0.10 and art.extra["dom_fit_sha256"]
-
-
-def test_select_dom_ties_keep_earlier_grid_entry(world, tmp_path):
-    out = tmp_path / "p1"
-    # both layers use the same perfectly separating direction and alpha barely matters: AUROC ties at 1.0
-    run(["select-dom", "--fit", str(world.fit), "--layers", "2", "3", "--alphas", "1.0", "0.2",
-         *world.args("--out", str(out))])
-    rep = json.loads((out / "select_p1_report.json").read_text())
-    top = max(g["val_auroc"] for g in rep["grid"])
-    first = next(g for g in rep["grid"] if g["val_auroc"] == top)
-    assert rep["chosen"] == {"layer": first["layer"], "alpha": first["alpha"]}
-
-
-def test_select_dom_fallback_when_few_positive_tasks(tmp_path):
-    w = World(tmp_path, specs_for(n_val_pos_tasks=3), {2: U, 3: V})   # val AUROC would favour layer 2
-    w.write_dom({2: U, 3: U}, {2: 0.55, 3: 0.95})
-    out = tmp_path / "p1"
-    run(["select-dom", "--fit", str(w.fit), "--layers", "2", "3", *w.args("--out", str(out))])
-    rep = json.loads((out / "select_p1_report.json").read_text())
-    assert rep["rule"].startswith("fallback") and rep["n_val_pos_tasks"] == 3
-    assert rep["chosen"] == {"layer": 3, "alpha": 0.05}
-    art = T.TapArtifact.load(out / "tap_p1_dom.json")
-    assert (art.layer, art.alpha) == (3, 0.05)
-    # the threshold is still calibrated on val negatives
-    assert art.threshold == rep["threshold_fpr10"]
-
-
-def test_select_and_train_refuse_test_rollouts_before_reading_activations(tmp_path):
+def test_train_refuses_test_rollouts_before_reading_activations(tmp_path):
     w = World(tmp_path, specs_for(with_test=True), {2: U, 3: U})
-    w.write_dom({2: U, 3: U}, {2: 0.6, 3: 0.9})
     (w.acts / "tr0.npz").write_bytes(b"corrupt")          # would fail if read before the guard
-    for argv in (["select-dom", "--fit", str(w.fit), "--layers", "2", "3"], ["train-logistic", "--layers", "2"]):
+    for argv in (["train-logistic", "--layers", "2"],):
         out = tmp_path / ("o_" + argv[0])
         with pytest.raises(SystemExit) as e:
             run([*argv, *w.args("--out", str(out))])
@@ -370,17 +286,6 @@ def test_score_refuses_file_from_another_artifact(tmp_path):
     a2.save(p2)
     with pytest.raises(SystemExit):
         run(["score", "--artifact", str(p2), *w.args("--out", str(out))])
-
-
-def test_artifact_digest_stable_across_runs_and_roundtrip(world, tmp_path):
-    d = []
-    for i in range(2):
-        out = tmp_path / f"p1_{i}"
-        run(["select-dom", "--fit", str(world.fit), "--layers", "2", "3", *world.args("--out", str(out))])
-        d.append(T.TapArtifact.load(out / "tap_p1_dom.json").digest)
-    assert d[0] == d[1]
-    a = T.TapArtifact.load(tmp_path / "p1_0" / "tap_p1_dom.json")
-    assert T.TapArtifact.from_json(a.to_json()).digest == a.digest
 
 
 def test_registered_in_cli():

@@ -12,7 +12,7 @@ representative (task, call index c) the monitor reads the FULL available trace t
     reasoning, visible text and tool calls; reasoning -> a REASONING event, visible text -> an ASSISTANT event, each tool call -> a TOOL_PROPOSED event (a malformed
     call keeps its parse error). Nothing after the call is shown (no tool result, no evaluation).
 Views and fitting are the detector's: `monitors.build_prompt_fitted`'s path (`_fit` with the matched assembler) with `actions="proposed"` and an explicit boundary
-at the new call. The primary view is the history black-box transcript (private reasoning is NOT in it); the history-with-reasoning view is the only one that
+at the new call. The primary view is the history black-box transcript (private reasoning is not in it); the history-with-reasoning view is the only one that
 shows the reasoning. Instruction: the per-call decision-point instruction `EARLY_INSTRUCTION` (what `run_monitor_per_call` uses for a prefix that ends at a
 decision point) by default; `--instruction terminal` selects the terminal `INSTRUCTION`; the choice and its sha256 are recorded.
 

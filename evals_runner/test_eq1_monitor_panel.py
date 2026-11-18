@@ -91,7 +91,7 @@ def test_prompt_script_writes_gz_in_throughput_format_and_manifest(tmp_path):
     assert prompts.main(["--trajectories", str(root), "--splits", str(splits), "--n", "3", "--out", str(out)]) == 0
     items = json.loads(gzip.decompress(out.read_bytes()))["items"]
     man = json.loads((tmp_path / "p.manifest.json").read_text())
-    for it in items:   # the fields eq2_rtx_throughput reads
+    for it in items:   # the fields the throughput summary reads
         assert {"rollout_id", "view", "input", "user", "user_sha256", "label"} <= set(it)
     assert man["labels_read"] is False and man["task_ids"] == ["lcbhard_0", "lcbhard_1", "lcbhard_2"] and man["n_tasks"] == 3
     assert [i["user_sha256"] for i in man["items"]] == [i["user_sha256"] for i in items]

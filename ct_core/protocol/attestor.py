@@ -28,7 +28,7 @@ _MEASURE_GLOB = "*.py"
 
 
 def _workload_measurement() -> str:
-    """Local MRENCLAVE analog: a deterministic hash of the trusted package."""
+    """Measurement used by the local signer: SHA-256 over the ct_core sources."""
     digest = hashlib.sha256()
     for path in sorted(_PACKAGE_ROOT.rglob(_MEASURE_GLOB)):
         relative = path.relative_to(_PACKAGE_ROOT).as_posix().encode()
@@ -41,7 +41,7 @@ def _workload_measurement() -> str:
 
 
 def _create_signing_key() -> SigningKey:
-    """Manufacturer-side setup for the local hardware-key stand-in."""
+    """Setup for the local signing key."""
     _KEY_DIR.mkdir(exist_ok=True)
     if not _SEED_PATH.exists():
         temporary = _KEY_DIR / f".seed.tmp.{os.getpid()}.{secrets.token_hex(4)}"
@@ -96,7 +96,7 @@ class AttestationVerifier:
 
 
 class StubEnclaveSigner(EnclaveSigner):
-    """Local enclave stand-in; it cannot create or update the public trust anchor."""
+    """Local signer; it cannot create or update the public trust anchor."""
 
     def __init__(self, signing_key: SigningKey | None = None) -> None:
         self._signing_key = signing_key or SigningKey(_SEED_PATH.read_bytes())
@@ -153,9 +153,7 @@ def _teeserver_request_token(nonce: bytes, *, audience: str, token_type: str,
 
     SOURCE (request shape: `audience`/`nonces`/`token_type`; nonce 8-88 bytes) --
     https://docs.cloud.google.com/confidential-computing/confidential-space/docs/connect-external-resources
-    Only reachable from inside a running Confidential Space container; not
-    exercised against a live launcher from this repo. Confirm the exact request/
-    response shape against current docs before relying on it in production.
+    Requires a Confidential Space container.
     """
     body = json.dumps({
         "audience": audience,

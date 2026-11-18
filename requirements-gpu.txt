@@ -7,3 +7,5 @@ vllm==0.31.0           # agent serving, monitors
 datasets
 inspect-ai             # SWE-bench rollouts (with the ImpossibleBench package at commit 061dc3dce6a96ab6cf02a855157263033dcfa3ba)
 huggingface_hub
+nv-attestation-sdk==2.7.3   # GPU attestation (ATTEST_PYTHON in reproduce/eq1_gpu.sh)
+nv-local-gpu-verifier==2.7.3

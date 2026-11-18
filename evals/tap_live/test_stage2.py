@@ -319,7 +319,7 @@ def test_capped_only_mode_main_table_uses_the_representative_pair_for_every_posi
     for i, h in enumerate(hs):                               # stage-1 times: position i has A0 = 10 + i, A1 = A0 + 0.01 (repeat 0) and A0 + 0.02 (repeat 1)
         for rep, delta in ((0, 0.01), (1, 0.02)):
             rows += [crow(h, rep, "A0", el=10.0 + i, seed=SEEDS.get(h, 1), h="x"), crow(h, rep, "A1", el=10.0 + i + delta, seed=SEEDS.get(h, 1), h="x")]
-    for r in rows:                                           # the capped repeat-0 calls of the rerun groups (bounded values that must NOT enter the primary)
+    for r in rows:                                           # the capped repeat-0 calls of the rerun groups (bounded values that must not enter the primary)
         if r["history_id"] in ("t1@0.5", "t3@0.25", "t4@0.25") and r["repeat"] == 0:
             r["finish_reason"], r["elapsed_s"], r["n_generated"] = "cap", 1.0, 4096
         if r["history_id"] == "t8@0.25" and r["repeat"] == 0 and r["arm"] == "A0":

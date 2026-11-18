@@ -18,7 +18,7 @@ from evals_runner.util.telemetry import (
 
 
 def _machine():
-    return MachineInfo("n2d-standard-4", 4, 16.0, None, "us-central1", "SEV", "confidential-space-debug")
+    return MachineInfo("example-machine", 4, 16.0, None, "us-central1", "SEV", "example-image")
 
 
 def _model():

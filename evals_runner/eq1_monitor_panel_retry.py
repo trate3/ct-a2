@@ -12,7 +12,7 @@ retry_prompts.json.gz (the changed user messages) and summary.json. Detector acc
 1. FAILED ITEMS BY RULE, from the original rows.jsonl: an item is failed when none of its rows is a returned reply with a valid score
    (the same validity test as the panel). Reasons: not sent (over the registry prompt budget); HTTP error (for example 400 when the prompt
    was longer than the server context); length stop; reply without a parsable score.
-2. WHAT IS CHANGED, by kind:
+2. What is changed, by kind:
    refit      the original prompt, plus the output cap the runner would send for it, did not fit the budget below. The prompt is rebuilt with the
               detector's normal fitting path (`monitors._fit` with the matched assembler, the code under `build_prompt_fitted`): only the agent's
               private reasoning is shortened, by middle-truncating the longest reasoning blocks, until the prompt fits. Nothing else is cut.

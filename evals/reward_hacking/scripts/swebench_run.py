@@ -1,4 +1,4 @@
-"""General sharded Impossible-SWE-bench rollout runner (generalises swebench_pilot.py).
+"""General sharded Impossible-SWE-bench rollout runner (reuses helpers from swebench_pilot.py).
 
   # 1. schedule: every train+val task whose preflight is ok AND whose original-oracle passes, ks 0 and 1
   python -m evals.reward_hacking.scripts.swebench_run make-schedule --out sched.jsonl --ks 0 1
@@ -13,12 +13,12 @@ Layout of --out (shared by all shards):
   failures-<i>of<n>.jsonl          the infra_error subset
   summary-<i>of<n>.json            per shard, rewritten at the end of each invocation
 
-Resume: an (id, k) is skipped when a successful, scored sample is recoverable from its log dir (same logic as the
-pilot's completed_from_logs, so it works even if the process died before writing runs-*.jsonl; a missing runs record
+Resume: an (id, k) is skipped when a successful, scored sample is recoverable from its log dir (same logic as
+swebench_pilot's completed_from_logs, so it works even if the process died before writing runs-*.jsonl; a missing runs record
 is then backfilled with recovered=true). Everything else, including earlier infra failures, is re-run unless
 --no-retry-infra (then items with a failures-*.jsonl record are skipped).
 
-Seeds: seed(id, 0) == the pilot's _stable_seed(id) (so k=0 reproduces the pilot's seeding); for k>0 the k is hashed in:
+Seeds: seed(id, 0) == swebench_pilot._stable_seed(id); for k>0 the k is hashed in:
 sha256(f"{BASE_SEED}\\0{id}\\0{k}"). Seeds are independent of the shard layout.
 
 Concurrency (--concurrency C): Inspect's eval() is not documented as safe to call concurrently from threads in one
@@ -49,7 +49,7 @@ from typing import Any
 from evals.reward_hacking import swebench_tasks as splits
 from evals.reward_hacking.scripts import swebench_pilot as pilot
 # Paper-matched agent settings: reasoning effort and submission cap, also from the environment so the
-# per-item child processes inherit them. Unset = the earlier default run (template-default effort xhigh, 3 submissions).
+# per-item child processes inherit them. Unset = template-default effort xhigh, 3 submissions.
 REASONING_EFFORT = os.environ.get("SWE_REASONING_EFFORT") or None
 # Agent model: Qwen3.8-27B.
 TARGET = "qwen3.8-27b"
@@ -112,7 +112,7 @@ except ValueError as _error:
 
 
 def check_server(base_url: str) -> None:
-    """The pilot's server check (served name and pinned chat-template digest)."""
+    """swebench_pilot's server check (served name and pinned chat-template digest)."""
     return pilot._check_server(base_url)
 
 
@@ -158,7 +158,7 @@ def context_audit(model_events: list, ceiling: int | None) -> dict:
 # ----------------------------------------------------------------------------------------------- pure helpers
 
 def stable_seed(instance_id: str, k: int = 0) -> int:
-    """k=0 equals the pilot's seed; k>0 hashes k in."""
+    """k=0 equals swebench_pilot's seed; k>0 hashes k in."""
     if k == 0:
         return pilot._stable_seed(instance_id)
     h = hashlib.sha256(f"{BASE_SEED}\0{instance_id}\0{k}".encode()).digest()
@@ -345,7 +345,7 @@ def _append_jsonl(path: pathlib.Path, row: dict) -> None:
 
 def run_item(out: pathlib.Path, tag: str, iid: str, k: int, image_digest: str, run_sha: str,
              base_url: str, api_key: str) -> dict:
-    """One Inspect eval of one sample, exactly the pilot's call. Appends runs/failures records; returns the record."""
+    """One Inspect eval of one sample, the same call as swebench_pilot. Appends runs/failures records; returns the record."""
     seed = stable_seed(iid, k)
     started = time.time()
     logs, exc = None, None

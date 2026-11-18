@@ -1,4 +1,4 @@
-"""GPU-free protocol checks."""
+"""Protocol checks with the toy program and tap (no models)."""
 
 from __future__ import annotations
 

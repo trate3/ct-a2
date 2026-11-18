@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # EQ2 and EQ3: coding monitors on ImpossibleBench (LiveCodeBench and SWE-bench): the transcript table (EQ2) and the task-and-code table (EQ3).
 #
-#   bash reproduce_eq2.sh            CPU: regenerate both tables from the shipped scores (about 3 minutes)
+#   bash reproduce_eq2.sh            CPU: recompute both tables from the shipped scores and print them (about 3 minutes)
 #   bash reproduce_eq2.sh --fast     CPU: skip the two SWE-bench report runs (about 20 seconds)
 #   bash reproduce_eq2.sh gpu-plan   print the full GPU re-run path (nothing is executed)
 #
@@ -42,6 +42,8 @@ python -m evals_runner rh-rollouts --engine vllm --target-model qwen3.8-27b --va
 #     CT_SWEBENCH_APPTAINER_ROOT to a large persistent directory (several GB of images per instance):
 SWE_REASONING_EFFORT=medium SWE_MAX_ATTEMPTS=10 python -m evals.reward_hacking.scripts.swebench_run make-schedule --out sched.jsonl --ks 0 1 2
 SWE_REASONING_EFFORT=medium SWE_MAX_ATTEMPTS=10 python -m evals.reward_hacking.scripts.swebench_run --schedule sched.jsonl --shard 0/8 --out runs/swe
+#     then convert the Inspect logs of all shards into trajectories (writes runs/swe_trajectories/trajectories/*.json):
+python -m evals.reward_hacking.swebench_trajectory --eval-dir runs/swe/inspect --out runs/swe_trajectories --target-model qwen3.8-27b
 # 3. Monitors (one vLLM server per monitor; registry names in prompts/monitors/registry.json):
 python -m evals_runner rh-monitor --rollouts runs/swe_trajectories --views black_box,cot --monitor-model gemma4-e4b --engine vllm --url http://127.0.0.1:8000
 #    final-code view: add --final-state-only (writes monitor_scores.<name>.final_state.jsonl)

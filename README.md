@@ -15,15 +15,15 @@ pip install -r requirements-cpu.txt
 
 ```bash
 bash check.sh             # unit tests, the protocol demo and both table scripts; ends with "check.sh: ALL CHECKS PASSED"
-bash reproduce_eq1.sh     # EQ1 table from data/eq1
+bash reproduce_eq1.sh     # EQ1 table from the timing records in data/eq1
 bash reproduce_eq2.sh     # EQ2 and EQ3 tables from data/eq2
 bash reproduce_eq1.sh gpu-plan
 bash reproduce_eq2.sh gpu-plan
 ```
 
-The table scripts print each cell next to the number in the paper. The two `gpu-plan` commands print the full GPU runs (models, revisions and commands) without running anything. GPU software versions are in `requirements-gpu.txt`.
+The table scripts recompute the cells and print the tables. The two `gpu-plan` commands print the full GPU runs (models, revisions and commands) without running anything. GPU software versions are in `requirements-gpu.txt`.
 
-The protocol demo runs on its own with `python -m evals_runner protocol-integrity-exp e2e --n 8` (add `--tamper-environment` to see the certifier abort).
+`protocol/` is the certification protocol in the paper's message order; `check.sh` runs its tests.
 
 ## Prompts
 

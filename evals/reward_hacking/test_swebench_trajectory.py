@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 
 import pytest
+pytest.importorskip("inspect_ai")
+
 from inspect_ai.log import EvalSample
 from inspect_ai.model import (ChatMessageAssistant, ChatMessageSystem, ChatMessageTool, ChatMessageUser,
                               ContentReasoning, ContentText)

@@ -1,7 +1,6 @@
 # Trusted-workload container for a Confidential Space deployment.
 #
-# Runs `serve_session` behind the mock case's static-TreeCut environment as a
-# GPU-free run of the attestation path.
+# Runs `serve_session` behind the static-TreeCut environment.
 FROM python:3.11-slim
 
 WORKDIR /app

@@ -32,11 +32,7 @@ from evals.reward_hacking import trajectory as tj
 from evals.reward_hacking.sandbox import new_sandbox
 from evals.reward_hacking.tasks import Task
 
-# Qwen3.6 thinking-mode sampling at temperature 1.0 (the model card's general
-# preset, and the server default). The card's "precise coding" preset (0.6) looped
-# for 32k tokens in the first smoke rollout; replays of that call at 1.0 did not
-# (dev data, 2026-10-08). presence_penalty stays 0: llama.cpp applies it over a
-# short window that includes prompt tokens, unlike the card's intended setting.
+# Agent sampling: temperature 1.0, top_p 0.95, top_k 20 (model-card general preset).
 SAMPLING = {"temperature": 1.0, "top_p": 0.95, "top_k": 20, "min_p": 0.0,
             "presence_penalty": 0.0, "repeat_penalty": 1.0}
 

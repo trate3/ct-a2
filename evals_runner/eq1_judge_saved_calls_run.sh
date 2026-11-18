@@ -10,11 +10,12 @@
 #   JUDGE_OUT        [results_regenerated/eq1_judges]
 #   JUDGE_STAGE2     [data/eq1/generation/stage2_list.json]
 #   JUDGE_HISTORIES  [data/eq1/histories.json]
-#   JUDGE_OUTPUTS    [data/eq1/generation/generate_calls_stage2/outputs.jsonl]   (the saved A0 outputs)
+#   JUDGE_OUTPUTS    the saved A0 outputs of a generation run (generate_calls_stage2/outputs.jsonl; required)
 #   JUDGE_MAIN       main_complete_call.json (for the composed With tap; optional, can be given later with the summary step)
 #   JUDGE_TRAJ       the recorded training trajectories (hashes are checked against histories.json)
 #   JUDGE_VIEWS      history_black_box (primary; add history_reasoning for the reasoning view)   JUDGE_INSTRUCTION  early|terminal (default early)
 #   JUDGE_LIMIT=N    smoke test (first N items; use another JUDGE_OUT)    JUDGE_PREFIX_CACHING=on|off (default on, recorded)    JUDGE_ALLOW_BUSY=1
+#   JUDGE_HEALTH_POLLS  server health polls, 5 s apart [180]
 #   PYTHON           Python with this repository's requirements [python3];  VLLM_VENV  venv with vLLM 0.31.0 [.venv-vllm]
 # Monitors (registry names): gemma4-e4b (reasoning off, 1,024 cap), gemma4-e4b-think, qwen3.8-27b-4k (off), qwen3.8-27b-think.
 set -euo pipefail
@@ -25,7 +26,7 @@ export PATH="$VENV_V/bin:/usr/local/cuda/bin:$PATH" CUDA_HOME="${CUDA_HOME:-/usr
 OUT="${JUDGE_OUT:-results_regenerated/eq1_judges$([ -n "${JUDGE_LIMIT:-}" ] && echo _smoke || true)}"
 STAGE2="${JUDGE_STAGE2:-data/eq1/generation/stage2_list.json}"
 HISTORIES="${JUDGE_HISTORIES:-data/eq1/histories.json}"
-OUTPUTS="${JUDGE_OUTPUTS:-data/eq1/generation/generate_calls_stage2/outputs.jsonl}"
+OUTPUTS="${JUDGE_OUTPUTS:?set JUDGE_OUTPUTS to generate_calls_stage2/outputs.jsonl of a generation run}"
 TRAJ="${JUDGE_TRAJ:-trajectories}"
 VIEWS="${JUDGE_VIEWS:-history_black_box}"; INSTR="${JUDGE_INSTRUCTION:-early}"
 NAMES_DEFAULT="gemma4-e4b gemma4-e4b-think qwen3.8-27b-4k qwen3.8-27b-think"
@@ -67,7 +68,7 @@ measure() {
   echo "[judge] $n: vllm ${args[*]}"
   t0=$(date +%s.%N); local launch_utc; launch_utc=$(date -u +%FT%TZ)
   "$VENV_V/bin/vllm" "${args[@]}" > "$D/server.log" 2>&1 & SERVER=$!
-  for i in $(seq 1 180); do kill -0 "$SERVER" 2>/dev/null || break; curl -sf "http://127.0.0.1:$PORT/health" >/dev/null && { ok=1; break; }; sleep 5; done
+  for i in $(seq 1 "${JUDGE_HEALTH_POLLS:-180}"); do kill -0 "$SERVER" 2>/dev/null || break; curl -sf "http://127.0.0.1:$PORT/health" >/dev/null && { ok=1; break; }; sleep 5; done
   t1=$(date +%s.%N)
   if [ $ok != 1 ]; then echo "[judge] $n: server did not become ready (see $D/server.log)"; stop_server; return 1; fi
   N="$n" DIRV="$DIR" CTXV="$CTX" PC="$PCACHE" SPID="$SERVER" LAUNCH="$launch_utc" SECS="$(echo "$t1 - $t0" | bc)" CMD="vllm ${args[*]}" \

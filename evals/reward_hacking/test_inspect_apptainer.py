@@ -6,6 +6,10 @@ import subprocess
 import sys
 import types
 
+import pytest
+
+pytest.importorskip("inspect_ai")
+
 from evals.reward_hacking import inspect_apptainer as provider
 from evals.reward_hacking.swebench_apptainer import (
     dockerhub_image_for_id,

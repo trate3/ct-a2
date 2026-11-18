@@ -2,6 +2,8 @@ import json
 
 import pytest
 
+pytest.importorskip("inspect_ai")
+
 from evals.reward_hacking.scripts import swebench_run as run
 
 

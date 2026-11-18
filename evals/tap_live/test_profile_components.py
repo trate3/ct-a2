@@ -16,7 +16,7 @@ from evals.tap_live import profile_components as pc
 
 ROOT = Path(__file__).resolve().parents[2]
 STAGE2_LIST = ROOT / "data/eq1/generation/stage2_list.json"
-CALLS = ROOT / "data/eq1/generation/generate_calls_stage2/calls.jsonl"
+CALLS = ROOT / "data/eq1/generation/calls.jsonl"
 have_main = pytest.mark.skipif(not (STAGE2_LIST.exists() and CALLS.exists()), reason="data/eq1 not present")
 
 
@@ -57,9 +57,9 @@ def test_schedule_shape_and_weights_from_the_saved_main_stage():
     assert abs(sum(p["weight"] for p in s["positions"]) - 1.0) < 1e-12
     assert all(abs(p["weight"] - 1 / 30) < 1e-12 for p in s["positions"])
     assert len({p["task"] for p in s["positions"]}) == 10
-    assert [r["history_id"] for r in s["runs"]][0] == "lcbhard_101@0.25" and s["runs"][0]["n_generated"] == 681
-    assert sum(r["n_generated"] for r in s["runs"]) == 76898
-    assert min(r["n_generated"] for r in s["runs"]) == 222 and max(r["n_generated"] for r in s["runs"]) == 23266
+    assert [r["history_id"] for r in s["runs"]][0] == "lcbhard_101@0.25" and s["runs"][0]["n_generated"] == 928
+    assert sum(r["n_generated"] for r in s["runs"]) == 103225
+    assert min(r["n_generated"] for r in s["runs"]) == 249 and max(r["n_generated"] for r in s["runs"]) == 40766
     runs_by_key = {r["run_key"]: r for r in s["runs"]}
     assert all(p["run_key"] in runs_by_key for p in s["positions"])
     # 6 positions reuse a representative
@@ -71,18 +71,18 @@ def test_weighted_mean_generated_tokens_matches_the_main_table():
     s = pc.load_schedule(STAGE2_LIST, CALLS)
     pv = pc.position_values({r["run_key"]: float(r["n_generated"]) for r in s["runs"]}, s["positions"])
     mean = sum(p["weight"] * p["value"] for p in pv)
-    assert round(mean, 1) == 5625.7                                          # main_complete_call: weighted_mean_generated_tokens_a0
+    assert round(mean, 1) == 7950.0                                          # main_complete_call: weighted_mean_generated_tokens_a0
 
 
 @have_main
 def test_raw_score_s_field_reproduces_the_known_weighted_mean():
-    """Reference value: raw main-call score_s, weighted by the 30 positions, averages 0.490074 ms, median 0.119949 ms."""
+    """Reference value: raw main-call score_s, weighted by the 30 positions, averages 0.672479 ms, median 0.212259 ms."""
     s = pc.load_schedule(STAGE2_LIST, CALLS)
     pv = pc.position_values({r["run_key"]: 1e3 * r["main_stage_score_s"] for r in s["runs"]}, s["positions"])
-    assert round(sum(p["weight"] * p["value"] for p in pv), 6) == 0.490074
+    assert round(sum(p["weight"] * p["value"] for p in pv), 6) == 0.672479
     vals = [p["value"] for p in pv]
-    assert round(statistics.median(vals), 6) == 0.119949
-    assert round(min(vals), 6) == 0.108405 and round(max(vals), 6) == 2.259373
+    assert round(statistics.median(vals), 6) == 0.212259
+    assert round(min(vals), 6) == 0.19663 and round(max(vals), 6) == 2.824488
 
 
 @have_main
@@ -90,7 +90,7 @@ def test_growth_events_of_the_main_stage_sequence():
     s = pc.load_schedule(STAGE2_LIST, CALLS)
     g = pc.growth_schedule([r["n_generated"] for r in s["runs"]])
     assert g[0]["rows_at_start"] == 16 and g[0]["rows_at_end"] == 4096          # first real call grows the warm-up buffer
-    assert g[-1]["rows_at_end"] == 32768                                          # the 23,266-token call forces 32,768 rows
+    assert g[-1]["rows_at_end"] == 65536                                          # the 40,766-token call forces 65,536 rows
     # no call after the buffer reached its maximum grows it again
     last = max(i for i, x in enumerate(g) if x["growths"])
     assert all(not x["growths"] for x in g[last + 1:])

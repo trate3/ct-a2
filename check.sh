@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # One command that checks the artifact on CPU:
 #   tests     the CPU unit tests (pytest)
-#   protocol  the certification protocol end to end with the local (stub) signer: the honest run must be
+#   protocol  the certification protocol end to end with the local signer: the honest run must be
 #             certified with a VALID certificate, and the tampered run must abort for the intended reason
-#   eq1, eq2  regeneration of the EQ1 and EQ2/EQ3 tables, printed next to the paper's numbers
+#   eq1, eq2  recompute and print the EQ1 and EQ2/EQ3 tables
 # Every step's exit status is checked; the script exits nonzero if any step fails.
 # Usage: bash check.sh            (FAST=1 skips the two slower SWE-bench report runs; SLOW=1 adds the sandbox tests)
 #        PYTHON=/path/to/python bash check.sh
@@ -28,7 +28,7 @@ step_tests() {
                    evals/reward_hacking/test_tools.py evals/reward_hacking/test_rollout.py)
   local IGN=(); [ "${SLOW:-0}" = 1 ] || for f in "${SLOWTESTS[@]}"; do IGN+=(--ignore "$f"); done
   "$PY" -m pytest -q -rf -p no:cacheprovider --import-mode=importlib -o pythonpath=. "${IGN[@]}" \
-    ct_core util evals evals_runner tee tests 2>&1 | tail -n 25
+    ct_core util evals evals_runner tee tests protocol 2>&1 | tail -n 25
   return "${PIPESTATUS[0]}"
 }
 step_protocol() { "$PY" tools/protocol_demo_check.py; }

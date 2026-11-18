@@ -135,7 +135,7 @@ def assistant_message(turn: ParsedTurn) -> dict:
 # generation prompt's opening `<think>`) is split into reasoning / visible text / tool calls, how the
 # parsed turn is written back as a chat message, which tokens end a turn, and what the next prompt must
 # start with for the context to stay append-only. The module-level `render` / `parse_generation` /
-# `assistant_message` / `template_digest` above ARE the Qwen3.6 format (unchanged); `QwenFormat` only
+# `assistant_message` / `template_digest` above are the Qwen3.6 format (unchanged); `QwenFormat` only
 # forwards to them, so Qwen prompts, parses and manifests are byte-identical to before.
 
 QWEN38_TEMPLATE_PATH = pathlib.Path(__file__).parent / "data" / "qwen3.8-27b_chat_template.jinja"
@@ -234,7 +234,7 @@ class QwenFormat(ChatFormat):
 # pinned (official) template differs. Differences from our Qwen3.6 pin (the Unsloth-fixed template):
 #   * `reasoning_effort` (xhigh | medium | low; default xhigh): with thinking on, the system turn starts with
 #     "Reasoning effort is set to xhigh. Please think carefully..." (low: a "keep it brief" line; medium: nothing).
-#     A system turn is therefore ALWAYS emitted (with tools: before "# Tools"). We pass nothing: default xhigh.
+#     A system turn is therefore always emitted (with tools: before "# Tools"). We pass nothing: default xhigh.
 #   * preserve_thinking defaults to true (we pass it anyway), so history keeps all reasoning as for Qwen3.6.
 #   * tool-call arguments: bool/None/int render with tojson (`true`/`null`), not Python str (`True`/`None`);
 #     our tool schemas have ints/lists/strings only, where both agree.
@@ -515,7 +515,7 @@ class VLLMCompletionClient(CompletionClient):
         return [int(t.split(":", 1)[1]) for t in toks]
 
     def uncapped_max_tokens(self, prompt) -> int:
-        """`max_tokens` for "no cap": the server context minus the prompt. vLLM's /v1/completions does NOT do
+        """`max_tokens` for "no cap": the server context minus the prompt. vLLM's /v1/completions does not do
         this for a missing/null max_tokens; it applies the OpenAI default of 16 tokens (found 2026-10-21)."""
         if self._max_model_len is None:
             self._max_model_len = int(self.served_model()["max_model_len"])

@@ -10,7 +10,7 @@ forward plus decoding until a NATURAL STOP (a format stop token) or the declared
 region. Arm order alternates with the repeat index (A0 first on even). Primary timing is wall clock only, no CUDA events, one host
 sync per generated token in both arms.
 
-What happens at the cap: generation stops after `cap` new tokens, the run is a row with finish_reason "cap" (the call is NOT complete: the
+What happens at the cap: generation stops after `cap` new tokens, the run is a row with finish_reason "cap" (the call is not complete: the
 model had not stopped), it is timed up to the cap and kept; summaries report natural stops and cap hits separately and also give the
 natural-stop-only subset. With the probe, a capped call pools all `cap` generated states (no stop token to exclude).
 

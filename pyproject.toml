@@ -16,12 +16,12 @@ model = ["torch", "transformers>=5.15", "accelerate", "flash-linear-attention", 
 rh = ["datasets", "jinja2", "jsonschema", "requests"]
 
 [tool.pytest.ini_options]
-testpaths = ["ct_core", "util", "evals", "evals_runner", "tee", "tests"]
+testpaths = ["ct_core", "util", "evals", "evals_runner", "tee", "tests", "protocol"]
 pythonpath = ["."]
 addopts = "--import-mode=importlib -p no:cacheprovider"
 
 [tool.setuptools.packages.find]
-include = ["ct_core*", "util*", "evals*", "evals_runner*", "tee*"]
+include = ["ct_core*", "util*", "evals*", "evals_runner*", "tee*", "protocol*"]
 
 [build-system]
 requires = ["setuptools>=68"]

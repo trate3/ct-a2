@@ -2,7 +2,7 @@
  "mode": "all_representatives",
  "primary": true,
  "rule": "Prompt-representative design, one main stage. Positions are grouped by prompt sha256 in the manifest order of histories.json; the representative of a group is its first position, its index is the group's index in that order, its seed is the stage-1 repeat-0 seed sha256('tap-live-decode:calls:<history_id>:0'). ALL groups are run uncapped (no per-call cap; natural stop or the 240,000-token total-context ceiling, recorded as context_ceiling), both arms, the arm order alternating by representative index (A0 first for even, A1 first for odd). Every position keeps its preselected weight 1 / n_positions and takes its group's representative pair. Stage-1 pairs are supporting data only. Distinct prompts are never merged.",
- "rule_sha256": "044e30e2807ed222bc91c8b0092d83c92750003cb7bbe5f7c7a8010b52babd64",
+ "rule_sha256": "b230fa71a4369c5bd33265962f5bf39ebada5ad4297ccf3dfd20c1027ec146a5",
  "arm_order_rule": "alternating by representative index: A0 first for even index, A1 first for odd index",
  "n_positions": 30,
  "weight_per_position": 0.03333333333333333,

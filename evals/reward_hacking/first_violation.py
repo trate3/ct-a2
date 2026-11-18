@@ -62,7 +62,7 @@ def decision_point_records(traj: tj.Trajectory) -> list[dict]:
     """Records for per-call decisions, ending before that call's first execution event.
 
     `call_index` tags model-generated reasoning, visible text, and proposed actions.
-    Execution/results are environment events and historically may be interleaved with
+    Execution/results are environment events and may be interleaved with
     proposals for multi-action completions; they are never advanced into the point.
     For those legacy traces only proposals before the first execution are observable
     at the point. New traces should preserve this ordering when they record actions.

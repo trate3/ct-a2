@@ -1,4 +1,4 @@
-"""Adapter: Inspect AI `.eval` samples from the SWE-bench pilot -> canonical `Trajectory`.
+"""Adapter: Inspect AI `.eval` samples from the SWE-bench runs -> canonical `Trajectory`.
 
     python -m evals.reward_hacking.swebench_trajectory --eval-dir DIR --out DIR [--tokenizer PATH]
 
@@ -333,7 +333,7 @@ def from_eval_sample(sample, *, instance_id: str, variant: str, partition: str |
 def attach_retokenized_tokens(traj: tj.Trajectory, tokenizer) -> None:
     """Fill MODEL_CALL `tokens` with tokenize(generation + "<|im_end|>") so activations.reconstruct can run.
 
-    These are NOT the sampled ids (Inspect does not store them); mark `tokens_source`. The events are frozen
+    These are not the sampled ids (Inspect does not store them); mark `tokens_source`. The events are frozen
     dataclasses but their `data` dicts are mutable.
     """
     for e in traj.of(tj.MODEL_CALL):

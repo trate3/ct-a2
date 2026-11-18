@@ -634,10 +634,7 @@ def run_session(
     the separate-process/separate-machine topology (`protocol-integrity-exp
     workload`/`certifier`), where this contamination cannot happen.
     """
-    # `attestation_setup` is the cost `serve_session`'s docstring says the caller must
-    # time: pinning (pk_TEE, m_ref) and constructing the enclave signer, paid once per
-    # session before any trial runs. Local/stub attestation here, so this is a floor --
-    # a real remote attestation adds a round trip to the attestation service.
+    # attestation_setup: time to pin the verifier and build the signer.
     stage_recorder = stage_recorder or NullStageRecorder()
     with stage_recorder.stage("attestation_setup"):
         if signer is None and verifier is None:
