@@ -1,0 +1,8 @@
+{
+ "registry": "7c4b2808239fef78c21805e44bd66df0dea2f3b4d3a3759e0fe4fc2785a46ba5",
+ "schedules": {
+  "ho_test": "7f81b26e99b92d301310dba4d4829a332f93d7fa74bf2a1fb996fef85652ab8f",
+  "div_train": "cd8fb733f7795ecf93b386b9442592f6c3506bbface111149ea4fde721414eb5",
+  "div_val": "b574b7ffb085a96ca2a3b8c3003dd60bf21564eb05ea9bed956b6863b3081f8d"
+ }
+}

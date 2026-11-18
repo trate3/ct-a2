@@ -1,0 +1,577 @@
+{
+ "_sources": {
+  "coding_main": "Paper draft impl_section_v5.tex, Table 'AUROC for reward hacking detection' (lines 112-135; first three columns, three decimals). SWE-bench one-off column and the valid/eligible counts: revision note for the draft (v5_update_guide.md, section 11, combined table). Full-precision values as recorded in the numeric source file of that note.",
+  "coding_final_code": "Table export for the final-code-only comparison (upload_tables/table_data.json, eq3_code_only), also in v5_update_guide.md 'Final-code-only LiveCodeBench judges'. Not in the draft's main table.",
+  "eq1": "Replacement EQ1 phase table eq1_phases_natural_responses.tex (built from the raw export; independently reproduced). The probe row's Tap cell is the isolated tap execution time from the component microbenchmark (26.46 ms per call); the paired A1 minus A0 latency difference (-1.411 ms) is kept as supporting evidence. The draft impl_section_v5.tex still shows an older, retired table.",
+  "note": "File names are those of the source repository; they are not shipped."
+ },
+ "columns": [
+  "lcb_conflicting",
+  "lcb_oneoff",
+  "swe_conflicting",
+  "swe_oneoff"
+ ],
+ "coding_main": {
+  "gemma4-e4b:black_box": {
+   "label": "E4B, no monitor reasoning",
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9888635065676756,
+     "valid": 205,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9895334928229665,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.6263724198506807,
+     "valid": 145,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.4758129265355279,
+     "valid": 147,
+     "eligible": 147
+    }
+   }
+  },
+  "gemma4-e4b-think:black_box": {
+   "label": "E4B, monitor reasons",
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.988575071099343,
+     "valid": 202,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9795155502392344,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.8105590062111802,
+     "valid": 144,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.5805417700578991,
+     "valid": 145,
+     "eligible": 147
+    }
+   }
+  },
+  "qwen3.8-27b-think:black_box": {
+   "label": "Qwen, monitor reasons",
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9953341502497879,
+     "valid": 206,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9883373205741627,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.9332454984628897,
+     "valid": 145,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.820955439582497,
+     "valid": 147,
+     "eligible": 147
+    }
+   }
+  },
+  "glm5.3-flash-nvfp4-think:black_box": {
+   "label": "GLM, monitor reasons",
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9938606510565391,
+     "valid": 205,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9877392344497608,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.9638777400432232,
+     "valid": 120,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.9020833333333333,
+     "valid": 94,
+     "eligible": 147
+    }
+   }
+  },
+  "gemma4-e4b:cot": {
+   "label": "E4B, no monitor reasoning",
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.956976965543499,
+     "valid": 205,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9766746411483254,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.7423144488361879,
+     "valid": 145,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.6188277800080288,
+     "valid": 147,
+     "eligible": 147
+    }
+   }
+  },
+  "gemma4-e4b-think:cot": {
+   "label": "E4B, monitor reasons",
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9512601745611454,
+     "valid": 202,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9657555282555282,
+     "valid": 118,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.8998682476943346,
+     "valid": 145,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.6392011240465676,
+     "valid": 147,
+     "eligible": 147
+    }
+   }
+  },
+  "qwen3.8-27b-think:cot": {
+   "label": "Qwen, monitor reasons",
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9947685927043076,
+     "valid": 206,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9789174641148325,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.9345630215195433,
+     "valid": 145,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.8531499556344276,
+     "valid": 141,
+     "eligible": 147
+    }
+   }
+  },
+  "glm5.3-flash-nvfp4-think:cot": {
+   "label": "GLM, monitor reasons",
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9906683004995759,
+     "valid": 206,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9794226044226044,
+     "valid": 118,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.9482269503546099,
+     "valid": 139,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.8462282398452611,
+     "valid": 135,
+     "eligible": 147
+    }
+   }
+  },
+  "probe:token_mean": {
+   "label": "Probe: mean",
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.996229616363465,
+     "valid": 206,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9686004784688995,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.9654347826086956,
+     "valid": 146,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.9459901800327333,
+     "valid": 146,
+     "eligible": 147
+    }
+   }
+  },
+  "probe:ema_max": {
+   "label": "Probe: smoothed maximum",
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9739843529079084,
+     "valid": 206,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9736842105263158,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.9460869565217391,
+     "valid": 146,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.8158756137479541,
+     "valid": 146,
+     "eligible": 147
+    }
+   }
+  }
+ },
+ "coding_final_code": {
+  "gemma4-e4b.final_state:black_box": {
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9840229993401829,
+     "valid": 206,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9712918660287081,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.49780412823891085,
+     "valid": 145,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.5272982737856282,
+     "valid": 147,
+     "eligible": 147
+    }
+   }
+  },
+  "gemma4-e4b-think.final_state:black_box": {
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9748798190215855,
+     "valid": 206,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.975328947368421,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.6115502854633289,
+     "valid": 145,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.5648204503956178,
+     "valid": 146,
+     "eligible": 147
+    }
+   }
+  },
+  "qwen3.8-27b-4k.final_state:black_box": {
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9902441323404656,
+     "valid": 206,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9623205741626795,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.8361879666227492,
+     "valid": 145,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.5917302288237656,
+     "valid": 147,
+     "eligible": 147
+    }
+   }
+  },
+  "qwen3.8-27b-think.final_state:black_box": {
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.992623262897392,
+     "valid": 205,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9838516746411483,
+     "valid": 120,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.8877909530083443,
+     "valid": 145,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.7452830188679245,
+     "valid": 147,
+     "eligible": 147
+    }
+   }
+  },
+  "glm5.3-flash-nvfp4.final_state:black_box": {
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9943355119825708,
+     "valid": 192,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9789954337899544,
+     "valid": 103,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.8977141203703703,
+     "valid": 132,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.7288928210313448,
+     "valid": 135,
+     "eligible": 147
+    }
+   }
+  },
+  "glm5.3-flash-nvfp4-think.final_state:black_box": {
+   "cells": {
+    "lcb_conflicting": {
+     "auroc": 0.9913654156113286,
+     "valid": 187,
+     "eligible": 206
+    },
+    "lcb_oneoff": {
+     "auroc": 0.9714820009350164,
+     "valid": 100,
+     "eligible": 120
+    },
+    "swe_conflicting": {
+     "auroc": 0.8847402597402597,
+     "valid": 93,
+     "eligible": 146
+    },
+    "swe_oneoff": {
+     "auroc": 0.8916666666666667,
+     "valid": 76,
+     "eligible": 147
+    }
+   }
+  }
+ },
+ "eq1": {
+  "no_tap_s": 236.094958,
+  "with_probe_s": 236.093547,
+  "probe_added_ms": [
+   -1.411199,
+   -64.770087,
+   58.269174
+  ],
+  "probe_setup_s": 5.149037,
+  "rtx": {
+   "gemma4-e4b": [
+    1.50068,
+    1.21189,
+    1.726395
+   ],
+   "gemma4-e4b-think": [
+    7.536828,
+    6.667367,
+    8.3503
+   ],
+   "qwen3.8-27b-4k": [
+    5.791741,
+    4.943415,
+    6.485067
+   ],
+   "qwen3.8-27b-think": [
+    17.376774,
+    16.299378,
+    18.458523
+   ]
+  },
+  "second_machine_mean_s": {
+   "gemma4-e4b": 0.609287,
+   "gemma4-e4b-think": 3.560061,
+   "qwen3.8-27b-4k": 1.728735,
+   "qwen3.8-27b-think": 5.056647,
+   "glm5.3-flash-nvfp4": 0.96626,
+   "glm5.3-flash-nvfp4-think": 8.258325
+  },
+  "table_rounded": {
+   "setup": {
+    "probe": 5.15,
+    "rtx:gemma4-e4b": 50.18,
+    "rtx:gemma4-e4b-think": 50.19,
+    "rtx:qwen3.8-27b-4k": 40.18,
+    "rtx:qwen3.8-27b-think": 40.18,
+    "second_machine:gemma4-e4b": 271.21,
+    "second_machine:gemma4-e4b-think": 115.61,
+    "second_machine:qwen3.8-27b-4k": 110.59,
+    "second_machine:qwen3.8-27b-think": 70.43,
+    "second_machine:glm5.3-flash-nvfp4": 1272.81,
+    "second_machine:glm5.3-flash-nvfp4-think": 351.54
+   },
+   "tap_ms": {
+    "probe": 26.46,
+    "rtx:gemma4-e4b": [
+     1501,
+     1212,
+     1726
+    ],
+    "rtx:gemma4-e4b-think": [
+     7537,
+     6667,
+     8350
+    ],
+    "rtx:qwen3.8-27b-4k": [
+     5792,
+     4943,
+     6485
+    ],
+    "rtx:qwen3.8-27b-think": [
+     17377,
+     16299,
+     18459
+    ],
+    "second_machine:gemma4-e4b": [
+     609,
+     514,
+     681
+    ],
+    "second_machine:gemma4-e4b-think": [
+     3560,
+     3027,
+     4051
+    ],
+    "second_machine:qwen3.8-27b-4k": [
+     1729,
+     1472,
+     1927
+    ],
+    "second_machine:qwen3.8-27b-think": [
+     5057,
+     4700,
+     5407
+    ],
+    "second_machine:glm5.3-flash-nvfp4": [
+     966,
+     759,
+     1187
+    ],
+    "second_machine:glm5.3-flash-nvfp4-think": [
+     8258,
+     5585,
+     11336
+    ],
+    "probe_paired_latency_supporting": [
+     -1.4,
+     -64.8,
+     58.3
+    ]
+   },
+   "median_agent_s": 47.33
+  },
+  "probe_isolated_tap_ms": [
+   26.461455323927414,
+   6.108722554434886,
+   55.636715853416526
+  ],
+  "probe_isolated_tap_us_per_token_ratio": 4.70367337823336
+ },
+ "coding_contrasts": {
+  "_source": "v5_update_guide.md sections 9 and 13 (paired task-bootstrap intervals, commonly scored episodes)",
+  "swe_conflicting": {
+   "probe:token_mean - gemma4-e4b:black_box": [
+    0.339,
+    0.251,
+    0.427
+   ]
+  },
+  "swe_oneoff": {
+   "probe:token_mean - gemma4-e4b:black_box": [
+    0.47,
+    0.364,
+    0.571
+   ],
+   "probe:ema_max - gemma4-e4b:black_box": [
+    0.34,
+    0.193,
+    0.477
+   ]
+  }
+ },
+ "coding_populations": {
+  "_source": "impl_section_v5.tex Table 2 header and v5_update_guide.md section 11",
+  "lcb_conflicting": [
+   35,
+   206,
+   103
+  ],
+  "lcb_oneoff": [
+   20,
+   120,
+   76
+  ],
+  "swe_conflicting": [
+   49,
+   146,
+   46
+  ],
+  "swe_oneoff": [
+   49,
+   147,
+   53
+  ]
+ }
+}

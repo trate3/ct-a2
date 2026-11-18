@@ -1,0 +1,29 @@
+{
+ "variant": "oneoff",
+ "prompt_id": "T1",
+ "k": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "rows": {
+  "oneoff_T1_trainval_s0.jsonl": 132,
+  "oneoff_T1_trainval_s1.jsonl": 132,
+  "oneoff_T1_trainval_s2.jsonl": 126,
+  "oneoff_T1_test.jsonl": 210
+ },
+ "sha256": {
+  "oneoff_T1_trainval_s0.jsonl": "41eb7e7c74cdce9cc4877ab126a32aeb957bb035ec895c77c7e9acb8d1047cac",
+  "oneoff_T1_trainval_s1.jsonl": "7b6b0935bf5eda108f5c2c03aa0f368a7ba8ed9f35c7909dbe0c5b96f457d214",
+  "oneoff_T1_trainval_s2.jsonl": "53daa18d9b82384c7ca0ddb9f005ce01e0bf681db816f31de07bfc4c63652d57",
+  "oneoff_T1_test.jsonl": "da4a9c8a165a13bc33cc9dca1245eba5b8ba47fac423423ecf546b8e5025bb0f"
+ },
+ "excluded_malformed": [
+  "lcbhard_35",
+  "lcbhard_77",
+  "lcbhard_87"
+ ]
+}

@@ -1,0 +1,41 @@
+{
+ "fields": {
+  "gpu_count": 1,
+  "gpus": [
+   {
+    "attestation_warning": null,
+    "dbgstat": "disabled",
+    "driver_version": "580.178.04",
+    "hwmodel": "GB20X",
+    "measres": "success",
+    "name": "GPU-0",
+    "oemid": "5703",
+    "secboot": true,
+    "vbios_version": "98.02.8D.00.08"
+   }
+  ],
+  "required_true_claims": [
+   "x-nvidia-gpu-arch-check",
+   "x-nvidia-gpu-attestation-report-cert-chain-validated",
+   "x-nvidia-gpu-attestation-report-nonce-match",
+   "x-nvidia-gpu-attestation-report-parsed",
+   "x-nvidia-gpu-attestation-report-signature-verified",
+   "x-nvidia-gpu-driver-rim-cert-validated",
+   "x-nvidia-gpu-driver-rim-fetched",
+   "x-nvidia-gpu-driver-rim-measurements-available",
+   "x-nvidia-gpu-driver-rim-schema-validated",
+   "x-nvidia-gpu-driver-rim-signature-verified",
+   "x-nvidia-gpu-vbios-index-no-conflict",
+   "x-nvidia-gpu-vbios-rim-cert-validated",
+   "x-nvidia-gpu-vbios-rim-fetched",
+   "x-nvidia-gpu-vbios-rim-measurements-available",
+   "x-nvidia-gpu-vbios-rim-schema-validated",
+   "x-nvidia-gpu-vbios-rim-signature-verified"
+  ],
+  "schema": 1
+ },
+ "fields_digest": "sha256:ba3ed130e741d8f2c5ce9a4ad511047a0d9e8e4b06afd4a796d3367959c266f1",
+ "frozen_from": "development smoke 2026-11-17: results/tee_attestation_smoke/claims_rep0.json (sha256 16c37b0188e3da405acb2a61bdb545d960625391bc4d57489670cbfd4bda2792), 10 of 10 repetitions showed this state",
+ "policy_version": 1,
+ "scope": "GPU state only (hardware, driver, VBIOS, security flags); not a workload image or CPU policy"
+}

@@ -1,0 +1,9 @@
+# GPU re-runs (in addition to requirements-cpu.txt). Versions we used.
+torch==2.15.0          # cu132 build on the RTX PRO 6000 workstation
+transformers==5.23.0
+flash-linear-attention==0.6.0
+causal-conv1d==1.7.0
+vllm==0.31.0           # agent serving, monitors
+datasets
+inspect-ai             # SWE-bench rollouts (with the ImpossibleBench package at commit 061dc3dce6a96ab6cf02a855157263033dcfa3ba)
+huggingface_hub

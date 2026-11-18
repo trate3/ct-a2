@@ -1,0 +1,42 @@
+sleep cycles for 80.0 us: 222400
+rep -20 done, 1 s
+rep 0 done, 19 s
+rep 20 done, 36 s
+rep 40 done, 54 s
+rep 60 done, 72 s
+rep 80 done, 90 s
+rep 100 done, 107 s
+rep 120 done, 125 s
+rep 140 done, 143 s
+rep 160 done, 161 s
+rep 180 done, 178 s
+C rep -3 done, 202 s
+C rep -2 done, 208 s
+C rep -1 done, 215 s
+C rep 0 done, 221 s
+C rep 1 done, 228 s
+C rep 2 done, 235 s
+C rep 3 done, 241 s
+C rep 4 done, 248 s
+C rep 5 done, 254 s
+C rep 6 done, 261 s
+C rep 7 done, 268 s
+C rep 8 done, 274 s
+C rep 9 done, 281 s
+C rep 10 done, 287 s
+C rep 11 done, 294 s
+C rep 12 done, 300 s
+C rep 13 done, 307 s
+C rep 14 done, 314 s
+C rep 15 done, 320 s
+C rep 16 done, 327 s
+C rep 17 done, 333 s
+C rep 18 done, 340 s
+C rep 19 done, 346 s
+P rep -1 done, 361 s
+P rep 0 done, 376 s
+P rep 1 done, 391 s
+P rep 2 done, 407 s
+P rep 3 done, 422 s
+P rep 4 done, 437 s
+measurement finished in 441 s

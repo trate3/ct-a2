@@ -1,0 +1,46 @@
+{
+ "kind": "eq1_judge_saved_calls_table",
+ "view": "history_black_box",
+ "agent_hardware": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+ "note": "One saved A0 output per distinct prompt (24 representatives of the 30 positions, each position weighted 1/30); the monitor reads the whole recorded trace through that response (transcript view; private reasoning only in a view that explicitly provides it) and its time, prefill and generation, is measured one request at a time under its registered settings. With tap is the weighted No-tap generation time of the saved calls plus the monitor's time on them, added as two separate measurements; Tap is the monitor time. Model and tokenizer loading and any transfer of the saved output are not included. Where the agent and the monitor ran on different devices the two were run one after the other and the sum is not a same-device or end-to-end wall-clock measurement.",
+ "rows": [
+  {
+   "monitor": "glm5.3-flash-nvfp4-think",
+   "hardware": "second machine",
+   "arrangement": "agent on RTX PRO 6000, monitor on second machine; two devices, run one after the other",
+   "config": "reasoning on, cap 16,384",
+   "tap": {
+    "estimate": 8.258324866666666,
+    "ci95": [
+     5.585419984166666,
+     11.336385872499998
+    ],
+    "n_tasks": 10
+   },
+   "with_tap": {
+    "estimate": 244.3532831254284,
+    "ci95": [
+     62.756132441000354,
+     499.2352376459915
+    ],
+    "n_tasks": 10
+   },
+   "no_tap": {
+    "estimate": 236.09495825876172,
+    "ci95": [
+     53.167693677318695,
+     493.19943947099136
+    ],
+    "n_tasks": 10
+   },
+   "root": "<HOME>/rh/results/eq1_judge_saved_calls_second_machine/glm",
+   "counts": {
+    "n_valid_positions": 30,
+    "n_positions": 30,
+    "evidence_shortened": 0,
+    "responses_without_parsed_action": 0
+   }
+  }
+ ],
+ "not_measured": []
+}

@@ -1,0 +1,1 @@
+ It also contains the agent's private reasoning, which the agent produced before its actions and which was not visible to the user or the tests.

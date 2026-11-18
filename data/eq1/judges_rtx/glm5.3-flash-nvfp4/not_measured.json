@@ -1,0 +1,46 @@
+{
+ "monitor": "glm5.3-flash-nvfp4",
+ "measured": false,
+ "reason": "not measured on this hardware: the GLM-5.3-Flash NVFP4 checkpoint is about 204 GB (figure from deploy/user/eq2_throughput.sh) and does not fit one 96 GB RTX PRO 6000; its cost on the saved calls is measured on the second machine and composed with the RTX agent time as two devices run one after the other",
+ "registry_spec": {
+  "name": "glm5.3-flash-nvfp4",
+  "hf_id": "nvidia/GLM-5.3-Flash-NVFP4",
+  "revision": "da920bb0b9f4a06727223a349e55468e38352348",
+  "api": "chat",
+  "engine": "vllm",
+  "prompt_style": "matched",
+  "weights_name": "glm-5.3-flash-nvfp4",
+  "max_model_len": 196608,
+  "max_tokens": 4096,
+  "max_prompt_tokens": 190000,
+  "chars_per_token": 3.0,
+  "enable_thinking": false,
+  "sampling": {
+   "temperature": 0.0,
+   "top_k": 1
+  },
+  "seed": 0,
+  "request_extra": {},
+  "reasoning_format": false,
+  "vllm_args": [],
+  "language_only": true,
+  "hf_overrides": null,
+  "yarn_base": null,
+  "dynamic_output": false,
+  "min_output_tokens": 1024,
+  "think_open": [],
+  "think_close": [],
+  "notes": "GLM-5.3-Flash NVFP4 outside monitor, reasoning off by the template's own empty-reasoning form as assistant prefill (continue_final_message), greedy, 4096 output tokens (amendment 50). Server flags (modelopt_fp4, fp8 KV cache) come from lib.sh with TARGET_MODEL=glm-5.3-flash.",
+  "assistant_prefill": "<think></think>",
+  "weights": "glm-5.3-flash-nvfp4"
+ },
+ "registry_config_sha256": "34d289ffa832680019cba96a3c2e7393576f9248d1aefef3ee8bb8b21fa2bd8a",
+ "hardware": {
+  "nvidia_smi_gpu_name_memory_total_mib_driver_power_limit_w": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition, 97887, 595.91.07, 600.00",
+  "cpu": "AMD Ryzen 9 9950X3D2 16-Core Processor",
+  "cpu_count": 32,
+  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39"
+ },
+ "recorded_utc": "2026-11-17T17:35:31.587+00:00",
+ "note": "recorded instead of omitting the monitor: a different machine would be needed, and timings from different hardware are not comparable with these rows"
+}

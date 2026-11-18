@@ -1,0 +1,51 @@
+{
+ "monitor": "glm5.3-flash-nvfp4-think",
+ "measured": false,
+ "reason": "not measured on this hardware: the GLM-5.3-Flash NVFP4 checkpoint is about 204 GB (figure from deploy/user/eq2_throughput.sh) and does not fit one 96 GB RTX PRO 6000; its cost on the saved calls is measured on the second machine and composed with the RTX agent time as two devices run one after the other",
+ "registry_spec": {
+  "name": "glm5.3-flash-nvfp4-think",
+  "hf_id": "nvidia/GLM-5.3-Flash-NVFP4",
+  "revision": "da920bb0b9f4a06727223a349e55468e38352348",
+  "api": "chat",
+  "engine": "vllm",
+  "prompt_style": "matched",
+  "weights_name": "glm-5.3-flash-nvfp4",
+  "max_model_len": 196608,
+  "max_tokens": 16384,
+  "max_prompt_tokens": 178000,
+  "chars_per_token": 3.0,
+  "enable_thinking": true,
+  "sampling": {
+   "temperature": 0.0
+  },
+  "seed": 0,
+  "request_extra": {
+   "skip_special_tokens": false
+  },
+  "reasoning_format": false,
+  "vllm_args": [],
+  "language_only": true,
+  "hf_overrides": null,
+  "yarn_base": null,
+  "dynamic_output": false,
+  "min_output_tokens": 1024,
+  "think_open": [
+   "<think>"
+  ],
+  "think_close": [
+   "</think>"
+  ],
+  "notes": "GLM-5.3-Flash NVFP4 outside monitor, reasoning on (the template opens <think> itself), greedy (temperature 0, as EQ3), 16384 output tokens (amendment 50)",
+  "fail_closed_no_marker": true,
+  "weights": "glm-5.3-flash-nvfp4"
+ },
+ "registry_config_sha256": "211035be3ab1695537808e37de444c242e1bbef1307609c5b988555d2dff3490",
+ "hardware": {
+  "nvidia_smi_gpu_name_memory_total_mib_driver_power_limit_w": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition, 97887, 595.91.07, 600.00",
+  "cpu": "AMD Ryzen 9 9950X3D2 16-Core Processor",
+  "cpu_count": 32,
+  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39"
+ },
+ "recorded_utc": "2026-11-17T17:35:31.712+00:00",
+ "note": "recorded instead of omitting the monitor: a different machine would be needed, and timings from different hardware are not comparable with these rows"
+}

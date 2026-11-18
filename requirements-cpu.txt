@@ -1,0 +1,11 @@
+# CPU: tests, protocol demo, table regeneration
+pynacl>=1.5
+numpy>=2.0
+pytest>=8.0
+pyjwt[crypto]>=2.8
+# Some tests also import these; they skip or fail without them
+torch
+jinja2
+jsonschema
+requests
+pyyaml

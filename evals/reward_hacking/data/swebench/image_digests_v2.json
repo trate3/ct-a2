@@ -1,0 +1,2997 @@
+{
+  "version": 1,
+  "dataset_revision": "9c2d34f364b7229e8c0ff807c646100bdc18bbb5",
+  "images": {
+    "matplotlib__matplotlib-25122": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-25122",
+      "manifest_digest": "sha256:0fa06f48ba2c929c68f74e8bf02673e9f8cb007059d4455289feb18805aaca38",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:7dac4e6faa3be2af10d4cf48d8d53cd765191df5584a1f2b2ec139e7221ff742",
+      "verified": false
+    },
+    "django__django-15863": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15863",
+      "manifest_digest": "sha256:6fa751d50cbfcf2b3b2234fb5ec04f46887607fa6085cea4a5994769a9f5b214",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9a40f4fb56bb78f3936e763ee8332f764ec461d2757f38cffb037a1aca47f1bf",
+      "verified": true,
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure",
+      "sif_sha256": "98a2092e974a43785de5c3390799550645f5d39ccab1d1465709436fb8b7aebc"
+    },
+    "matplotlib__matplotlib-25960": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-25960",
+      "manifest_digest": "sha256:396c621f3067dc1f1d4928494d8b6a0b68975d3e88d83ea6d2b43573c64a1b8e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d90a47f41a49e07b1c9c2cbd47879e69d0a664a3539fea58d307c050724ddf64",
+      "verified": true,
+      "sif_sha256": "7a09cf1119f29f79be5d8781bf8c473adf15361c4357ad369d720d19a509bed3",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-5787": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-5787",
+      "manifest_digest": "sha256:48c6ca4406eb36dae43e08dc2137b750239b8ad8f9ccdf2924e8fc2177fca241",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d1abda88ac4d8effc52e3fde7711a19be44e4e6c7c9c262facdbca784c815c7a",
+      "verified": true,
+      "sif_sha256": "c943fe3c190a6875fe7d4b0f53c75fce01389f2dd07706f789bc25703d1036d6",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-16597": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-16597",
+      "manifest_digest": "sha256:80716265dd8eef4052cb15f07ded4cbf2ddcd5957d7d526597be6808c56bb55e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:166853c298d0dc29ad6cb0468b996714d2682dae62fc7103fcc7bd85bdbc1916",
+      "verified": true,
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure",
+      "sif_sha256": "e47636987458e2202295cc29a2513525e4b3a6fd8a9f8911729d898b8202515e"
+    },
+    "django__django-16255": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16255",
+      "manifest_digest": "sha256:32b922f258d8a318319caee863c0c6cbe6122dd8efe5642ad9ab7359975ed45b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6be06e9f3f8f648539f2aebf68a2630c49df6b6632a1cf889d61b0f6677fa3a2",
+      "verified": false
+    },
+    "sphinx-doc__sphinx-7757": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-7757",
+      "manifest_digest": "sha256:afdd76c95a6cc039f5f2aa49ba8f66da3eddc72a0c11bbc32666b99496f237c0",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e8b26974c86962c84c5364b8112db0c095dc1782461809248b7e4abdc69a311a",
+      "verified": true,
+      "sif_sha256": "b4777712e31a80ffa5fe6b2630884c4f5ef8245c12419988486e9e007f4f0468",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-8269": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-8269",
+      "manifest_digest": "sha256:463ca25b904e464131cad1b7cb3f9e5f1db830967fd1d9aa1526fd44c7bfc997",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a1f5a3dcde6461a718cbb0140c383c05671dec90b570502cc02e746ff76fa320",
+      "verified": true,
+      "sif_sha256": "c9ddcc15dc5038f857170c261963db7fc7f73c7e9e328bfa3298c1bac5ad0284",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-15017": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-15017",
+      "manifest_digest": "sha256:6bf2b82cdba92ff0030985067ef0dc74880be2cde224ec10e6da443a21925cfb",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:5e036aca7050439313d4afa6538953bbc7daeb36d3dd3e6d38e143de4c8b7c9e",
+      "verified": true,
+      "sif_sha256": "408a38940c3952f90180c45959c9fb34fe12182be9bf7047c88c92a00c6fb62e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13297": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13297",
+      "manifest_digest": "sha256:1dca304a4ccd9f39df8794fb807c04a4076b5f35aff7d192dc5e0a14f8bf6f43",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:2986b686f47814e48022af56b7f148cf0e71d81795869821a198bb404a4968f6",
+      "verified": true,
+      "sif_sha256": "97021f1e58d0ef9e769a771f133e9513accfd3540017556390e21eb908979ddb",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12708": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12708",
+      "manifest_digest": "sha256:3722a130f618602e5636c8c7ddd821550e2c2462b569907c4140fc162e24671e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:5f920ccf13410e9fbc43b9e3a83e2b876f5a28d6b0db5369b428552320567b7d",
+      "verified": true,
+      "sif_sha256": "5c8a2d9763df5d7fa0b9aad2513c3d9cc84a99e7efb7c7d64b584697cfbf9bb0",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pylint-dev__pylint-8898": {
+      "image": "swebench/sweb.eval.x86_64.pylint-dev_1776_pylint-8898",
+      "manifest_digest": "sha256:a78e6034f627c1ae69c67b5a25ae5420192afb7279a4fd032a74095752e707d7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6a3950d518eac34eff08f89136006c94526afc1cdf2b34d1a4d8f598faa4eaea",
+      "verified": true,
+      "sif_sha256": "ed05a529a06afe607fca2b2471c7e12dbf9a79c38eb569e2f030817a2a3bdc58",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-9288": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-9288",
+      "manifest_digest": "sha256:97513fd4c20825270f446d586549bd594bfa0d56a5ea2bbe1418eefb2dc6db4b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:702434646ba19a69bf216770efdbc2010f64aad9f1162be14abec1bb52399662",
+      "verified": true,
+      "sif_sha256": "29639f7e201a56bde4ec989c9bf54ecfd10949020be6488d4402b277cf6d8464",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-13579": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-13579",
+      "manifest_digest": "sha256:f3dc11a37649430d6a7a3aac4858477db8f19d9a941f056f875e8e566066ffe3",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3a4b8059992d3eed81046bd4b3bd3450993a237a909c2298ce69b59bb5b9c863",
+      "verified": true,
+      "sif_sha256": "814d11e2fcbef7f84c84a5b1f1b6e5fadeaf84617c132ed49e9a22fba11dcf14",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16100": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16100",
+      "manifest_digest": "sha256:768b2dd7ecee6c437c64441966687c4a1597230169c7c929e14374660a2ecdab",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:07524a702c042e0baa5725c35e2e1ae8c8f50a221682b5bf21ff26438fc46fdd",
+      "verified": false
+    },
+    "pydata__xarray-3095": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-3095",
+      "manifest_digest": "sha256:ad5af107b0b590bb5002ed8b66226a625d34741b6e7fa008c04c481745a2d2eb",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:fb721923cba0d05faafdafb2fb76e6caa3adc22fd4fdcbf2de45741312f91c74",
+      "verified": true,
+      "sif_sha256": "836e5b47c8c63d11128e8d357c02596919d20d9cb3175d32c83b78f6745d5075",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15695": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15695",
+      "manifest_digest": "sha256:c7697fff17b1d0580146de04672f7e71d2ab19b3a42a0cc08168c5920385bd69",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a067cc9cec81ba8be9799c03da7a3355fdcd1f10477142052f3477ce8b33057d",
+      "verified": false
+    },
+    "scikit-learn__scikit-learn-13124": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-13124",
+      "manifest_digest": "sha256:36b429f4c7fa428226090d04d4a019cd3401381637554d162e5f929f3a80f77c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:bdeb5e17bf55616082bf65f2b83de5cfc92556f3548fb38f4095ed1f802a7ec0",
+      "verified": true,
+      "sif_sha256": "291b6f4c36706adfd10db961c57195cfb20d951f492148527dd3af28a25e50f5",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-19495": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-19495",
+      "manifest_digest": "sha256:d8a5b9f1f21ae86a2141b234c99b960680c67c4088fa44830b43f8ef845ab731",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:cffd1c1a8c2cd69cf3032ca1515ead1e695648c2a788c79d86b22cedf599bb39",
+      "verified": true,
+      "sif_sha256": "c33f8d83bfa731770ea494227f54be8e8d63e04105192d1882fd392ac37d0abf",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-14141": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-14141",
+      "manifest_digest": "sha256:c0f6a733154dad51cb8f617ca2ea09d095a6f56a1576740c2d43f9020294f2e0",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:19965ec2d932dc3b25b1e657b1e1d283f630bac03373e4830e1965ccddb61817",
+      "verified": true,
+      "sif_sha256": "9f1ffd5ed911441cef8357284f3890a6a6ef5218e26084dac56979df3f4e06b5",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11451": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11451",
+      "manifest_digest": "sha256:573a31e77453fc4fbdaa85582c4d611ebbaf52f47e3630e02cc32c2f5826f82e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e2c2c0e62a1c20b86f394eb12bda5efb503f1cc336069583d932dc7dfa81efb0",
+      "verified": true,
+      "sif_sha256": "c25329acfc63eea51069ad79ee121b8162c2850aea5ae638c421702fda963ecb",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pydata__xarray-6938": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-6938",
+      "manifest_digest": "sha256:478bec70c00955b969d68ce630cee233560c0d43ac4f01784f05b38105f654dd",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:672985f42845cd0b9c53819e1c74c6caa4959d8bf9470587d47fea8115f80dff",
+      "verified": true,
+      "sif_sha256": "42eda3265f116c1b2cd17f941e4472c93697ff6538e6929c32792b255dcd9fe2",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11740": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11740",
+      "manifest_digest": "sha256:6a057a8a78fefed32c70c306c4843a12a9a83147a75e20a523d2fa7bdca392f4",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:cd95eb83c40d5738a534d6210a485345fffc9cf653c2c5995b4395d202ff0eb4",
+      "verified": true,
+      "sif_sha256": "f95288e3df05a3199fb179327dd6904d5a9f758eadd5d86857cb7d5163c31a75",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-10554": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-10554",
+      "manifest_digest": "sha256:3e799bbbf2aa8ad8201cf7fa1302d3a8c2d0885bcd8141dbfcf67ae9d68ab2d1",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3ff931f7fe4198a73adeff4bf55ec9193598e5ffe9410ab79feef463e928e01e",
+      "verified": true,
+      "sif_sha256": "2d69b4e62e9f684f5e784ecdc71624f7f2805260fb4da3dba805e49fc3138fc8",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-10880": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-10880",
+      "manifest_digest": "sha256:94e6ba5d96b1a1db8bc6fd117c03728d6a7453ddb723dc4484f48bd22efc968d",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d093c7b3ac897213dc6e607df217be05cbf0bbfca79a58ca37463ea75ba3e980",
+      "verified": true,
+      "sif_sha256": "b6e99ffd4a511fb5433ef122ecf66810f7cf9d0b5af5e75941a439bd3be68b31",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-10908": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-10908",
+      "manifest_digest": "sha256:8727c0f7bfb76c294cfef16c9fe3d0dc9ddf313e7c0fb3e8e9cbc74c4955404c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f3903e9da732f6d69540bd41a61e13b856d97dd54da060fee9fafab3a3c84116",
+      "verified": true,
+      "sif_sha256": "b4d9b76a8c08d1556646b4c5701f15a6c35e2666c335d81c56db9af2d47ccf88",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-15345": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-15345",
+      "manifest_digest": "sha256:49fa46483cdfdc4d806eadfb39f7cb50ef608fb5037ccb6d38687984f3e9fa34",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:abb44c544ba4f65d5c6fe657257ba1001912643ed83783c2655aaf6aa1729f17",
+      "verified": true,
+      "sif_sha256": "e1c02947011e5593fb9a1313e5cd8b9bf8b166df0bbd32f669a945141e5b007a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15127": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15127",
+      "manifest_digest": "sha256:2fbf01c7457fda0f49eef1e1c035b589ed12432ef307c368aac22af534f15fd4",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:2a85d524a0bb3d4de0079586b6ad1dd7830ad590f32c225b4ecd4177795b26ec",
+      "verified": false
+    },
+    "django__django-11603": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11603",
+      "manifest_digest": "sha256:6b53eb34c74acff36eb2709ba2f239e213ecb386948e14a3101b9fa16be8b74d",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d2362d3fee49d087314bb6f12114fbddd08b30cc42e9848fddd0a591872963e9",
+      "verified": false
+    },
+    "sphinx-doc__sphinx-10673": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-10673",
+      "manifest_digest": "sha256:4654890cc32945f5021445040ad6f2efd3b651f1c9efe679021d3b3da5375eb0",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e9ab2c706df3ab326ac6012a28b77c404f79f13ffad38a37753315866163454a",
+      "verified": true,
+      "sif_sha256": "c253f9fdd1f99a81e8ae09f6d064388a2d67b45e27e7f5674fda06a41a529d1a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-7671": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-7671",
+      "manifest_digest": "sha256:ea67d17c5e1832979ba972feb18531110a4ae0bb86e8cbaf951d34aae99598e3",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e4a644271876ead58b4e1cd05780e0ddb17ca421bf7b2f6f5dca9269d574e201",
+      "verified": true,
+      "sif_sha256": "09f351c0ecda38bef70fd028d5e7a676cb5abf0b49ee2e6b5a5e6f2cc71b7909",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-7490": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-7490",
+      "manifest_digest": "sha256:9e10d2e75d41e6f6325949d19d6a8a033d1f5d5fd6d4ce53ad483eb8951a417f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:49c550d753f09eabd2b10d63c9697f659606bc52b07be6e6dec7c0e48133e71f",
+      "verified": false
+    },
+    "sympy__sympy-15809": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-15809",
+      "manifest_digest": "sha256:106c6882b193223962fe6bf7ce76b14b3e395c7e0ffc64f5361b6a410a108ab7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:c4afb36bd37ceab829e4900e5fe1e9cf0e2707b6fa8c5c21cc9f6454587acb05",
+      "verified": false
+    },
+    "scikit-learn__scikit-learn-13328": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-13328",
+      "manifest_digest": "sha256:4561ea7d239224b3ab1c7d645add8e86c0b435dd158c11c41ed4494d28d855e8",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:bf8c3425ac315ced20986def6adcd580ce4536ded6247d80f99d4c4352c85dab",
+      "verified": true,
+      "sif_sha256": "ce52739e4f84077b1e8ff7b0e5e89d1e4c1791b4ed0e5b7e71c85ba599ccdab1",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-14995": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-14995",
+      "manifest_digest": "sha256:e1c746371f8f7132c29768bea9cc1380871c87f6e4404a2282d8d3c582786874",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6a204c3d4002b221144205ad13a0f414ea335170ae8327d3af2c5946b19b387d",
+      "verified": true,
+      "sif_sha256": "ec5b1ef2f60abc4fe9ec6714839355540120728fc4607743ab38ea6f2ece4df4",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12050": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12050",
+      "manifest_digest": "sha256:34773901589784072af940b29697018dc17b32e37b4ff135a153c99ac2c38dec",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e9b0dbb6b2fec8535a33dc242342020a3c3574adefb95b30d46b25669fe72108",
+      "verified": false
+    },
+    "django__django-15741": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15741",
+      "manifest_digest": "sha256:384224d214a356d06be660e58db19118fcc51fb5d5b8fea45d756ad1c1a8711e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:319ba85c6304fce090f7e0fe65ae1f7785ecfd5d3d57c318ca08711883e1b4d4",
+      "verified": true,
+      "sif_sha256": "745a8513b777bfec43a457b82c235b964a521b85e9102d3b9f1f00a5ce6b6534",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15268": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15268",
+      "manifest_digest": "sha256:aa1a72acd35319e7ef9439c54f8cd26f6ffd384a9973416ad504e478a6a6d076",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:26494a45d6639a4d8abe230a5eaf665ceef8e34b8e01d788f9e4eaa1a51c0144",
+      "verified": true,
+      "sif_sha256": "beff9163924704007a9586da4f2d3899aa13bf4cd50d6fce9e7441b277e540e6",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12308": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12308",
+      "manifest_digest": "sha256:6250d2a608d52b82cd4eb03eb33082bb9927397c01876025499430b782cce9a6",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:748bcffc9cb391f94983dcccfbd753f4ad34d948f2d6a0f06d359ad29a674fcc",
+      "verified": true,
+      "sif_sha256": "e03620a089873dc3b17e0a5de99c1f5a1ce6066c96ec700457d8ba2ea0d9e92b",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-8475": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-8475",
+      "manifest_digest": "sha256:36012a43df40098aa0e7027c9ae1f14d4ffde426e09b695bfe0b395f853fa4fa",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:fcb5d82fdcbc4b03d1552e9f3f1ed500647541e8cb25386f8d553d8f22bc8831",
+      "verified": true,
+      "sif_sha256": "8961d6ea6f68b65fd73888bb2311e860c615b0fcd14bdda5c7e79daa0906e908",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-8265": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-8265",
+      "manifest_digest": "sha256:31ac9a0a59b7e065eb7c662d9f5f8e4f33c7ba1bdf40913cfbdad93c576a9f4d",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1d1718be41f71e422403f4cabb1267cb91ae85f2b3caf0b39ebb9f751653f721",
+      "verified": true,
+      "sif_sha256": "547c6f371c6a165d859912ef726564f61d2ce1cd7a0eadb14f7bb41b48db80b7",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-9296": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-9296",
+      "manifest_digest": "sha256:c63adb629b6dafbb12aa506778e27b02f06387c64df3f2cebaba47f9b5f26150",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:cc101dee36124adc65a6571f8c897e0c1b4c7578ddc5d4a975104b9a0a3e5117",
+      "verified": true,
+      "sif_sha256": "75b4a7b27b48c4ae4492ad5ec5c602e92c5bc69656b067ada6c2b43340c97754",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-15976": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-15976",
+      "manifest_digest": "sha256:699f53232f0f802fc71c98162e9edbf1b072c335f6aa58f0f677c2d3c3ca70c6",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d5fa92a5a917478d7ac91c9e48e0cda9b1415a61535acbd5f02d8b9c6a5f498c",
+      "verified": true,
+      "sif_sha256": "f55483c55eccf118538011b7d1fd8289e8957de4857d053515d8858fb90cea81",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-8459": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-8459",
+      "manifest_digest": "sha256:c2856c3d9bc3ad3015f6ed63a66621229393d3574bb546e64c1a5bbee7a2e572",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e9d2f0f12549045c3ba48800c1fda5af40062926fc2e1a80de7a7b3ef54acc88",
+      "verified": true,
+      "sif_sha256": "7d20c17117aaa18cc6e80db822ec3ab96abf0d06e1db0e77d97b9848691cf20f",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pydata__xarray-3305": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-3305",
+      "manifest_digest": "sha256:dac8706a05650ffb4ce61ad8de6a7338f1b8a144a8cb4567c674c97b9462949a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0e234daddf9a42b85a77ba0436f3fcbad90759921c978b127dff90d55cba0f89",
+      "verified": true,
+      "sif_sha256": "adaedb589d1614a37d8cdb596d2db510f4e0b7596d0ec5f555c1b0a9c47e9033",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pydata__xarray-4075": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-4075",
+      "manifest_digest": "sha256:3d56429d0a07d2b74c0342c12e19f4d7b1510023f87edb6a11cadbfd993de56d",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:64cba3e907a0c4fa08652422573abe19a43d12299e15ce08d8ff84a3a1f39a18",
+      "verified": true,
+      "sif_sha256": "6b420bfdfa3f0dbf2c43bf27ad24feddadd62be259fcd0ec33b50b19ece7d976",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13346": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13346",
+      "manifest_digest": "sha256:a58c4f201531ac127ef08636fccc8c0849dc747e6874cf53a3c83da8d851bb3b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:2514141f625fc58dba82c51e7bfe4ed43ad3169194d98eeb2fe5bc23a73ebcae",
+      "verified": true,
+      "sif_sha256": "1b44220a93ac661d479f70e5dba62ba5905c7c6b645a9695904159b129ede5ee",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-9673": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-9673",
+      "manifest_digest": "sha256:2fb8bf6cb7fb970785e7e79480a754bc1a4be25cfe1edeb8b74514b5d232553a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9ecf577f75daf1596646efde4678fa96c1b790624137015538afff080539a73d",
+      "verified": true,
+      "sif_sha256": "3f294cccf972dc5c705b37dde369377e6112c9b17608d911c9625866a2991fce",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13658": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13658",
+      "manifest_digest": "sha256:eb867897d1362f64efd96d65ec1decc1d3783f433a59e74885bb5e92f6737cd9",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:14bd49881bd2989a3a3b4bfd003198521d220242d035d6864927e5cc409b2f86",
+      "verified": true,
+      "sif_sha256": "bd9d3035fda37d9e995348475437178ff9f77b1741d2ebf15dd836f19b5e7fdf",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pylint-dev__pylint-4970": {
+      "image": "swebench/sweb.eval.x86_64.pylint-dev_1776_pylint-4970",
+      "manifest_digest": "sha256:5d331d487e49480c4098366cd094aae9dd2e8d365f0412174d5e1a2e9a3d5893",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0bcc3ef7203790a1f612af4fb9241041bd5bc2d90dcbb168a30e26dde49858dd",
+      "verified": true,
+      "sif_sha256": "2fe2ba75d45caeb782073ea0482699d6ffd9392238c6506dd4a93521d8c0e349",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "matplotlib__matplotlib-23476": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-23476",
+      "manifest_digest": "sha256:10230151c40fbb30c572497c0d2cc6bebead75042568f9223c3266043e6fc249",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:64bb043b17a25dbeeba766c82d1d5f66ca446ca32da12c88418ded9e0d79cfdc",
+      "verified": true,
+      "sif_sha256": "91b084b6497e97fce0f62565ea8d82f06b205c625d59f4225dcc0fa788e6ec8a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-9602": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-9602",
+      "manifest_digest": "sha256:6e74f436abd59301ea0f4c01560fb3dc23a0c7d1c38cc14e24609401e172a3cb",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:fc4a4f7057274ac47068c3996e729b3091b6a56fd7b8259076c4aafdbff176ee",
+      "verified": true,
+      "sif_sha256": "575ae654bad0a84b39eeb024450fb3cad0e3173669ed950dd2ad6f647d0688ca",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pylint-dev__pylint-4604": {
+      "image": "swebench/sweb.eval.x86_64.pylint-dev_1776_pylint-4604",
+      "manifest_digest": "sha256:df6eb48f445388d0e228108c635625a0cc9f0cf5ed87303e89f75ab6fc3c2b39",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e24d647f8421c551d60da005ce2272910c0aae8bb37f9de870b10c5e70b840ce",
+      "verified": false
+    },
+    "pydata__xarray-4966": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-4966",
+      "manifest_digest": "sha256:71780cdb18ee29fba095dff8090508a77cba28826c80f2bb19ac2425acd95cbf",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:445adac04fe8ac03a165c2e91adc1cfb3f41c20bdfa977ca195698c23d1876e5",
+      "verified": true,
+      "sif_sha256": "79ac6b82a7612eadbdb68223539fcbddb623e745fe20de7cd5021abdf40151c7",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-23534": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-23534",
+      "manifest_digest": "sha256:8a18511507a128964f0a001f54354370b84f4598d59b43d8df24163ba560a516",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:76fdc9420de9a76c6a75848941200c1b9658dd5f0cac86d269569c9b03e59b65",
+      "verified": true,
+      "sif_sha256": "8729a409e88cfe85227d04d7665a436f5a1202f073a6315e1ffeac92c1345f8c",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "matplotlib__matplotlib-23412": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-23412",
+      "manifest_digest": "sha256:12e202cf55f7c103677c1e0ccea3dc01087b1053e3b1b26a7a125df6fc5a48f9",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:914aa40628489b61dc06c60724d8c9bfefafcd6e012f0f92fa0896b747702f5f",
+      "verified": true,
+      "sif_sha256": "a53a2ceaf5817888eb8b5c40efc1da654dd3fdd5919cfa85063fa4365262b153",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14017": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14017",
+      "manifest_digest": "sha256:ab40fe86d24dbe0296a4ea9a82969b0c86824274242b208764d2aee227ce9ee6",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:affc6bda6a7b7f002a2a166b941a70aee8b20c9fb123d2703695ff4447d9e51f",
+      "verified": false
+    },
+    "django__django-16429": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16429",
+      "manifest_digest": "sha256:931fcb1408d2dddbd72756e24bf7bf9ab714e74c08bf63a4df62fdf395aae65b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:2c6681b7bc14c7b0847d3c0b5c5b3bd1ef41e3764b43852ac5415a6e5dde3ae8",
+      "verified": false
+    },
+    "scikit-learn__scikit-learn-15100": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-15100",
+      "manifest_digest": "sha256:2f1747f80b8b633cc886f0a0bb52f7fe557aa9c0d4eeadff7b0609e744a2e5f7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:76e6237ffd0eb85c4762076c6002a532898e03dfafedab1c2d3cd6505a9ca740",
+      "verified": true,
+      "sif_sha256": "b909c100699a3d6a9bfc40af908eca264dc6ec9991692ca7b9231b377c8de886",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11477": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11477",
+      "manifest_digest": "sha256:2a11b9c6bd131e3af00119e975a04f00ed4d9e6c41f8606bc0792459fd538293",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:18fa05d1fc555eb673f798a17cfc1a32b86b6cd9f9a56c64b7840cd5e35e7c10",
+      "verified": true,
+      "sif_sha256": "1df3bbdd4919dd62247f39a830493d3059f14fdea802e1498336a7e6e95c7ffe",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15280": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15280",
+      "manifest_digest": "sha256:164bc2de15ec3cdd2f5418ed00e94bc6cd98812898707532127def78ac851e34",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d1fc6c4600c4e41b9f1894611a22b91f30baa109270ee8205a42de90d995b54d",
+      "verified": true,
+      "sif_sha256": "5d5ba212ac09c1eb692d8cdbdadae65ff3579c5d05def0f82b371508a0ed3ac7",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14404": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14404",
+      "manifest_digest": "sha256:a05098fa255df9079ea81f63500076e5f777091aa71aa396596b56365d53767a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:474478576b8632dd65d7168645fb7cb08a1d1065783dd262985ad95d7b898934",
+      "verified": true,
+      "sif_sha256": "a0c63702999d2b24f04b99f4e360c368d485e1689a70ad963921c085f8587022",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-20590": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-20590",
+      "manifest_digest": "sha256:3a282752833ce34730ee0621e22033501c993f45742775ca57f04c9ff27178a0",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:bcdff110a35d19a6838fde5f678d1b5103610234bd034e5703df46878aad3b63",
+      "verified": true,
+      "sif_sha256": "fc57deb38dcb79188d1dbce10081e9d593edc9eb6deba04eb197dfc45e0d13f2",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-17087": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-17087",
+      "manifest_digest": "sha256:fef77b052bf6729f7b6326b3b485b8a63ac1dc39b6e1c7040242aa2d3b2dc656",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0788f06e29640d23e7318fb25a5f49ad51f86811eb5a7a499b35d452e63055df",
+      "verified": true,
+      "sif_sha256": "852fc0c13d1270714795ff52a695c1398cff810936ab2942be09fcd87ead97d7",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-13453": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-13453",
+      "manifest_digest": "sha256:466329fbdcabb164b2fd24ae50a32f456366e53d29bee24899a604d0cab272d3",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:7f4879060f51b675aa1d01cc7a543bce8cbe48cff0e2a3f55b43057b0b6b9bc7",
+      "verified": true,
+      "sif_sha256": "c17622cdd83d7f3b940c3da0f98b3efdafb17cb43eac07e13c29fe3bd2587106",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11239": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11239",
+      "manifest_digest": "sha256:e260b7489ea9fe2c6d99f0a727badf69ff1d0fc44b4f45163f1bd7a997db2587",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d0e1e22a263cf2ae9b54884de5ad1b0089cfde31aa16fbd7546550dd947954dc",
+      "verified": true,
+      "sif_sha256": "4381f5909bfa64d8a95fced11527d58c071bff89412c92807f0758ef253c0f30",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-21847": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-21847",
+      "manifest_digest": "sha256:9a45ffe20cac4243930e8c5b2b065adbc08f476c880d7465ca0fbfb9f98c6456",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:dc63eae1d6089ed44748eca7a136b877beaf316ca0ed31d0c563909ff1e094c8",
+      "verified": true,
+      "sif_sha256": "3e06dd32f0be0e2b813ef9bfa4240bb3c786d8dc09e8a3c54f83c7f999768a3e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15375": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15375",
+      "manifest_digest": "sha256:c40f0e97e7696a166761d1a0e9d2cea3598b2d360a59b5a42a0ca4ac729509bf",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9b5c4d37ff4e256b9ae6999aeafde0d36b71a56b6a36ecd1995fa874b8161628",
+      "verified": true,
+      "sif_sha256": "b729fc8c33ffdfba763621ed00a52e9fa6081125ee2ebca087a9f61930d28205",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16667": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16667",
+      "manifest_digest": "sha256:28e82e91c61e771774a7a72d6819efb7f994671077f636507a1e2f91889c451a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a0f59024db622ca13d7b34fe9356230a199588e8895a958e3501ea39251368a6",
+      "verified": true,
+      "sif_sha256": "58c9cd4d3371735160af917d88a85a82b9feb82a261c0742b9030a5adcf59158",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "matplotlib__matplotlib-24637": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-24637",
+      "manifest_digest": "sha256:bb2ad4cfe0a3f605f875a0f65c4f110cefecde547dd9a1edb3d1c992f4ac8698",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4b23025de00447a61c1a4e88d1a4a5511f45663a8bd81142978676999466849d",
+      "verified": true,
+      "sif_sha256": "a0b345c38c1006601651ea22244063e26973366bdeb3cc7ea5535aa654715a16",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16502": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16502",
+      "manifest_digest": "sha256:cec85453942266e005d5a8f573fe1acb1f24780104ef78ff3ae4524e8f92fcfd",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:95234213ffb269fe318ed370c2d2aef2febf6b6199ba6cbe4fc1fa42495a7ac2",
+      "verified": true,
+      "sif_sha256": "5a527b73a8ea6a1b698c64a4eb40f12708155d40b83bd1b908d00f3f3daa4c7e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15973": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15973",
+      "manifest_digest": "sha256:cc0c54149ac4626b70e827fe913a967c2621c0c970c529ef464142a282a0c355",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:54ada7b5f0e3cc5032e960c4a6e3aa8903fdfd83618cb0d6c0453e10dc75521a",
+      "verified": false
+    },
+    "django__django-11206": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11206",
+      "manifest_digest": "sha256:1478ff091b2e702e3eeda873e40054431d9f2b592f8e0f61d9dc6b7ec18455b7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f4582d367068b12ff63f49536ed010537dc94470649a0046047353a15f8a4a9a",
+      "verified": true,
+      "sif_sha256": "54c131595d61bf74a79e3802c963bf1f2138e4e9f0b8f2872176df8583f46209",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-24443": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-24443",
+      "manifest_digest": "sha256:0d6610c1dd6f38eb68ee0923a74aebc6103fabc063f5cceec45a4cc0cb8a8cd4",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:2c038f0f89170065a375ccb9210f6cfc91d9c9a22683ebfe46f713078c30d2e1",
+      "verified": true,
+      "sif_sha256": "8f44d5bf4ca10197d71eac7df6586faafe4bf6fcf0fd7b417f9c172499002103",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12276": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12276",
+      "manifest_digest": "sha256:903942f778dbcf0b61c62031697c4a5f3655569c11c84204bdfa307b844ec2ae",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:001fcf705cb514b1a4e6af9dad2a21a657127cf92fe00c1ef8200706d44186c9",
+      "verified": true,
+      "sif_sha256": "d87653882a4096374af74f909e8300e8a11a7b4db220d34c769f8f72c70d9e72",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13925": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13925",
+      "manifest_digest": "sha256:358f31f2359647c4a2bbfa511c40337fe98119364441b5d2c7acaf5422e4e4dc",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:dfcffa35bc68e3b014c6e4c041210721cfc17179fd372e4f7385c6e6384d5db6",
+      "verified": true,
+      "sif_sha256": "be6d997c15b2ba21ae80c5146da050ca4cbfe217f55c3252eb1eb4a5161fef4e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-13372": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-13372",
+      "manifest_digest": "sha256:afc436645be2d3bc40184b51f04e9a0cecad3945746e9bcfeaf6733b1d7cf436",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:90cbc4e001578a30988a85ee06fdc76e3bbfa8bb59b578ec2d2ade870c3a3c2b",
+      "verified": true,
+      "sif_sha256": "ea0a41cbcec9679018b6a3d67d3ce713d025794bd8c7aa329b44046c5ec027c7",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "matplotlib__matplotlib-24870": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-24870",
+      "manifest_digest": "sha256:e7387d51d146c5aa492184a1ba8b4be444964ba3f653b3304e8d5d9a27ea3c33",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:ece1384646704d7cc741a377ab68037faf9ffee33df133dcfa0c17e4a23e55ae",
+      "verified": true,
+      "sif_sha256": "913c8e76e4219749404ecc5e104e9ff829f9b5a6cbde7221175da54d9cfb37c2",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-12419": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-12419",
+      "manifest_digest": "sha256:f78a02916b66645a5325eb515192081890cfc77a103202d5b611d3b2d4b77893",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d72d802ea46a9a328017406f4e6c83ce7d014cdae537276807f0cdf05bb0f3be",
+      "verified": true,
+      "sif_sha256": "7fe8be0e64ca37a8e5179b3d892cd0135b500fcbe5db46974171d326e58a0444",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-6202": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-6202",
+      "manifest_digest": "sha256:d2d9f0bf1ed8a5f50799291be86144768c3f7ad9400482d6dab7f05830f3e226",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:46c4cba4147a424e386808760d3b96fb362388556b00e9257661ac294c52c62b",
+      "verified": true,
+      "sif_sha256": "fe4d540b3c0d0b841a63cc0a6beb0ec235ec4d5264ec51e5e852aa04840ad1f6",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-9230": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-9230",
+      "manifest_digest": "sha256:2a18fa57b69c646bf0e1916f1df157a62de80ca8b55325738f9c9eeff9c38c86",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:036fb5014ef0054831e7218af5addb8957f527fe4a01bf6d4b6e1eebfdd4fca1",
+      "verified": true,
+      "sif_sha256": "70728846b3d9f651945df6271d60c1519634ddf964fa02dad1b5d2fcc274804d",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11179": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11179",
+      "manifest_digest": "sha256:23e061f0071647d4c459b2c3aa84081011080f57a4580727c16997cf01e0d477",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f36d81831615d46d1eea34feb6c49a2815f637a28bca14105db346bf90a8bd0d",
+      "verified": true,
+      "sif_sha256": "39afe3690791f7c0bc51232a3aa8010b0ca2de939dde1f32cb1fd298add49f44",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16612": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16612",
+      "manifest_digest": "sha256:d636fb686b7fabddbc66210cd743e5853b92d23c3c84039dd5163d9ded1c6bbe",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:649981ea000e74f8f8b7411df99002a0079ff0519a6e5140c7f95bd2720b944d",
+      "verified": true,
+      "sif_sha256": "b4bfeceaa0bac4e39f0d61d6dad84045261dba7634fc1b1decb18faaf3833228",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15930": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15930",
+      "manifest_digest": "sha256:13515b9e9004217ff7bbd3b95ac8e6475ca965463435b4dda24a8da969710ffa",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:fe178684ad09a827fdd8fd62708a80b85f97f238bacda032ab15392fed4c0c6d",
+      "verified": true,
+      "sif_sha256": "0ad294bd920c29147846c5be3953e42aea45c02d6d71a63ea5bfd5d1d26d4420",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-14309": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-14309",
+      "manifest_digest": "sha256:fdce7843a7aeb4d630df414fc1bf01301cfe07e1389e2b3d7ee61f93f8ea6789",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1a682f9156ceb9e939cde549c6a01828998e06a653d901c3dc72c5b6b2556eff",
+      "verified": true,
+      "sif_sha256": "a01db7c42cf79254e5a9e3883420cd5c1d06b57b9f82eeab506baf988ab07307",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13590": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13590",
+      "manifest_digest": "sha256:981974f9ed75972ce502a3c9b805513b509031ba3d5a41d93e5f95db9e3dadf8",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:110b5da1873bdf35482ad8c22a77effbc19e0fa93466067502a1dba03f695f0c",
+      "verified": true,
+      "sif_sha256": "993d246159abe46f16b5052ce247070a35d59b63c7afc69201eab9082ce6ebff",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-13977": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-13977",
+      "manifest_digest": "sha256:ec43fcbcea2c26b6f74796a177fbbaceb754a1152b0ce47ecbe4fab2e04caca7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:bd003a6a247d33fc29c4df16c9288f6d2b75ff4ed94e1fdc6ff161f1db94496f",
+      "verified": true,
+      "sif_sha256": "dcf7b369126e1760409e5b97b29e34557912ea954426e4b56adafe94524e7452",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-20428": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-20428",
+      "manifest_digest": "sha256:5e4cde96a50b814adfab5f2dc786b2a865ee3b146c18f1f231c467d6f8aeac96",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9d3cc06601f7d120a22d2821eaf5c5456cbc0599ec734ba767182b0919994094",
+      "verified": true,
+      "sif_sha256": "a981fb41ec34ee6bb833f32ed4a8daac249dfd5db41d3bf1dc240e853d477e36",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-10449": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-10449",
+      "manifest_digest": "sha256:84a2f8f5505d8d0fa39c756c3561240780855aa4da266a92366d25dac2e07846",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f6c9a3a3ecb31d4e4fcd7e4cc384d003dc63594a32a9ba91161626d110fcbbb6",
+      "verified": true,
+      "sif_sha256": "89b7e94ae32a1f557ce59e9c99922c5ec22f5a27cb825605c382255437244692",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-18189": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-18189",
+      "manifest_digest": "sha256:7f3118533e22d47a19b9784ab86c7b0251cd6fec0acc71f7fe8805809f052724",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:5d4dcec6309087223683586740b4fd96e27c0ef1678bccc872a0dd4eba1743b9",
+      "verified": true,
+      "sif_sha256": "29293ea990bbc534a472846d2e793a786a77611b87cb96c8b0820234229c07ef",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13212": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13212",
+      "manifest_digest": "sha256:6d5203003bd83e110cc1dd5426a80da290a39d40717a94b51c9260b66fd79bcd",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e227ab2b42f174d78b4281b23e14b13f83ad54953f8215cbc0c622c09a84acb0",
+      "verified": true,
+      "sif_sha256": "b4cd1fa5fb1ebded67ca9bca99a3ed23bcf045b44a5a84287e12f31540361e07",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-5809": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-5809",
+      "manifest_digest": "sha256:0185f5d9efb9cf1364122a7eff7fc5f02227698d01f7e4f2d593917816df42d3",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:fbe0fd2a8794df1e5502fd0b2c82a98fe0a6a51f39414c2c38bb69a0b3c405b9",
+      "verified": false
+    },
+    "pydata__xarray-6721": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-6721",
+      "manifest_digest": "sha256:6397b462fd42ea2078c8e730c12c1ba36391471adc1dd956a59baa320874a5bf",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:58c7f4ada7f3cbcfcde50e0b55157701100cf694faa87978c672e368c0531898",
+      "verified": false
+    },
+    "django__django-11532": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11532",
+      "manifest_digest": "sha256:8abdd4a9c5f66b458599cb3b1418861dd16c1ac7cc29a226f6e0148f1ecb966c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:77f577d4cf9c43446b9ba086556fa8a5d877d5841d1c21912947e0f00ac4ac2d",
+      "verified": true,
+      "sif_sha256": "dc2fb8ea06a37eb3e83328bc98ef69e43c74edd360a17706d6fe8428b4f94408",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-23950": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-23950",
+      "manifest_digest": "sha256:3332a07cc5df8ca74a7b48b958155cb8f3ceed2e7ccebde20fcea6930a69562f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a55e5fd585231ba6bbcb53bb8b6a9f61fcc2e8012bfbb511430e6f192c2baa35",
+      "verified": true,
+      "sif_sha256": "5d78d319a5344a2091c1f7dd4157fa8c2abb6ce0a6f3384c829155a3de2f19e9",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15563": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15563",
+      "manifest_digest": "sha256:8ad1a52cd8c746541f87d77df6e56e3ad1fe17742494153ec4215c86108a641a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:94186b4d24bc8f1da5f54488e4367dd466aba0ceb6fc29f0057479e30275445e",
+      "verified": true,
+      "sif_sha256": "ffeaf3407f89aa74604400ba01a4ba9d25fd3364df38ac1c410d23e51a3bb9b2",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14170": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14170",
+      "manifest_digest": "sha256:c2c5eed6f8e103deca2391f740e52c120a59e3fb2086b0a092b837b8e1c8919f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d10fbbbb16acdfa184b9e4c8292ca40becd40099afba97a19665384d4ea5d751",
+      "verified": false
+    },
+    "django__django-14155": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14155",
+      "manifest_digest": "sha256:df566a06348c488d15869f8c8745a9f6c19eeb3ebd66a823dd7f91ed92058a7e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1890602326397108ee8f6551174834e1867446aabf63a143b0016b18c6e2f720",
+      "verified": true,
+      "sif_sha256": "0226666473fd60d788c43e3518cf6a2e70f38df7f483e2db303affaf2299672e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14752": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14752",
+      "manifest_digest": "sha256:743b7bd1ab48273b53cc92635f21a5f2697d2a7bd4af7a2a17c399d0d24ebecd",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:df8caa4518b9d1295e55052e61c939bb583e33dbd57db7d44693bc27077c426d",
+      "verified": true,
+      "sif_sha256": "2bc35fb969c6bdaf0decfb600cc30d26fb2fd37d88c41a491229b86abf7a2cc6",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-24562": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-24562",
+      "manifest_digest": "sha256:776086d668f184408eb410669894ed1721bd813aa01af4ffd2884e3312a843da",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:2a49032560c3c59816920b1e00e0dab696d1061821d0fa8b5c5334ff0c000382",
+      "verified": true,
+      "sif_sha256": "ee4745e3af47a18ecfea6c58ae0d2ac68a343114cf02b9a93614654313e29e5a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-17655": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-17655",
+      "manifest_digest": "sha256:2c0112dbc185b0d0da1030ceffdb92b7730208caadb2cfbaac8af6ed9fcbddcf",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:01af1e0f248307413b8c1a599b23ece96be0067f407aa1fb5e917f180f5e2ced",
+      "verified": false
+    },
+    "pydata__xarray-4629": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-4629",
+      "manifest_digest": "sha256:033589865b8522fd28ad477db28dccb4fcfcc3e56174bbc95e7996b2a948135b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:583ef721ebfc24858c10704ad28fb935adef5f18f493d29751b68fb467c66994",
+      "verified": false
+    },
+    "django__django-16082": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16082",
+      "manifest_digest": "sha256:a553a5c186a49df0a5c6b97499e2318e4db2d8f6992059fe144758e850670572",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:983c9f9fb852ccc0377c3a348f122f2f6cb4d90e107ec6ab978c55d11940ffd1",
+      "verified": true,
+      "sif_sha256": "3c45ed2c857058ed099ca3c398bb7964dcbe17877e93ac07471ae01aea952393",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pydata__xarray-6744": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-6744",
+      "manifest_digest": "sha256:2b2d88a009299437cd61f155bb5a0ecf9a956386ecf4fc2dd765bb79907f3a8f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:81611b35828f9d9f2c39e755d21d53ac74e23b5d24fe5b01516b39d8619d0c93",
+      "verified": false
+    },
+    "django__django-12273": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12273",
+      "manifest_digest": "sha256:ceea46664eff0d02e627ee17f0f9230e5c20a1debf3eb1ca2b53c7ca476210aa",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:75717e276e656f42bd46e25c4fd2b2754bef012539030ecb89bfe426031ce0bd",
+      "verified": false
+    },
+    "astropy__astropy-7166": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-7166",
+      "manifest_digest": "sha256:4b46c92697326df9440868e8990289755954dd739a1ff27a4ad1371da6a63ce2",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:cef0666d736b54a87c99d615690d343a381ca0cddc5d10d62811b82427ee98b4",
+      "verified": true,
+      "sif_sha256": "1d4a89a11d9f0b5ed83e6465a43d59ed96a63646aaa455cfa55b2cc1d2bc4e65",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15315": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15315",
+      "manifest_digest": "sha256:1060f830aa3331b052eee3a54b8793625d9f2731959b4b1fc57755afb338ee71",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f81a013b2cd280eb464bc2104c5818bb22820f9634f03c4a5a6d3e2873defe33",
+      "verified": false
+    },
+    "django__django-16136": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16136",
+      "manifest_digest": "sha256:e7b5be8c540efc2fcd17b6c1ce59492007f5992ae762db9fc1956857bd4d9288",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6636ca265ca6aba6f61aeb7e96300b832a5b72c162b96d07133185928da387cc",
+      "verified": false
+    },
+    "pylint-dev__pylint-4551": {
+      "image": "swebench/sweb.eval.x86_64.pylint-dev_1776_pylint-4551",
+      "manifest_digest": "sha256:910cb070fc5e1c02b715b561c2f5783bb5f5e5935d9a169b4c91bdcfdd015f52",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f0f898ca4ef3fec27a985b1c2c6ca6ed3cb8fbf5be393e0bb6caf4aaf1512c8c",
+      "verified": false
+    },
+    "matplotlib__matplotlib-22865": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-22865",
+      "manifest_digest": "sha256:a57f77eb429bece1e7eef612143c5c1586cab2dd9da37f36faaccd9aec3062bd",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9696098532ade2d1e2fac736a4d9c46ba983fcd92fbada1307df1a78d55e0731",
+      "verified": true,
+      "sif_sha256": "e37130ba3cf264ae7c1ddb127ae3129e6816237e8cf7a4a5c7c26b5ff7339e73",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12039": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12039",
+      "manifest_digest": "sha256:bd4dc8875144f8f3e0b8866575f9ab564b51774a71fa954cb8e4a9d34484a90c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a164db2152541c12d3a6ceae98645510ab3485cc753705da70f204515818f1ff",
+      "verified": true,
+      "sif_sha256": "70ca3371e4e41735d60a1f95fd51c4b7cc213fe8da17a021570ce69ab7c5afc7",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13569": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13569",
+      "manifest_digest": "sha256:e0270aab510cb2153b21d66a58f8d772b64fd3cf0cb702ae880bf4154221d826",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:941f05dde54551c184816c4510eb5dde3085bef76087834294436bce215c10d5",
+      "verified": true,
+      "sif_sha256": "49d9545730568d192e990bb44b4f8c02c17a3b1d5eab98a639c54298d1d1e71e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13158": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13158",
+      "manifest_digest": "sha256:b05beccc82fc00cbc3a3090ebe207b122dd31585aefcf7d9c1fc0c4147c664b6",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:ed8dd115b1b27e4eec5b2a5e940f7a4e5d7abfcff4ff4332b2c1d34566fa58c5",
+      "verified": true,
+      "sif_sha256": "703aef07107ce0e82cad556d4157d7c6e2bb09e44289835917a38ec0a89f1521",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15814": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15814",
+      "manifest_digest": "sha256:56da9705f6ffdcd965e4226d8bfaf81fa6f2aac5ed9d2e2b796d1b0f3d200871",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:58230bd6169c8c769fa8fc74d59bcc2f68e41bc46e8190aeff5a63cad5fdd1b0",
+      "verified": false
+    },
+    "scikit-learn__scikit-learn-14629": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-14629",
+      "manifest_digest": "sha256:66bce6f57afd4d7633046f74364ffc3c2c6944da953e013db667af550f54adc9",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:de0579911863656a0331adc8d2dd6080ccc2543d0a5fd2bd68d753c8df1ec7c8",
+      "verified": true,
+      "sif_sha256": "baa94a0bd1d735b2c8d8e5da72cbfc57a1fa182173d98daf7a15e84bc694f465",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15916": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15916",
+      "manifest_digest": "sha256:cb20d42e6a13a051b62294efcbba022068d2635ed84cfa8b5298b0403bf5d729",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:5ef0d4365a38dac6adb76f5f4ea100a32355b90bf24e9d64506ef9154ea5150e",
+      "verified": false
+    },
+    "django__django-11163": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11163",
+      "manifest_digest": "sha256:22424bbf0a4c54e8a7fce6b9d78bd3807589f727ff5de3e5b0c2b89c6ceab414",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:ae0b96085340fc1c0cc2962ba5ac39f9cc935cbd50fbc98229b635fd80df31a3",
+      "verified": true,
+      "sif_sha256": "ec5afd50c651bd8b1bf5ac49b4f8d612b48da2dccc1fd7236db9bd3d5ac5c2d6",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13089": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13089",
+      "manifest_digest": "sha256:44447df3e17b1fb5f4708a810fa0d425edefbedc0cf092c05150ad5adfc623e8",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:800b15850facfa2657e9d7db3fb15222af02c166b996ed490f2cc4184e51510b",
+      "verified": false
+    },
+    "sphinx-doc__sphinx-9658": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-9658",
+      "manifest_digest": "sha256:f8847eb2c89ef395c61e91c1f00166b274b2742aee6f310e3a315a10999f1e93",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3ebc590069ea1a3566c30edeb686fd2c28d73719d9fcb379afcf2e0bd01ebf83",
+      "verified": true,
+      "sif_sha256": "74421711fd2b9c620a78304cf77e587b1382ac4c3214a93e89c3f8d0deb96eda",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-5840": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-5840",
+      "manifest_digest": "sha256:21a4deef9114348ab02986927e057d6bc0caf46fceca06414493f91ce4c64283",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f2e8a2039f31a889902cb311f03b58fb85c1840b51172d1e7ff30727eb3945d8",
+      "verified": true,
+      "sif_sha256": "52941db16f2dc21ed1e34809f776462b58c0fea41920f005a9957983d66f8955",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-12481": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-12481",
+      "manifest_digest": "sha256:bb526b7d1c4a160d96d3ab925a6b382194a19bf77a72df71e220ce19fe924e7f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:eaaa73a493f6afb689056b65f566a1f69ead19b88eef24c05a5438244827198a",
+      "verified": true,
+      "sif_sha256": "a2845ccf36d673eb8050837595c645a262c0a29cc597b322d8f43cd597574edd",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-17630": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-17630",
+      "manifest_digest": "sha256:9b839af473048e347a0f435e920bfa5206e588b59a5187bef826352ac05ae73a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:950c79918a3185786c91b207a0fc7cb9d0d5513a0ef4bf81f0ec2e2f07340a21",
+      "verified": true,
+      "sif_sha256": "c294ad33c2206dd3f3753e129f72adbfa7e40d94ad96f3beceaa4afbf789c154",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15368": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15368",
+      "manifest_digest": "sha256:f41ed3068a209a8372d6e78847c4be434c582ef63550c87b86c5d3acc3da0f43",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:c4d11f1520b99129b8640cf8841eeda3d8d58f1b59ca75bc289dacf0cb812592",
+      "verified": false
+    },
+    "django__django-13513": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13513",
+      "manifest_digest": "sha256:3e24b398102a82535f18951342d28cb996eb7e38177fef493387d068584e76a9",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:70adad783c72816162c0bccfd70e3baaf87d13a59591915712ea7802502cf076",
+      "verified": true,
+      "sif_sha256": "d54bbc9e6b6eb8bf064b36b84b7622572f75e97895e8ab7de205cf9b724dab33",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11551": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11551",
+      "manifest_digest": "sha256:2c2327cffde3e63d1d2631235539e57622eb3c60b118302148ce0e6fe109a0dd",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9c43414924a1598c8c11b7d6ea24179624eb362c397be8fb5f1a73647f1bea5c",
+      "verified": false
+    },
+    "django__django-12325": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12325",
+      "manifest_digest": "sha256:9c15847c3fd7d269adf15233bd7034bb9e0491e45fefe87454013d2bdf7a6efe",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:ca93e7820abb93c4fdb4a567ab05b6625b6474ac437c9f2d9bd706093d7de9df",
+      "verified": true,
+      "sif_sha256": "02a96d278690edfac62abc873aa2daaec72d048b300a258341cee8b9ab62218e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pylint-dev__pylint-6386": {
+      "image": "swebench/sweb.eval.x86_64.pylint-dev_1776_pylint-6386",
+      "manifest_digest": "sha256:fda08a7a0a711af33163d53ed09b8401d84b7c9bb76b31e25a81357c98e6aeed",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:83f7a8849f90aff7654ca4a8dfa61b33d67312710bb7be8c2f15533581cd3821",
+      "verified": true,
+      "sif_sha256": "2b42317636d2fac2622a71a00338dfa3f899d5d6f612ca7517f040c7961e3f93",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-13615": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-13615",
+      "manifest_digest": "sha256:b71f0f3e41f7d5f64028c13703a3563c09b6cbd84ee43103e5925ebc52fda263",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e3e1300d5673bfe80ce06a79bdbc934720225deba5b0bb873570ef23e3a6333a",
+      "verified": true,
+      "sif_sha256": "31212507f271c9b2a153add61fccd2db0644c9e459e47084cdca3b20c51c061a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15380": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15380",
+      "manifest_digest": "sha256:66199366efacfc1b5185cf16a588ef38952970c3cfb503e35a54572685fd3155",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:8b523d4c313891a8271aa513ff57162d48bcf1a548e741cf9d5a1f1a183c835c",
+      "verified": false
+    },
+    "astropy__astropy-7606": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-7606",
+      "manifest_digest": "sha256:45c4f681fac75f6fe1a6e8d17220f60b4ae64d3d19e637501b0dd1f9ef61b6c7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3fa12cb7c6f5461a477e6757994202b08139f723c8c488e3e8b45b0cb1032546",
+      "verified": true,
+      "sif_sha256": "fc43fcdaba14578ce9c5c6bb34b59926e78fa84d262adfdaf3cdc2d81f83405f",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pydata__xarray-6461": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-6461",
+      "manifest_digest": "sha256:88efae745c9629cc34677c9ff042a8a488c97aae47b915799c4efad2ab603632",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:5f0507f4349e057da586ceafba199570b94370808dcefbe55bc8cc39dfeacb0b",
+      "verified": true,
+      "sif_sha256": "1e3fe26666f8ab9854839642c2d3f4870782cfc68ded22ff6c6eef5586ff2767",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11133": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11133",
+      "manifest_digest": "sha256:914093363dbe12def92c5d36e9bdc5270cce5ed0aa6f3daad8bc4ef0389c29bf",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:499a1f64294c5b3787c461633cec96581207248d52a4d52325a87fbff3805064",
+      "verified": true,
+      "sif_sha256": "e7ec14bc789cf9c4998899f528d25dfb757f16777b59f8fbe89a92b6b512a2bf",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14315": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14315",
+      "manifest_digest": "sha256:a1852da09a4bf55cd175802d6bcabd360e78b89123b01d3d94b89739c0322ac7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f914cdb3cce55703e51ad3714a4f92f5cf40752174afef9d278dd9317435cf5e",
+      "verified": true,
+      "sif_sha256": "331ad6dbe024617bca7e67e9acc57ffa150412f3eafe825de6dac72d94a1805e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16116": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16116",
+      "manifest_digest": "sha256:402e3f794142610246be59481c9978f57a0a737182fd78ea86c80e8e253d30a0",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:249c616c6e80522bfa1a7828c51fe1dd9b79e1002c2ad0b95ad2e9e34ee7bf9c",
+      "verified": true,
+      "sif_sha256": "d2b54ed21a4748221b0803dd8d58c5bb28634a9931a2279d7f41cca7394d1462",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13794": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13794",
+      "manifest_digest": "sha256:da6bd792b940a0365f3cab125bcda443602646272c8cfa0e7e9e42f55bad8a1b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:548bb9ecf7d40b61275bb7de3ac4e3c92c66360c2b012b1239ebcd6541b61ded",
+      "verified": false
+    },
+    "django__django-13809": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13809",
+      "manifest_digest": "sha256:041365848333f9c8e0ace64a163da6e66038a5cf5d0b1e0ee93bc32e73cbaab6",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:505a1ddf221a3f814648afba808f88eb05cdb03a606b2cf78185d001422d6412",
+      "verified": false
+    },
+    "django__django-14349": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14349",
+      "manifest_digest": "sha256:d02cca73e9b238ef6d3577073093b627369e72909667dc5483150be37f125754",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:cf38516897206f8b489543ed8e792249af107f5767e6148287636c5e195acb7b",
+      "verified": true,
+      "sif_sha256": "e25d6c01b07ec4ce5168ae6849bb33029c28bcea52c4ebb2f82e34481e7b77d0",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-12907": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-12907",
+      "manifest_digest": "sha256:e082963099ed7d5a5f75a0be46e338be36faae33b2cba5289a9ddbd505997f1f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:7485c1e3c8861efd0c6a4a78b952857592e541031039000d25e9481f045dc4a3",
+      "verified": true,
+      "sif_sha256": "d2439086b328c4d28b707dc44f2d8b7b96d30e8b69ecf15bbe76dd35d2f0c8b8",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12754": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12754",
+      "manifest_digest": "sha256:0b678f9efe11f2120db3747adfeebab3e75c0b6f410c4b43bcedf6abd9abc12a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:449c15ed1d3f73bb30a9665965f57de8ea72a3589c8c1194a8a8dd0da4f753e5",
+      "verified": false
+    },
+    "scikit-learn__scikit-learn-25102": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-25102",
+      "manifest_digest": "sha256:a867569ffda421d052245801f98064f13460291d06f439b2e6a05ab7c3135d57",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:b9d4474791bd7ebf1c5bbab468b77802d1fe7368819ff9c9e97076d8cb736472",
+      "verified": false
+    },
+    "sphinx-doc__sphinx-10323": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-10323",
+      "manifest_digest": "sha256:b27e055730cb8a826e4e2cf0503d03c6770d537ab29cb6df8caa93ef5db51e8f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:30b09bb22c96bc3aeb3de19069452b4363805718e28bca5aa1e6199676243959",
+      "verified": true,
+      "sif_sha256": "abaec2aadd0782498b047d24411ab07d37cf0cb5985691a09272ef96a8b1b68b",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11099": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11099",
+      "manifest_digest": "sha256:cca302934edd881cc4f1e4647a389a25cdaa3c02bfa33667a4204934a09c4fb1",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:364ab4524539dda8fc9c18c7b4761c76113eba606b79b845563d5052dec163c4",
+      "verified": true,
+      "sif_sha256": "60d64640f3ca593ca757577d2c688ad1b0164326e71f6e0d3ca4ba6c9b1d56ef",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-20154": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-20154",
+      "manifest_digest": "sha256:d05bbd76c08f2d5b444f6f304ed6d4621f7e5a20db97f9fd0c602210068b0f80",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4cd606cd10023eb7df7faa8b7affcef72750cd25fb4f8bf29d491c46bcd52f4b",
+      "verified": true,
+      "sif_sha256": "3bfecb3261ed93a0723179b1ae24b8f546c9cfd9a327ba3860578cb1bf66f33a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-12489": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-12489",
+      "manifest_digest": "sha256:da745b29eda94f68cb55a6648fb5767ea6709c242d7cc1c93caee41256ca02c6",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:97d5e3120174bd85719c4e96148c9a1fefc3360f9c276fbea417f9167d0ee8f9",
+      "verified": true,
+      "sif_sha256": "3509c2fc0fc4f7624d9649b42cdd5eece4972d2b78f5b3e2338f7a904fd7c727",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-18698": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-18698",
+      "manifest_digest": "sha256:9b8ce19f9470ecbe3390699d06db56a5bf92b49cd41e687a468156fd5d3e947f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:fddcc1afcb282e97ebe724c0df5d5f045593eee2265ca078ce9895e292019a4e",
+      "verified": true,
+      "sif_sha256": "6ab783c2dc1d7af5074919775c2848bceea0a450e7311b209036f86395edd325",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14376": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14376",
+      "manifest_digest": "sha256:cedafc3a8b3c781cf4ab59095146e5f470af9c91e0a45845d9f8a8cfb971d55d",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:77a303e37421cf6a4c4453a3c72923dc53f888b2556136b2a2b82b4b75c1ca8a",
+      "verified": true,
+      "sif_sha256": "2cf23d4c9f38d2f3a40f67cf06f318a2c62c8be3b130e519d770ea843e0893af",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-12585": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-12585",
+      "manifest_digest": "sha256:88b5a356d2f5a8d8bec254dff955b1e89746f4c2b01ddf01d70bcc85bb1a3e85",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:cdd7ee1f8be0ad736dad1a201aedd1683f8535f9cc7a1aa489e992a71fcc81f8",
+      "verified": true,
+      "sif_sha256": "e7d6607e23d1087b2b6c820ff7d879de4c79ce6f53e4671a19549db4f489748c",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13933": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13933",
+      "manifest_digest": "sha256:0f3b43fc1c71e443ccaac6c84253a158a37026f8d4bb192e2e81da36f0a3abbc",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9872c1a03b783ad17cfaf332ebfc7c9d992dea47f911b2b7e0e31cbfc0064297",
+      "verified": true,
+      "sif_sha256": "81eb77e024be28aa79f0aa60a4cb15e214489dc6b81400b7d9c6d3b3e2bacd99",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-17084": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-17084",
+      "manifest_digest": "sha256:5a200d1c5ac1dec314fa7c4e9933db8314f030d2579ffb0ac4f4891f7eb77169",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:eda554c68de207ce3bf07467eff5396da097425ecb4fba4fcd6988891200f29f",
+      "verified": true,
+      "sif_sha256": "72e960074760d91adf673efc3c84244d5ad694ff2391f997d0691293f56d46d8",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pydata__xarray-2905": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-2905",
+      "manifest_digest": "sha256:23c72d6ce177631efc8094bf28418e3a960d96ca23e8ad727a18c644de257e9f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1fb7fb411d115d06cf2f34fde3b6f8a33427f2d6f36e1ab8df3b1b977195bd61",
+      "verified": true,
+      "sif_sha256": "645354a95663ef54690754a224d9e6fd44cc95be3b35fcd1c6d76205a2a441ea",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16662": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16662",
+      "manifest_digest": "sha256:ee2a4b7ff16d8ae37bd4311b9c57ccff00f2576cc861cc1dd039b9e24de954ec",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:88f4e9078d8d403ca4f431b35a9c4dcfeb83b8f59dad2a69d988cca6a82a7bbc",
+      "verified": true,
+      "sif_sha256": "f8508f84389a685f80318197b7130c93323c3c351ef64b60a18600c3cbdb03c3",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14999": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14999",
+      "manifest_digest": "sha256:1ca2b627c38a7299c6d0972837ccb260aa9d81c44a7d95effbac1df17f596748",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:ace2e4a5a8c7583dd493e54b2b24c11e2e3581e80394ceb7c583fc0cb8c0f9da",
+      "verified": false
+    },
+    "sympy__sympy-13031": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-13031",
+      "manifest_digest": "sha256:067e63442eb90f260defbdd2ecb27bb8389449ba889cc7f98fbb1c7585e37b49",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f1b132a899871f43c1eed5dc33ab53a1a3c96b73502fa970e276ee531efa11e7",
+      "verified": true,
+      "sif_sha256": "79a069cc98c8ec191d76130c8d800f9ee158b56a0c7735113bc1f5a5ac0e012c",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14089": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14089",
+      "manifest_digest": "sha256:8acdf052e6ad2978645b9724be04d09fa759a98428ae9b5a789e9c6e4d8372c0",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:350ca9194f232f18e2e5e38b2fe7b0f3669cebb94b25d6fa2e3f2307ada0a6b7",
+      "verified": true,
+      "sif_sha256": "6aa1f3abbd557ff4a69221ab92cf13680addb29c0424abd967e8d0dcfb07f097",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14580": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14580",
+      "manifest_digest": "sha256:34f0b2435968031cc19f39e942843c395128c10b0a73f4107742e06944aeb338",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:36ae66cb383bf48c5bc41a87e0d2e37d98f5bbadc3d42dbd0a21b3077ef10dad",
+      "verified": true,
+      "sif_sha256": "1dfaf8947648947c4eab70c7b63ed3be3a4bba288513691f0534d03486e6a44a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16454": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16454",
+      "manifest_digest": "sha256:3eaa23ab3e8e83a25dc8e4a5297f4424335f0830ba42dfdff2491647e574cb0a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:674eab0bce68e359a0913f77ca80873a95e952906939c92a253dfb74af837719",
+      "verified": true,
+      "sif_sha256": "8f1ff1d75def40b803825e9f2cc718b5d48e1d3606651fa0bbe4575811a22077",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-7530": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-7530",
+      "manifest_digest": "sha256:843450ff83f444aa4626d05cffc0c912b79eb26045f2f625a4f2dd2b58d627f4",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e81c4c6c0e3848eb1a39023403b90dc227582c985bcdecd5098d20778a110292",
+      "verified": false
+    },
+    "sympy__sympy-16450": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-16450",
+      "manifest_digest": "sha256:3dc2ba041aadc8d34042c89d09d1570f804665c60413b111ceaf50a58dc982a4",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0281fdd254c479762a78267206c93a5ceff112ed78ce5d414e4b53a50f2115d7",
+      "verified": true,
+      "sif_sha256": "2f762446ccf1f0f9db7cdf1f05a3bf40e9c6272f2390a8b989b556812c96e445",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-11445": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-11445",
+      "manifest_digest": "sha256:fec58c84a7ccc38fdceb65528bfb6fb923f038cb1dc95de1f79c0a85e2dde4f2",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f9c01b658d690b91efb4903cecd777d3a306a6e9efbfb71806de89f401348fe0",
+      "verified": true,
+      "sif_sha256": "f68b76a25062c210e8a81f61db09d70c207d73d3b98a2d575cc9d8d00af2e2e1",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16263": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16263",
+      "manifest_digest": "sha256:82700a720fd444baafe5b0a83a16784dad712f8da1dc2c2b7070a5c6650e0739",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6ffbe9abb5fe3ce7e36bfa9ce81a43985958acdd25fc56bb8ffc14f6e80e2bfb",
+      "verified": false
+    },
+    "sphinx-doc__sphinx-7462": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-7462",
+      "manifest_digest": "sha256:b7919ea5c17761c09c474222d5d1141b4bf4a8b5b68bbf78f548f664452fb021",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f253f2f59251a79ad044a4d84b461f4be0be10eb6ff53279a83d142616377c7e",
+      "verified": true,
+      "sif_sha256": "cd7c9e5c7dd06935b72b125b757c8596b919e7088ac3a21951d68c420e1e7304",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11265": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11265",
+      "manifest_digest": "sha256:70a39003fb3ce8f01ee82dfeb16b09bc3714ab669d3743fb3e1e5689f18ea1ef",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:8e8eb63519510156e4bd1bcb930a817f1f6b958d19db6987bfdcc60c90bf1dcf",
+      "verified": true,
+      "sif_sha256": "2f37866155f30c9df220e6154328634473dcd531651eea461ff5c5edb56c4990",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13417": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13417",
+      "manifest_digest": "sha256:c3f2f81683b4e3f0692b269a168b0764680fe634ba0d3e7ba929af579acc021f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f66b0252a26d1d4673bcbc76c17898c363b813a8e458cd32d5f8b5093a856a5e",
+      "verified": true,
+      "sif_sha256": "283fb35549fca8c2f5f23d37e2c1f19885a8b3fde848752ca017af14144f4507",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "matplotlib__matplotlib-26291": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-26291",
+      "manifest_digest": "sha256:1b5b3c1164c4f2a4210bec437b5416fb6346560c09b49e17ede58d045e8b8231",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9c568e99e8a534ba8b622af9c48a5c4c157c4f1003237b10ed8d0b82c4b771a5",
+      "verified": true,
+      "sif_sha256": "629f638b0c4bf33e76df46de1b23c5dfae0445e51061e66c35f48e3a062a76c3",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14771": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14771",
+      "manifest_digest": "sha256:1e0da32b298c5c98cb54814c15164d54eb2b2aeb5d9564972dc36b05017713f7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3ad8d3502223b8f51cb12167946619e2dcb10d39d17c7d138dc62236b291ba92",
+      "verified": true,
+      "sif_sha256": "32001852e0f4d307bf30b1d6d1fec8078630e05fcdf08a945add9babc1ff052e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "matplotlib__matplotlib-20859": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-20859",
+      "manifest_digest": "sha256:353f8d809b5faff5a1042dd3f99358784a92e2ee7750bb17cf3546d8201992ed",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6b3463d153c8d0469b440af8457f1cf3fd3effbbfbb87ef85e062e937e21cb02",
+      "verified": true,
+      "sif_sha256": "cf94b116eff4f268aa9de7bf1abafbfd3fe807ebd95869ce9f373db09f0a5de3",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-9591": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-9591",
+      "manifest_digest": "sha256:74df74273298874f532c3386fddad8b90528d256b01eaafe8472eef4da437057",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:220d0df031409eff9d93285d8bd10f0bbb5e3abf161e40828350a594dfed3497",
+      "verified": true,
+      "sif_sha256": "a431ae7ee8763c3458cd2fd08de6dc5ef47e3efaa27e1d8b0f0758c5244eda01",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-9698": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-9698",
+      "manifest_digest": "sha256:38120cc331db6bb9d962101a6795a515d56c8a4ace9983f17afede39fd926d5b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1aa4fb3e28fa44b7a619b6edf41ca84b61d80d29baf1d474ef9f5e52e1b2eb25",
+      "verified": true,
+      "sif_sha256": "88c93c4cf422409fe6c3b75533303d86ac7d4cf026010894eba71d19f3bb506d",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14034": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14034",
+      "manifest_digest": "sha256:90e8d93cd5268291ab32adc671d6bef6f58eae6ab571140c98e677f31fc1070d",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a418d2ce60722b04983d018e8d46f88f236fdb22f331ae908f8528104631cdcc",
+      "verified": false
+    },
+    "sphinx-doc__sphinx-8551": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-8551",
+      "manifest_digest": "sha256:7ef3c26b1f402bcae518faddbdea62e12496a29b8d49b582a752874df1a5cd57",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0cee9556d1dab507161552be8bd82757ee1a835fe660a832a6df023bcb60b67d",
+      "verified": true,
+      "sif_sha256": "f275d43f37636f89d0a98c7c49d349c6691981c8bebfd3e2d1bd13cff294c71f",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12713": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12713",
+      "manifest_digest": "sha256:cc6a38b67ce149e7db25db27dfd0075a3c28e4b85bc17c46f2606a3558a970eb",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:7a238335a0f05c3fbc1d9d193efb32d83cbba7c7fc72a89e37cc0496901e1993",
+      "verified": false
+    },
+    "django__django-15561": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15561",
+      "manifest_digest": "sha256:a45cf78a1a598052abff8ee976da1877796107e9d6f8f8ed6201aef360ec381b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:2e9e4bc6f609ad3497862f05bb8413f125f17d51065af09302e5146faccca490",
+      "verified": false
+    },
+    "django__django-15569": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15569",
+      "manifest_digest": "sha256:13d3ee8c6e4aa4d5c34024f32ada971a11153bfe0023339ddc4bdfb0ca48925d",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1e9a54d724442423798d68fb4fa505f9db5ba0ad782c067df3d40eb6c4902d50",
+      "verified": false
+    },
+    "sphinx-doc__sphinx-10435": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-10435",
+      "manifest_digest": "sha256:30d33734839d5f49cb85de2ef78d99a2c8869693b72c9abeb4d999bf1ffc830f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:385e2304cfac060d2c858befb76c826f6aa93374ee5847cdfb87c374d17bb441",
+      "verified": true,
+      "sif_sha256": "0f1a7ecc9e28676387428b52b9c5914ae02ee1fe6df03cf1859b05ddf8fc7792",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-22080": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-22080",
+      "manifest_digest": "sha256:7d31053ec5586fbcc013e528671f6a1fa0060871be0d1ef31e61709e61a86018",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3696601f9ada5905f3ea490181f6f83058e4d89e7e546500fd078c101e55d64e",
+      "verified": true,
+      "sif_sha256": "e249f59117d76373e841396c14dfcd5a8cd161e264ff30e65cbb444cce85a20f",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-14496": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-14496",
+      "manifest_digest": "sha256:9fb17db38a54b0ddc8663bea55f1dab894491ebc6d75e4899a1ba76662d0c51b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a1d4ade93c453ff019f6007d735ed1a8e02fdff7495cabe8cbdd87b83c910779",
+      "verified": true,
+      "sif_sha256": "a1e49507d3dd0d6f3b3ed6fc9ef3ee46d44aa21b4b97e2c2af60e213458571a4",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13012": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13012",
+      "manifest_digest": "sha256:29c0e742cb37711bd8439df0ab91e29900dcac93d81121b2f2c4fcfaf995eceb",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:7659744249a363a023de49161042b3cc2e77586e60b28e627565ca7f8020b314",
+      "verified": true,
+      "sif_sha256": "c8edcc5da681aaea0ae23ecb1539885cb37119a26ee6e44343d160387a0a0596",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14559": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14559",
+      "manifest_digest": "sha256:485b4a7804049c425b30cfb6d79a078d758eb21fa1585e856f8e1c5526fecd21",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4dbe7b478a97d5f2470619f5db3a9d5c9297766bca3d3a288e77f2d3c39cc0d5",
+      "verified": true,
+      "sif_sha256": "8b38cb1ba03e47f9890737c99efe17326b73d0262164de854e33b74c91977789",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14534": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14534",
+      "manifest_digest": "sha256:a82af598c0a980d8dc6b6a81f6893074c4610d83d8cbf7cb97482c81d0c16913",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:2e2c4c046f01df8af119486f0f266b156e5195603868f9cd481ff05996442e84",
+      "verified": false
+    },
+    "pytest-dev__pytest-10356": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-10356",
+      "manifest_digest": "sha256:363458d4698f5d985f6476d189d3f1cf902253cd9518705fd395516cd30138da",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:c1d5d19e5ba86f7560d00f06b6a3b37958ecf8cb1191105aeb269d72ba86e12e",
+      "verified": true,
+      "sif_sha256": "2d9388e1a31f5089991ffe185b35b93b66911a517aee1e8b67399bc2d072f4b3",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13837": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13837",
+      "manifest_digest": "sha256:055afcd42d92e1cce4a128c106a78dd00c4dcbe007973cad4fe3e7f90ce5d093",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:662a8d801fb6a0f9c221f9f2b73be8fcd98d3e51b4e5b70b24f9505c3787d530",
+      "verified": false
+    },
+    "sympy__sympy-16886": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-16886",
+      "manifest_digest": "sha256:8e68941a90d2b34aaedf409876a2353e3ffc7cb8b70c90bb543bea626c5da085",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:513a744bf11ccfe87f3cbc97bf093925d3d17d47c651859b8f1efdb66cb24f12",
+      "verified": true,
+      "sif_sha256": "4e0a217746f234bac100d165eccb67d44e69f19becfad4d80235a8aed03266cf",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13786": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13786",
+      "manifest_digest": "sha256:7e99e4c610bb4f49f4d90cbeab257ed16a340fa425d8359650a4f142a68207dd",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:badae8719be4c3dfb0e76c067cd472135935cf6d4b80a2e63f8f867b0e9610a5",
+      "verified": false
+    },
+    "django__django-14792": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14792",
+      "manifest_digest": "sha256:95b4576c207216a24962c777447737314d8a69e9beac97065f58995fc54ce7f8",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1fdb4a4184fa605d16ce742e6a0900a3625e66df9b9bc5aeefb5baf264f3bfee",
+      "verified": false
+    },
+    "django__django-16560": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16560",
+      "manifest_digest": "sha256:42b251fee6107a5c2ba27ed14afb485f635c6a6118dae91cf505fd05337e0181",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0bafff953ce186aa261162d4091549fb4ad49df938900474b5f070d511bb1604",
+      "verified": true,
+      "sif_sha256": "f229afd6b4618cea2faca8fae249381996262455c6347206ead6d5ae237442cb",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-8638": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-8638",
+      "manifest_digest": "sha256:704547bd5fff87b0485309ce562e5df09edb84525569d72e5786c14c6c8a772c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3f2d3335613ab578fc026ddf8cda2a835e8f0f24ba6c0605e53241ec518bf78a",
+      "verified": true,
+      "sif_sha256": "60fc69e3b97ffb1346925be4b13a2133f58053caed5a43b7e7ea56200ba04625",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16595": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16595",
+      "manifest_digest": "sha256:b67a9f061115dad809d38dcd6e2bac714dd222302fd59506b303606f582d36f7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:edcfa6ee3bb948db7c58d751d88e4113a29a5083495fd2ee9979d8df85c7b896",
+      "verified": true,
+      "sif_sha256": "021b6d9d186c756726a82ea5b250688c0e21ad900a5f1cd1fe17e0e912270702",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14631": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14631",
+      "manifest_digest": "sha256:bf4d29a9b9f54559d7a3ffadba03e462a97f8022cf536cb064b8804ed95cccc1",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:5f67eee68cd7e4eb00d1642840df30774b1fd42b0f8bfd9f08851df5bd6079ba",
+      "verified": true,
+      "sif_sha256": "242ee60253f094b46ac58a72e217957ba5559c62c210b70e27ce3ce672bd969b",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-5631": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-5631",
+      "manifest_digest": "sha256:c76510e12a1765211e064f6e8de09e51ac0f7839f60d72305b374e004308b6a1",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:22a1a81b8e937a1ff52cef4f38bf59e6a8baa0648ef3b115e6206bfc5c5de68f",
+      "verified": true,
+      "sif_sha256": "516a0339d232f796f40e9cb8eab9fe96e21588c23e1936dfc330e5c007f77e0a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-11578": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-11578",
+      "manifest_digest": "sha256:356d13cc7323cd19eef059944545940115a77eb79a92073a2fbd65475c7c129d",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4d8cf9ac05bdbcd88c02e3eb7aa09635f4dd69ebed5b8261a87b38d6f2b6481f",
+      "verified": true,
+      "sif_sha256": "c8050ef24eef42a674f1084c91c011b4bdd3c21c2ebb356de6a969953fe7599f",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14434": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14434",
+      "manifest_digest": "sha256:dab450e90c01a77b1ee3faa369674964a29d6da49903a32c1f45f21560c43f14",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3eaf46f79dcfd5fa4141f4613fff0ce5d5d3d24fdb0548d2cdb5456e5cfc85ec",
+      "verified": false
+    },
+    "django__django-14915": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14915",
+      "manifest_digest": "sha256:a677be35326049cb42933368d879f3ecfe408c4da1fb8842b70b556e22245b6b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a46bf61e9ccbbdf80b8c3537847ece7951bd55488465ae1ba0dd4695f7960487",
+      "verified": false
+    },
+    "pytest-dev__pytest-7982": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-7982",
+      "manifest_digest": "sha256:1b6cd660102de29c36d28954eb2f6158b93d11b855a9bbfc577a55eb67a8f375",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6e0be26902eb9766ddf66e9da973d8a3efa324eee1c8555f0d96fafbc80e32cb",
+      "verified": true,
+      "sif_sha256": "f50a5449875c0fbd1ead6ef50591b12b6ae1175d2c2fb8e740a47f6b796629b2",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-16766": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-16766",
+      "manifest_digest": "sha256:31178dfc1eabbcb5b6b8f569c4cbe60dd0eecf423bbf99223d125e08f3b5444a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:70dcf2c5f915ffc3e74ff92720d0318df561ec4bb86a8101bd04fc472e23ad1d",
+      "verified": true,
+      "sif_sha256": "b92270e793e56968ab00654c33bf4a4f2d2ee31ce0557bc74c20325c74040a79",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-13779": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-13779",
+      "manifest_digest": "sha256:f7188477fd1e48e0e9bb1efa8a47068979127e1995fbab4c9eb3b04eaadf0618",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4de8b61aed8a3c6c8bbc1e8d69f5060928a9b7ac0d29d808f696fc3cbf01b521",
+      "verified": true,
+      "sif_sha256": "60370b5daebd5ad50771805598a336965f3c21b884db621e19e7354a3c654225",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15851": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15851",
+      "manifest_digest": "sha256:aa80884e053cf1a238df7c4ceec43e4e07929547f658278bd3c3154f0ef8bc90",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:25255217ee5f2ba10801b5ec77738959d8167898e119bc483eafe93b1fa05c5f",
+      "verified": true,
+      "sif_sha256": "4232a5f9fc3aee31c452573b9da87463e0a995c69bf795a45cc41c3932d4b587",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "matplotlib__matplotlib-22871": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-22871",
+      "manifest_digest": "sha256:8db2e8a94d2543644a7885b195e1cf3f102925d5c296ae25c0e6c1e40a059842",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0b50468d5fab27e15ed1d19f001d357534872b4392b71683e400923881c258aa",
+      "verified": true,
+      "sif_sha256": "a4cdc83568348cd881df29c6a6450785185825d9ba6e88eccb902413accde6dd",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13410": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13410",
+      "manifest_digest": "sha256:65d44eeb4199046b129e607153c42d099fed0251574e027f7bede556dbbb692f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:78f814438b2ca1a63da0567362046f8e12e0d630d1c492947a7eb8bb015df8ec",
+      "verified": true,
+      "sif_sha256": "e3b23481bd5d23d3be4d011d8c37cf7f56b3675c30ec95590c17e5d8871be34c",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12965": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12965",
+      "manifest_digest": "sha256:0b7b7b2916ab66921ba020ad0356cf968cc4729470000e6c40f641286af3ee6d",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:8b70283e444098dbd94df614b2ccab6557cd200d5a03c6fbafb947cc66e85359",
+      "verified": true,
+      "sif_sha256": "acb52ff824e82a43a55b2e55a013c6cf7de5f17643611e2b89c175a4ca1088b0",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-14182": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-14182",
+      "manifest_digest": "sha256:d25559050ee0b046e072ed31d2a1c8943a928d9d842462a50234118156888a0c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4a1da544b0a2d7bb43266093db899f77c60700f76b84497e6c66138cb30d8663",
+      "verified": true,
+      "sif_sha256": "7c321a2586631c450c527210496671c4a01390af05c196d2043a62a50f06c8d5",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13128": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13128",
+      "manifest_digest": "sha256:5d3032e45ec74dcdd31d6893ba098f72b97b565334909b265921b9cfb45b01bd",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:04c63492a9ef0e667a5b72571eea581247204e8c59065707f4a0dc354263e132",
+      "verified": false
+    },
+    "django__django-14140": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14140",
+      "manifest_digest": "sha256:240a043512ae9cd079c4de5ff3a488d992265d3f4bc7ab51c81861dbb30c07a7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:5c682d252da98928dcb05e831b2091c72fc10ae54b0ea9d13052a7379d0bb42a",
+      "verified": true,
+      "sif_sha256": "5a14c117b9c2a0dcd5fceb4b4e494c02fa34fac21233561192fb304b462e09a2",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13279": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13279",
+      "manifest_digest": "sha256:d1f9e91af87dc9ca48cb66b36b718aa2dc63ea009d03fa815bfa10af1318eeaa",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9bab50ce3f2e0c86a1e423d36ac6c7dd77c2034979d5e68bd72c96098fbb1470",
+      "verified": true,
+      "sif_sha256": "749b10e361585bce0cd70224d9195418af84f6ff41b984a47b9068ab04d2b1ac",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13810": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13810",
+      "manifest_digest": "sha256:b3b2851bafad29b19506a85779bf248365381c6f04b228989f57d5c5c54c5ddb",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9f21a861697a2eb806de71a7aa11ecf8f73842981c8a9930c5af2f00d83df5af",
+      "verified": true,
+      "sif_sha256": "25df6261cd02d37b98759ced64f4532ed2350c322ebb72f9b750c2da1b134790",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-10844": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-10844",
+      "manifest_digest": "sha256:2cb7669b05e488e4cf5ab5905ccd225c71fb2804cdb4072bb3fa0704e0816e76",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0721acd36a3d3f0504af91510930b5915b131a1f60583654f3bd5f6a1a65bf5f",
+      "verified": true,
+      "sif_sha256": "ef8666672d5f7813a4911f495aa8ee7f6e5d5785fcfc2567703632467759adcd",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11095": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11095",
+      "manifest_digest": "sha256:0d2973f2ef6308ebe0309814503143869edce1f057e7ca565d4305ffbfbceb76",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:029795e178a057bb82fc223943527fa4aa4e229d3524bdf9e8296c978faa28ea",
+      "verified": true,
+      "sif_sha256": "304fc9219af5943adc495e545030dde5aa85b5e3ba5110204db83340bc8a45af",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15525": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15525",
+      "manifest_digest": "sha256:3c4645c743bf8e951d1a51deed06b270aeaa58ec0f049197425d2bbb28940175",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0dd30cd3dcceec598e33aa8167c7fccb008767c060683a544bf1935162fab203",
+      "verified": false
+    },
+    "django__django-14608": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14608",
+      "manifest_digest": "sha256:a8978401269f0ef58e8ddc42dae1ad21547a74d94551241c1754627dbc0d79b9",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:115014157acb675b51ffbdf53e9b546a207978c630ab3a8c686d2aedef62efab",
+      "verified": false
+    },
+    "scikit-learn__scikit-learn-13439": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-13439",
+      "manifest_digest": "sha256:0c61d64ae4c3b8a215ecc4f8efbde87dd6bb9d2583579a82b24ecc7780631775",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:125ac4b2346631615a0846fa8b077fc1e15dc3da12034f28aafd26f7896f26ac",
+      "verified": true,
+      "sif_sha256": "b026babffb8226a3e0be604a796f84d061da0cc0dae21e8bc086fb7e2f981d4b",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15467": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15467",
+      "manifest_digest": "sha256:cef767ae5200b458af2fb89cf28584f656b835860ea903b690f18ab8454b7732",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:11917468f167d62037940b6d0e96e1ea6398768379b2c160e309d93c135d1b0f",
+      "verified": false
+    },
+    "sympy__sympy-22714": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-22714",
+      "manifest_digest": "sha256:85c5000278d19e07ccbfc130861bb3407d4e5494ecbe6ca4cfff0b5e58f25815",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f8f6b7d2e72a05ea8c4ec8143b5da6cefd6f5fd7e679d74257e25a59c082a15d",
+      "verified": true,
+      "sif_sha256": "fb8fe750910c6db11daa68df4757a9ce35131f697b21e0cf26de6b27948bd30c",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16485": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16485",
+      "manifest_digest": "sha256:570eb343d44b9ef6ddd5bfffbbe0c80217c926c79f164205cc328b51c5676020",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:beb779e5314f19ed69da3214744fda2b26025511054dc7f367d617f88b216966",
+      "verified": true,
+      "sif_sha256": "db957c9f78add4db9030552d81f98b0d07c73af405a32609858bdadaaf4bab27",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-18211": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-18211",
+      "manifest_digest": "sha256:5b03a01d5871b1f8148add41dcd69240b064ed3df13b8347a6e2baa10b20da86",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:c92da16cfc8ba1c304c3fd0bf991aba569cc5eaa99a85fb3953c60f09de2c7ca",
+      "verified": true,
+      "sif_sha256": "d242200f91b7972009f9528caf86d1cae43fa687d869285e909bee4b682e69df",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-19954": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-19954",
+      "manifest_digest": "sha256:0d006959685a7c6bcec46662f21da69da4f9cb27674efc193afa3ec46c7cfd3e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:fd13cef829daf5da790c170634159f461382d51b71dea0cb304d7f55efafd5fe",
+      "verified": true,
+      "sif_sha256": "6f1818f4691417d0cfb95d6e4ed059b3f675c04f9808d7b4577852ac8fb13ed1",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-13496": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-13496",
+      "manifest_digest": "sha256:adee9f4911a853e64f9ae4ebd7b1bf32615cbf52c3210873e9a752fb5fb975e6",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:50a7f61f8c04f76a665865e6431306d64e741a9447fb9ee23edfac0fad72e00a",
+      "verified": true,
+      "sif_sha256": "11ed8d4b366a9b09aa711afaba73cb71d775bc218d8480078562285d47f7a359",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-24213": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-24213",
+      "manifest_digest": "sha256:a458bae7d95f469fa8e438da0a39a2d168e93f70239155dbd833934948f2b296",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:520c3b73e9160c42fdcd8ea7fa1e126156c639a326743074a622a2261672157e",
+      "verified": true,
+      "sif_sha256": "5bae04835e4cb1a407c1a0fa90d63d52f5c985f32e362312945504f8a9855b66",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-7571": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-7571",
+      "manifest_digest": "sha256:0a1f84cd32e2c8332f90bfad6f3fd16304f25c01384adb4ffd4f7250316bd60a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a4cdd92a11a554106948342c614cbcaa9a7fc7f42b261859c9deef149a673cfe",
+      "verified": true,
+      "sif_sha256": "8ec41e8fc2b17085f2347513100f4dc5c9db49e985bc11b1679b566709d458b8",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-9281": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-9281",
+      "manifest_digest": "sha256:08c9e293bbc73d548670319b2d37ef8eef6bf528b995959f361159c505355f2d",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:8cbe4bae14c379cc165a78e85f7651fd253123cf7b05b2a95b14708948ffcd28",
+      "verified": true,
+      "sif_sha256": "0a1515b19247b84e54443d3770ace885a0e2c962145263b6c9035bf0a0b14434",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13670": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13670",
+      "manifest_digest": "sha256:990610e7895ed038d48efc83688b9f6925d63da64e57d88b8e4545de63932ba2",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:ee8ca5f87cf82d944380bba31970c509b364716f84cb1d2727c3397d2369c881",
+      "verified": true,
+      "sif_sha256": "09a42e56314cc9f6374bc85f76dc2eaf6a3324ad52f925a0d9342dd6c9dc0b00",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-15875": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-15875",
+      "manifest_digest": "sha256:e2812656720310590f43b2773a81f896dafe9e36efa151494a6663bb26ec49f0",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:38f122d257b6cc7dbd14e195ae26f3c42d8a0627b7bb8bccfdf70178ecec34f7",
+      "verified": true,
+      "sif_sha256": "51df0141cd5c4214d94ad39f2caa1f58894a29384e926ddbb1b1c1f87c5facae",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-14531": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-14531",
+      "manifest_digest": "sha256:cf141443a85d16108fd94f025f15996cc89a1ace20afdf41d77edc20603030a7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a70916f3989475b80ef1fca53c98413f49b33efba421e7430ea8ef5b057e5e4e",
+      "verified": true,
+      "sif_sha256": "6bba3bd82d5e8a8a0ac0fed01bb3567a6913548fdac2dd74b4ec98b2925bd9ec",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15987": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15987",
+      "manifest_digest": "sha256:fda248d0e8cc266b52a56094cec5e0d71083766805533deaf908bfe6b288c0d9",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0909f223e32ae24cc92e70293005467061f15773176cc8e855768885007269fa",
+      "verified": true,
+      "sif_sha256": "886cbeb065c502df07de111780638b9aa4820f3b9982bcd1137414a139d0675c",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16139": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16139",
+      "manifest_digest": "sha256:6fa17bb4def5d77bc724e285673f3763ebb58c8560a52b454fb984912be9e4a5",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3dc112cdde1abd0b6f4ed9f4c7636df2bd194c5d023cda23d34bec90005c9bdd",
+      "verified": false
+    },
+    "django__django-13821": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13821",
+      "manifest_digest": "sha256:3d4a6aee4a1b55a9610794dde388865bac8128f057c2432b573cb81505516f46",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:8abb785ed67a7c3cce1ec344f7a97725829970cdd69b0af1db8465e9cb3cf832",
+      "verified": true,
+      "sif_sha256": "f35d282982712d61159d95dfa490fed05f74cc549fb1b800985742b9af1f9ea2",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16661": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16661",
+      "manifest_digest": "sha256:650279030ed7df19b23f0051b3313cb6d43a530101c0688204b1b64722901343",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1cdf60316383c26bbcf7f4fcd8413cb26f9d43ce7a733e23e24397edbc8bcdb4",
+      "verified": true,
+      "sif_sha256": "ba30e4a954c461b48bc5f3b799d07043f4c59a566b63feeecb44fbee8227fc2a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-9320": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-9320",
+      "manifest_digest": "sha256:0dd7b74de29c5734fbcd2fb9ab5295f610b5b281bd2fdd87e9c3c1d3f272f28a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:5bf9fd889410da27c44c220fd1dc9b2bf136ee87f7a4ab0b09c27ed34076ea84",
+      "verified": true,
+      "sif_sha256": "0f3bd807ce3d80236ea627fa81353273da695ab7ab8c734067ea4eff9f656167",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13406": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13406",
+      "manifest_digest": "sha256:c77b22d6ae21f4d800edf357b7d79025bf49f4a591a9bca6de3e45b9f5990d48",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6e373c233883d3deece4cc2ddc043a8fcfb2a71cadfd7230b4168b4cad73729b",
+      "verified": false
+    },
+    "django__django-14725": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14725",
+      "manifest_digest": "sha256:0986189cc4022bb07d2db1666f174e48ddffc8337b311fe745fd517425dbe7cb",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a2959303beab095c21aaa41a60f7f7b0c8333744cfc85ee39bceafd01abbfd97",
+      "verified": false
+    },
+    "scikit-learn__scikit-learn-14087": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-14087",
+      "manifest_digest": "sha256:b0e9f68baa5df7a97e08f89cfc3c185597b640fff66b9b7dce4664ea884251ea",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:64fe97bdb98689db5bf0fb60bf5ef94b1efdf0aafc2ff3a5510f91b3557ea16c",
+      "verified": true,
+      "sif_sha256": "bfde43dfcb03cbf593d5a887d9cd5d56e2d6cde7ef874780e1cc1c2166aa1bef",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11734": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11734",
+      "manifest_digest": "sha256:774206c89be84e276b5e609071934e11c41b02a3e7e804558f50759914fdcf38",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:5ddbc111ccc7ed091855034eacff1c58347df158d6acd0c015feab17587d36a2",
+      "verified": true,
+      "sif_sha256": "62859be05ac888b4a1283cc0a37cd487517ca02ab0bbe23d72334989e412de52",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-6197": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-6197",
+      "manifest_digest": "sha256:5dbfbcf23210a5a0ccdc4dbf1a55c894255b28fe6c56c13c9a4724d6c13bab4e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:15d39592171743355fdade433454d2dbd5cd7d7db21bdcf0e2f125edecabaf09",
+      "verified": true,
+      "sif_sha256": "fdcf24567cab773e96e8eb0210f37e53f3dc735a08f35129e37e924db18115a8",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-12682": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-12682",
+      "manifest_digest": "sha256:28a50b218863fd192bb09a63aa68917d7dd722aab1f0f601d5722553c90f0c2c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d0777cff82b76decb07e2590d65e1807d52d0084eed90f22fa76e384ea715fe1",
+      "verified": true,
+      "sif_sha256": "960eef4ecda8bcb920e4574c38ff6f8feef42ea33bb01c3b2062b337237809aa",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13109": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13109",
+      "manifest_digest": "sha256:99485703b09250cf48812b5f24e4449c3f179b5bf7673b96cd398aa7f1179295",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:bcf1df49ac00f04235e755722507cf04a02df3371a9a7f39801481242cf808a0",
+      "verified": true,
+      "sif_sha256": "18eae6856c19169ad03e370ca1a16cd52dda294ceb54fa49229de7a430941d6e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pydata__xarray-6992": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-6992",
+      "manifest_digest": "sha256:a70eb8c7e98b984c8c9a75c8e165d564d2f0bd16c1717320dbab40f771691112",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:2811e30973fd2cca1ccad4858a4e1a51cc615f2590ebfc8df44baeecf3596221",
+      "verified": false
+    },
+    "django__django-10914": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-10914",
+      "manifest_digest": "sha256:f26f0db931c6c1e785ab8287e1ea4f5f948846267db159deaf90b3fe7adea4e9",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3afaadae84f779b57ff5397f77efd7a22a6bcac61d77a7f09b70b3139a5c12e1",
+      "verified": true,
+      "sif_sha256": "c565ff72b725631285ffdda9ae202b21b8fc22bea8593c0efa038095d87cd9ea",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "matplotlib__matplotlib-26208": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-26208",
+      "manifest_digest": "sha256:b3268fee6c746093c7df3f79be03a358d2b6f6183d0547b99afac28135d5ffd7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:178e5526bc59646e386bd8614efe1d201d2df5368a6519334b7c1131ae70fde6",
+      "verified": true,
+      "sif_sha256": "bb2e7d21125d3ca8898c4ae7b51e5d82fad706b37760a53769918cddf4933b26",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15104": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15104",
+      "manifest_digest": "sha256:11507b757b18b5b61ef52fc54c069fb846e143e4d16439528c25387a70f44fdd",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:935b41f18bb3b5f83eb1075d75b4f4b57af84d2610168c7ab9f929eb1fbdb6db",
+      "verified": true,
+      "sif_sha256": "22ed3ce133e66a96e5cbbe85da6c72355205f78f700f0b0a003ff2216a0a8dcc",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-14508": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-14508",
+      "manifest_digest": "sha256:1cb2289905723e150cf6b4d0645a10062f27e1c79266d2574e25d7630fe3fe26",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f65db6bec005fb5db80c71fc9dd756935b581bfa903530ac0bd62d381e8de6bb",
+      "verified": false
+    },
+    "django__django-13512": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13512",
+      "manifest_digest": "sha256:730eab5b64c03ed8e8c94064da483db36fbd79d2465ffa98809acc6282bcfd82",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d9ed685983c9725847d150a52114aaae03d8c922e266d37a61c4dadf4d89633e",
+      "verified": true,
+      "sif_sha256": "04ac75f38a2f4a11411fdb28539d807109ab45b2f0b750613e622b5e38cb24f5",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-8035": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-8035",
+      "manifest_digest": "sha256:8f0c620e13fade585f0be2ed8f9d394319c63f33729e2fe4780360dca7871c19",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6b18ecef25e5593f57a92958e0fd84c21f2cab5394e02d87ccd64b03c08a9da2",
+      "verified": true,
+      "sif_sha256": "1cb134de358d13f94a6eccd9443f9bb4f7b46b5d6ce0ba9d3fc5ab3a098dbcb4",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-20916": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-20916",
+      "manifest_digest": "sha256:cd63c5ad1e2dab2e4f222cdd069ab620b69b3607d6a56c23922bd7de441dc1bc",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:792007a030035b455f7a3ae1b9abe02bf19109b7dea43521df4175fc9c8c1a10",
+      "verified": true,
+      "sif_sha256": "237b6093f470163435f79cb7f9aab6b727ab9efcd5c2f2a2138668e6c1b55d53",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-15349": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-15349",
+      "manifest_digest": "sha256:a21f1ef8cc0ba65bb8bd3d01f92aeb92b3169c6b859db8d22cc60fe2f28c3fad",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:c20e859396864a73e18e4f7e48f4a98cd6c2a108df1bf8b54debab97acd56d29",
+      "verified": true,
+      "sif_sha256": "e4ba8c4791dedc687977bdfcc2b9b27fd995d2b93b44200ec8293cf49bd74129",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-9258": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-9258",
+      "manifest_digest": "sha256:cb12fe0f619c5d84e248afc0b89729a26cc46c7b51ebfd0444a77d9a7471fbb9",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:64d5385bcf03c155a2718594a1d58d12dae15abb7e8759a988ca433241f9ab7f",
+      "verified": true,
+      "sif_sha256": "b122a78d71b542854aa015bd5c9ef6601a1a85c692b56c9b6de1906e5885aceb",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-14894": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-14894",
+      "manifest_digest": "sha256:3b94dd629c4719b4983860c1e488c2fe8b6550f5e825c23d08c8888862810d2b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d068816ba82a3b1af8200b6d214e44b67a39084c1c92d235efb9ea4b9e37a4a8",
+      "verified": true,
+      "sif_sha256": "9d4cb85b846ad2a9796449ce428ce87447ea72dd815fe1511f9a6b418a1089c8",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-21379": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-21379",
+      "manifest_digest": "sha256:5a10d273b1b5ae6e4d70c0242dc9c9ecb2e111945e6aa8093b7d1e4160b4dc3b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e6db58892f5b77435e7e4fb4f0fc5c0f251d1d2396b8352eaa03b9eb0703f088",
+      "verified": true,
+      "sif_sha256": "e7d8c9674810add3e647f6db4f976b9601b0e6e55c771f0a8f4541c1c78f0f51",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-26194": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-26194",
+      "manifest_digest": "sha256:8c34e4480d53f2c125463b8bfd0293e2fa24fde72edc07e46e9b9f97e6fce3b6",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:fca1ded18212c7cf74a6b741c4a42cc58b7c0f7e48f5885b625780045b1c2163",
+      "verified": true,
+      "sif_sha256": "fce22d0d01d758993fe80dd2c54ed427d65b7ea681eb68ebb91cde061868ef7b",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11790": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11790",
+      "manifest_digest": "sha256:061b5e37b0dfc15512b9604c843618b47aece8e603d08d0926c3990e0e9b3ac4",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:97132bd9fa42be42add93741520b3e58dbba8a693a209757a18381a31d386ec5",
+      "verified": true,
+      "sif_sha256": "fa04f2f0691740c58c8b64cb46f56f0c1606695466547726d08789b232bf1c49",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-17139": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-17139",
+      "manifest_digest": "sha256:9a8111742e0548816d920a27ba259ebde7647f4e46e7522c61647990dd35713c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:bdd9cb046564ab53dc89940213b8dd7cce35c87a62b8ccb85cbe8b337cc26a39",
+      "verified": true,
+      "sif_sha256": "1b0f336515a1fbdfeb5e4024ac5316d3797118c19dccbf41c3d4868efbb90aa9",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11066": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11066",
+      "manifest_digest": "sha256:533a239ec38726f2cfe0ed08a18d081f71cfc9ec7c459e08fbfc0f39d19112bd",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4742b1aa9909b136ec0eb6641fbc02e18a7cb3acea53cef7ed4429d08c1ef86b",
+      "verified": true,
+      "sif_sha256": "7f98ed9f103fcbd0bd9ba2fd2a5b57921db26e0e11c4b84d2d7f77f955edbb85",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15629": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15629",
+      "manifest_digest": "sha256:59f1f89efe666569df30dd7dee656f4a4368cec715857e7e845010ed5dc29ed7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:70d0f93a3891c6d334c7cc3028b2bf1de51b64a216c3d99712608cc9a0e501ae",
+      "verified": true,
+      "sif_sha256": "c174cbef3a364631e7e71572b9277fa1a573185a646d44689b85a85b2f196175",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14539": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14539",
+      "manifest_digest": "sha256:f82cf9346e4b4a37db29ad906ca3004b2c333faf00ae7c8b91bcd5621466c3ce",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:c8ce818e7f4d925c74fc38cec3d64585371a24e2cd1f0a60a478db7bd44c3bba",
+      "verified": true,
+      "sif_sha256": "a9ea7220787acabb5c95c5f7137c1578aee94a14aa3013df44dc3fe4442f7894",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16642": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16642",
+      "manifest_digest": "sha256:24ec74ea4c3b4752bf45ce156da22d08ad8114b417fe76634547d09df7ede1ce",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:f21c3dbda9cb09b04064cf6a4ce1df9fc8fe1845446b5905b386e19ece2e0632",
+      "verified": true,
+      "sif_sha256": "23d78c31d04919d3856610ce67a8663d43495984aae056d6cbbc7a4060ce7611",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13343": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13343",
+      "manifest_digest": "sha256:e1c1cf084024c90ef17ce2a098ad4b68a548d1776adc048b5e113395ed492a25",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:913df49ece3ea99cf855b2fdd62edcf10843a412f39aeb6943fd06732ec7d2f5",
+      "verified": false
+    },
+    "mwaskom__seaborn-3187": {
+      "image": "swebench/sweb.eval.x86_64.mwaskom_1776_seaborn-3187",
+      "manifest_digest": "sha256:aea7e43b20703256f5cb807b54cd78a12601f21086d3a62a41de18c254771f4e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6c0cd3296b90a84889796531ab87a0ed8779015b2bbd2e8d99adbdef95397b03",
+      "verified": false
+    },
+    "django__django-11848": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11848",
+      "manifest_digest": "sha256:08eac9219e5d4b15b445fde26c587157a0ad8a2d9209e4b1e266259edf51bb4b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3fb3b90074424b3deaed41b2e2e66483e54e922d22fa034952f5a7f8553be607",
+      "verified": true,
+      "sif_sha256": "dcb64feb47782fdd1684717712cbbbce76c327478216ef628fcf061ce05e41db",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11141": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11141",
+      "manifest_digest": "sha256:f2decac6250608a5fa4edd0d388d34983a612c7d9951e6246591a7d3a61a8d66",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4ddf6f0c40a736648940e229b960411b35ff78124cb95a0a4407690cbdbfe442",
+      "verified": false
+    },
+    "pytest-dev__pytest-10081": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-10081",
+      "manifest_digest": "sha256:58951c0d236ade36cd508d48e87819c488ed28c60abda963f8d4df99d89c030c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:eab7447ecdad975bb6d48acaa02ee21b53764618b28da742e95c8531686a9c98",
+      "verified": true,
+      "sif_sha256": "f6562aaae0fa0768036ac1a511a84b49b6700faa3afb30c53a2f848dc105b081",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-21930": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-21930",
+      "manifest_digest": "sha256:ac9b1c65d632e5a3d1af240db144ff27ed9a70b5507705d50480ede6899125d1",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:22630e622f894c9f3c620e2a3aafc9d077ef23cf701f01694fa3c568e6b45410",
+      "verified": true,
+      "sif_sha256": "ddabf6f132964731f409eef3d22b1fafd8c1d4de7ad7850e994ff815842b2f1b",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13568": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13568",
+      "manifest_digest": "sha256:9ea751c5a941120e5bef2c95b24eb50309cf3ddd0fab385e6d44f6686ef8a8e1",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:00682fdd0ca3bf2a288635ab7cc1ac6d5dbd6181c75249bf3474eb6e9a56d6fe",
+      "verified": true,
+      "sif_sha256": "c15fc1fdbbeaf774456678b30cb004596fd301fae76251727208960c67095e34",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15572": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15572",
+      "manifest_digest": "sha256:0409b51743d552658e20a8e54fc461186f67e6998f589e3321b4c4b6c29e23c7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:675e046b90690bebc1de1d46ea5dc44445e4228c748eccae69309ecc17e03c90",
+      "verified": true,
+      "sif_sha256": "0634819378d8b4b603456f3c535734f2cc97d808f39be40bdc85ef6667b52592",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-21612": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-21612",
+      "manifest_digest": "sha256:437a3dfe3b51447b629262879d8dec70c613fd9a1ef9e475454546c7fa740e9a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:689024e8a43de562fa754cc1766e73dc4f4abb39b5e11dd01ce177addec4eb47",
+      "verified": true,
+      "sif_sha256": "0bfd88149e2bbe356c974e64b49991277ab61f92ed28093d41b692ffae99285a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "matplotlib__matplotlib-26466": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-26466",
+      "manifest_digest": "sha256:f800b21c102fae7869144983fc32dc6c344f40871be11524807c3df30046ef37",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:35be1078dc800d0bfcb32fef52650b1915480bca8778f2ed0a5528d4b6929784",
+      "verified": true,
+      "sif_sha256": "bc5a0db24e5432df06cdb5bcae2a8bbfa0c6183e865b13ec6e8f512d8e95d037",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-19783": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-19783",
+      "manifest_digest": "sha256:f479dc5ad70891339f836122f10dcbf3e2fb24c7ffc7cf0eb0a682595e7c1db3",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6a2b612909911b6406a70a85b02182754ff19195d711d38b824f94bd34136c3e",
+      "verified": true,
+      "sif_sha256": "d96d0a3af44f9e8d5e7bb2dadcc7b3e952efb2800fcb92582fdd9851772276de",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11880": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11880",
+      "manifest_digest": "sha256:ce0c7fd75b0fe8d24632c627359c5e2bc1a4922843d889870931f80f2f98c311",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4488d53c0526d3a4e679753beb3501d70253a1f687274ef9c2ed07e7225dde6c",
+      "verified": false
+    },
+    "django__django-13195": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13195",
+      "manifest_digest": "sha256:b42fb9c9d19e0f503e0353b77195524e6dff1997ce7cf2e53e38950af3f1cc11",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:18befd1acb588516d019e63b99f00126f44323a4aa23e4a493ef3eebb4610b03",
+      "verified": false
+    },
+    "django__django-13516": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13516",
+      "manifest_digest": "sha256:26bdad1af7291dfaa292f82a6c607fcc056886de161d96df643d97164bbccfec",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:55556b453052f67e5e6a638fd02b62027142727be88d0ab3b5b21e42f14f52ab",
+      "verified": false
+    },
+    "django__django-13401": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13401",
+      "manifest_digest": "sha256:9c0e1dba61d9382534caa48011231df377f6f313428e689b70ae13b3a48675b2",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:64a74a21a4c80468a65e56823461e9ec05625df646d92b989bc59c20f4989a01",
+      "verified": true,
+      "sif_sha256": "0b9d28283755a9b5c78f76f3cb7a87d6b81068885b6c2f7dfe2317427bfbfb51",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-10051": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-10051",
+      "manifest_digest": "sha256:e38365e835d4ba57f3e7331778894f51ac20bf6c5893827065da8657525e123f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e44f9e532acb710b07626a0b927addd9ee24adf5abb554e25af149a7ab19cf9f",
+      "verified": true,
+      "sif_sha256": "c529644d6b720f2083bdf2cad1094c0498ac2c50fa467ffc967fe1df3dd6b6d3",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-26323": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-26323",
+      "manifest_digest": "sha256:b39ec40bfd83dd1b8ebf5997db582ca459c5c835e6488f35f157cf076bbb7ecb",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d2b000a97a5e46c6d1e02bcc05873dd446c03126f6af81c4d4bf18a59199586d",
+      "verified": true,
+      "sif_sha256": "c371c0fa8de3495219531f901464ad84eda84c461ad0600bf04982e4ca055789",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-7432": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-7432",
+      "manifest_digest": "sha256:5ec7065f9477542610ea5137247539d8f1c9762112803b0690d5ccb2e64d2f07",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0e556e33eec3eb68e7737ea264268a758197718006336b84bb5f0c99187cf066",
+      "verified": true,
+      "sif_sha256": "d790a6287834abcfd37c2035ebd678a736eb06035d1b30edab1f16d8ac1cf4ad",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pydata__xarray-3151": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-3151",
+      "manifest_digest": "sha256:154a77ba71a5b6ab4d75f0f368d91432916af6b2711472b0100d955474642172",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:320eea88d5a1b8553e7bf3f51c705b2230936800bac59f9cc0acd920a5d44d6b",
+      "verified": true,
+      "sif_sha256": "7c5e48106c0a8e69cccc8035b816293cb8af495eaffd22c1fca8611e245a0a78",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-25931": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-25931",
+      "manifest_digest": "sha256:ec4f5c634599ba3c73bf945583d28efe04bb59c58a205932f66c420351e59602",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:ddec546aa1fa04ece4083d1d65eee4115ce72d2233b06e58250bb33a7a0c8aa7",
+      "verified": true,
+      "sif_sha256": "e010966ddc438f7c669bcea2da86d977397a2080818dc2ff9d35f9efd5c94ec4",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14765": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14765",
+      "manifest_digest": "sha256:a87d9a378eecbeda4a4c80ff2fd8a52b28230e08e19dc73bad71dfaef6908b76",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:db08499870716d958f64bb2e1d3b92fef4b42264db01482dda36818227e9e42d",
+      "verified": false
+    },
+    "pydata__xarray-7229": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-7229",
+      "manifest_digest": "sha256:ff7d2a1c6f69491a593147a1356df8469f0d67b75d2583b19fe28bf776abb88e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:99d38e6b07da20fcc875c0a1379aead8392a5976018b6052f2f330b6400ff740",
+      "verified": true,
+      "sif_sha256": "d28a5405ef43d4f8182c6492b4eb18e7286c2b4487939c107fd8749d40916f9d",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-23824": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-23824",
+      "manifest_digest": "sha256:678693d9a72aa779447ca2d9f0e85d4752e5b28e646edf083cd735aa6144f770",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:285c1306bddef950459d6002de5c21e7a448b46208bfba030a828830af997ae8",
+      "verified": true,
+      "sif_sha256": "a82c1360ce72d512cdf56230f84229e803aba4ed309beec600c6f91c11762cd8",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-7889": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-7889",
+      "manifest_digest": "sha256:57a4cf422e77ed0fa7993c550ce5f7e36e40b455ca8842baa9974ae0b9aeeed3",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:be4adfd4fe5feac14be9feb4fb576a6eb748e12533a30d0ff532421abc62f378",
+      "verified": true,
+      "sif_sha256": "a0802e7c99cb07f90a41a24aadd981557f24cb3e90c0a21c77349fbe04973f79",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11728": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11728",
+      "manifest_digest": "sha256:20c1140ad7480854ca794a512fd7db9345e16d8fed19edf8f7f8759f6658ee08",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:898316d97bbe284386e7706855598784b0570bc436c8c5c3a4b6e7e72e3ed531",
+      "verified": false
+    },
+    "sympy__sympy-13551": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-13551",
+      "manifest_digest": "sha256:42cf3d31011204d6220acf6b415046ea3caee46640f51137ad062cebc868240c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:fbedc1f2698e3d205eb1abcd43a4f1d2f38d6b8a40909a925eaa0a17342c56a7",
+      "verified": true,
+      "sif_sha256": "067e1bd3e5ad26acac7888126b380e3fa5f4ea125853fa2f1e38b4c51f33e292",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "matplotlib__matplotlib-25775": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-25775",
+      "manifest_digest": "sha256:485ab084e7e44881a7fc10c0356020603ac560371c8806bbcba8cffb307dfa8c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:0e72108fafecbb2cdc5c8d17ce24327e5aeff3033c81625dde59ca5d2d42b573",
+      "verified": true,
+      "sif_sha256": "1172e63e703d4d803108c822edff890c1eb3b5a8b9778ee68901b13b4ccfb7b2",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11815": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11815",
+      "manifest_digest": "sha256:19b66392c9872e6d07b331b0ed59466c3e6c3588bc4cdd89f56f8767dc774f8a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:940abc2df3158ff37de107233680f637536b96cae7bfce51b633f7e5212a5d5e",
+      "verified": true,
+      "sif_sha256": "d42217f187a4008805e1e17d9dd28457a6c8a519d6ca2d49094096b95771b127",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-17029": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-17029",
+      "manifest_digest": "sha256:07705efc703543ceb749dcd2ccb2dc07a34af78b99e29f4b283ab0bed607582f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9c5ff672b8c4cc1491353c7d83aa38c4c1cc4085bbd8f87e6579d775c2cf9e80",
+      "verified": true,
+      "sif_sha256": "1622f38d635423e970b199b58534447f18ae047bc9e87398b4291a1dab075296",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14311": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14311",
+      "manifest_digest": "sha256:c5f0fc491a68db34d566e06943acb95a067aeb3ea4b4e0b8c65e3fc113405620",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:8c297d331cd58ef315300306c6467aa5e00c6b26aea5559b05a73c1d91b39ae4",
+      "verified": false
+    },
+    "django__django-14373": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14373",
+      "manifest_digest": "sha256:e1b9cfcbd4787f08c621a82fc43e495bc5c7a6dce31f987832cfe7745fe2b0cb",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:347f288fb0684e3eacc2c2184634d7820f9345d8d4851b5542ad27067fcbea26",
+      "verified": true,
+      "sif_sha256": "97825c773663e0df0b87e8ee57be1d3ff1ddf9d7a134348a0cd0970365c2df14",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pydata__xarray-3677": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-3677",
+      "manifest_digest": "sha256:4a68ac272a07b3b4762756ae9d24b5de1cce82aae696b6dc3deb9676a4b0c14e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:97f5f793df1b6df512d8be87cd9c3180c407f858764f0af3d9d98934deca24a9",
+      "verified": true,
+      "sif_sha256": "1fe6def3d49dbdcf775178bb27400eeee7ff10bd07d1ce6800375e80e4e2e81b",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-16792": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-16792",
+      "manifest_digest": "sha256:2cb71c3fea9be968b204a39cb1af5d178f32af3cf916b0383f51c65f9c3181ab",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:3064872f9fef7139d864d821938635b2798232942db1dbe1b95bc085b45bfc61",
+      "verified": true,
+      "sif_sha256": "bf30986759251b40cc1d7de0ca8e15b821aa584382050807e30b08ee78f08174",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pydata__xarray-4356": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-4356",
+      "manifest_digest": "sha256:6783a6b3a574ea663b66d11da371b6fe00a18c6501e361e1384c8daeb978bf5c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:43e2c1d578ea6b1b1e64369aae9632569ca254e46c16819fcf4e08529814c406",
+      "verified": true,
+      "sif_sha256": "80c806c5ecbc6c1fd6050bc9c6cdf0e54a63fb003bff602681e38f0ddeba3d83",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-7336": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-7336",
+      "manifest_digest": "sha256:7cc2c89f47d69a8dae0b20eb543336b8f25917ca8d54c77c3e625543238cfcc6",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:481ebd12ef496853db01765b1dd57d9aebdedd056c22656b9f483fc1c8379da9",
+      "verified": false
+    },
+    "scikit-learn__scikit-learn-10297": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-10297",
+      "manifest_digest": "sha256:58b80e9100f9d107291b5ea37c76583ed4851d8e18ec07aef197f1803a290986",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:c48ade7195b167b2562f90f3a3a60ebb410276e7583bd1212e324c16157d7eb0",
+      "verified": true,
+      "sif_sha256": "6672df36b08842a626cad80cb3dc8064c12c0efdb1a388e185ffd34d3a19f24b",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "matplotlib__matplotlib-24570": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-24570",
+      "manifest_digest": "sha256:b223a05746c5783ce2865a57b8fabf45b6404ef3451707a25669a99e21223182",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:5d93272292526ed727fdbf8fcad24e751965c5d62d66f91c64be7119339b323c",
+      "verified": true,
+      "sif_sha256": "8827a8d768ff4a4e79faa4adedf5d66b7542f7ffa21ea900c2fb23b04e531177",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16631": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16631",
+      "manifest_digest": "sha256:89047cc950b66cc6a18c11d97f528877c313bc9e2a415931777140a8c0e2df20",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:73106409d800e32a921110d86ba25e1ac6764b76dc5b6bddeca8b8e4439f0a20",
+      "verified": true,
+      "sif_sha256": "0b274837451688b8837bea92ad22044895ed54aca3f2046c4de705cb1583f631",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15503": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15503",
+      "manifest_digest": "sha256:4438a1d7e5551ebb084426bd286735e51a05d498684a5cb7eec337d259d02a13",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9bbfaa2555a462e4a1e0d0768bc8cb907b91326ff1539cd6e548db4fe64eec67",
+      "verified": true,
+      "sif_sha256": "efb263213852acabfe2cac37f049069d2201b5804cc8b994fd15969b0cbdb827",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11749": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11749",
+      "manifest_digest": "sha256:8fd290a544ff73ae75fc4331e4c5f0ff1d80a2458665e484f3d4a5862ba10e50",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:ee36707667d3884ae64846162a37f2080e9669f0369928c53131428f3e9845c4",
+      "verified": false
+    },
+    "django__django-16569": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16569",
+      "manifest_digest": "sha256:f500cd7cad21c076f6e479b047ec3ce7fb6e5c0dbd76bbe73915e42e7b52cd32",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:c9c5cbfba8c3f8668d942bdcc892aa5d5e59627f979f4bb91d931184f3f62354",
+      "verified": false
+    },
+    "pydata__xarray-6599": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-6599",
+      "manifest_digest": "sha256:32ffcec37de801f41349c399cbab1a64ade337fdc88249ae2fe8dcf94c6a17d1",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1fec461e419dff41dbdb4aa46d8164af3669a7118948c453b80e46861db499d9",
+      "verified": true,
+      "sif_sha256": "2de9ecef85ebc451854b2334b0834f3a5b250b12a0f3167e97d01036da832b02",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16032": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16032",
+      "manifest_digest": "sha256:105509f4abf372cf3f5301f39664f631f3087d192f81055d88a16fddd5d0dd3b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:2b05c0e1e5815995e627e3780e332cafad8b06acb1fee06a9b7db4e2cff18066",
+      "verified": true,
+      "sif_sha256": "038ff4e6ad930986f7c6b591e19c73f7bdd021ec3e204a3d11cc397249ce66d0",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-14598": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-14598",
+      "manifest_digest": "sha256:e6a7291cea12126cd739997769070d60e4ebac363af4065261073750cb617bf3",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d312220e86c6b831d0e5df86ae86f68f93f13694cb64a68fc43ceb0c4c8cfcd8",
+      "verified": false
+    },
+    "sphinx-doc__sphinx-10466": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-10466",
+      "manifest_digest": "sha256:c02edca2a92a3353e0780dcd1b1a3ba2349245d7aa4e5fc6bc8f2a5327691452",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:5e02ca1446f493cdc9f47dd51a3e5c6d630a471a5b8eacdb85e2abedc95797e9",
+      "verified": true,
+      "sif_sha256": "9779f6d7f68ae62ca1b1ac3548d10ce74d3ab7bfd2e6fc1dc53751a9180d2d3e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-22914": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-22914",
+      "manifest_digest": "sha256:aa5f1cf12ce166511d03eed6ac0de0f76b27777ac2c6ddb4a9b11f67f000941f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:60ed5f8510af33c88c1932aac9c22c9bdae5bfe2a673a9a662bac0fbe3102539",
+      "verified": true,
+      "sif_sha256": "ffc30c0488302b074450151fdc68be63f8bed94fd1a66b7c63bbe94a3af98f28",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11400": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11400",
+      "manifest_digest": "sha256:513ed50493a651e0fa171b199872b57c81fedba92bf1a1a8fdad8976dc47dd33",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d8321ebabb7ba24e7db20275bba97dfd611fb36d078746ff08524b10225ba366",
+      "verified": false
+    },
+    "django__django-15957": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15957",
+      "manifest_digest": "sha256:0bd385831cbdab9d5b49d502708eeb831c290b856a8bd7b49ad889945b96452b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:7e2694f891d96ec8eaef27b746823acaa6dd28d65832b79db2bd18a816b3437e",
+      "verified": true,
+      "sif_sha256": "03803a6f693a67a437e4db4ce6a9da4b51262a9109f1783360d10fff91687ec9",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13344": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13344",
+      "manifest_digest": "sha256:bb7a5fef7132badf4cc18c9ae47d3f1fbc8f9102c447772d0c5fa0b27d85fad4",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:675551ddbb2800e5a3095003a0c044c5a2d36594fc630101dc2b34fb18e80373",
+      "verified": true,
+      "sif_sha256": "1b44a5c9cc1ab63d689c7377f3d375caa0660e949de1670347de8ac604902586",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14122": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14122",
+      "manifest_digest": "sha256:c68adb1cb710ccc0ee7649130cebfaa0219839daf1acdbc2db25d7dc19c7bc30",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:7fc3bb62f68f709d5cf5f8da26fb41c187fa096769c40367b150bb634c14bfe5",
+      "verified": true,
+      "sif_sha256": "c2822a5051ecb61aef266810e1b34ad1aa320803d1f0aace6e7ea3c9407ada6a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14238": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14238",
+      "manifest_digest": "sha256:ce30418a2b0599fa84ce4541450586010fab2d23a5da4cfe70770f304d289780",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:8b0f67486ca67f6a129bfdcebee43c86b2831942204b0840e321321b4fae0ba4",
+      "verified": true,
+      "sif_sha256": "381e4cc9483da091a1affb75e5024d3a562ed647a39be3be355a58406c60a375",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-17318": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-17318",
+      "manifest_digest": "sha256:dac5e27382a309b8dd1e6bc6aa4fe4dc3cb8c8384c6d5d516ea4c18e08fa06fd",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4d18e6a31fb1d68a8232f3c78a5a4c97e9c7a2d001765dcc90f228cef4b4e39f",
+      "verified": true,
+      "sif_sha256": "fe1d1a2c70e62668e3c37ffedf6426b470529d3227791f92bbc0c0a6f0cc1443",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-20438": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-20438",
+      "manifest_digest": "sha256:39b73ea4ac249445471138bcf090361b7c5aee24f9d4e01f273ffc86414573c9",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:cb6d4d5d94b5ef2dbf611a8caf1a82b52b88564c286767cd460c33cad9965ae0",
+      "verified": true,
+      "sif_sha256": "12d395ef145e9715d2bb78bd00ce09e01d9f20f54feb774d02a3b8ac8ce42000",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11292": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11292",
+      "manifest_digest": "sha256:ed10ed40b40643a9ebf70b08e7e93f1edadf47fee5b453ae2412dbb6ed340b80",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:14527bea3de0b756c25d9c9e078396f87e1862ef785f9f725ce52c9782995cdf",
+      "verified": false
+    },
+    "django__django-13363": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13363",
+      "manifest_digest": "sha256:d2d3a8ca05dac86be07180d39c31caa12d268924dc56743262ac92a175aed3f6",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:63af332c463d5014cbe0f6cc0336d6b9a29748be24b809b0c26901a55e6cf68c",
+      "verified": true,
+      "sif_sha256": "52a2961de5bd9a3f714a71ea38d4d9df1068b02b1e53e925a51a5aef504aeb5b",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12419": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12419",
+      "manifest_digest": "sha256:7e32534eba09fd9214fd5b0cc6c1d418923b381d09493a1e3cf65abb1309d09a",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6c6b1fec0a323b9225564620cd34f2d39828cef8f32496ad4a6c9ca0f7256768",
+      "verified": true,
+      "sif_sha256": "2e99b1e5dc3b737b0307bb6f342c72d964375de0aa50057e73343059b53f5b37",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-7590": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-7590",
+      "manifest_digest": "sha256:5c86dab7120b83b3bdb4af86743a3910da328029ed92183477fe9865ea76cb2f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1518e4ea72ffff0ec1dddd3713ac9a99cd87ca225cdcb01ee5f34c12acb6d31c",
+      "verified": true,
+      "sif_sha256": "4e954c6333a9aa18c2b382b13172bdb09c53249c855e5821330d9ac7196f146d",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-23262": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-23262",
+      "manifest_digest": "sha256:c29e2fbcef442fa9833021bc492ea4c39bc71a0fb606e61fc5521a841ae88b2e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:7c8f88bc121da29758c49f4877c3b34d5503e30d81b53b7f7e6bc802ad3a7170",
+      "verified": true,
+      "sif_sha256": "baa3a45283a963d1dd0e4873a7327ec58f8aa99e8a652ee7783a6a98abc7499e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-23413": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-23413",
+      "manifest_digest": "sha256:ff343113e7d03f91f325eb74e7a90247714fcac28af5c28cdb69ccb17c768eb0",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:20ff27f6a06e781c201194bc8c30f321703461c63e1a7e14014dae6b2fffbb0e",
+      "verified": true,
+      "sif_sha256": "1c25d70500f22aedaeb2dc6857ad437b1dbe833bee5b8ee4b5bce4e035fd7d96",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12304": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12304",
+      "manifest_digest": "sha256:46ad662e0ab1ab9417a26ceae392395f255634a054c25faf0fcfcd43aa52702c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:86ac7281087965cb576c24e92ee6a71fecaf952948e388583949dac9935c5f7a",
+      "verified": true,
+      "sif_sha256": "5a786155e184da16b756368c844fd7d01afc9a64c7e8e76bacbb614af8f6218a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-10973": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-10973",
+      "manifest_digest": "sha256:ed086eeedcb33feb3d298d97764c0413e078d1e6144f0a145c5defa34bb077c8",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:b6c8c71dde4d6bba6e2dc50a70778bf275b07dca2df97c4b96b252d6e54a1fdd",
+      "verified": true,
+      "sif_sha256": "3221566c5b09522c6e1eadf2fef1aa593fa5734c95139d9c9c33ba5aaa1f675e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15499": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15499",
+      "manifest_digest": "sha256:97dd2c39ae07da19f7ec3ecd0c82cd8c40e6c5a09a4084cce7d5432a7e053314",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:13a23a0a1cb8d4241463f3750a8c75c5ae964c6e0b6984cedc549fa9f65e71ab",
+      "verified": true,
+      "sif_sha256": "6b1481621c72c8e23f04c347ce9ecdef9e35b6a51265519cb6996255a3c367ae",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11276": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11276",
+      "manifest_digest": "sha256:727317e7a8eb50abb663af37206c595a9171295157add746c3f2b3cc42da7323",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:8e02100e7495c6258bb1594dab4170aa147bf3e8e338a2dcd85125c7bec65b5a",
+      "verified": true,
+      "sif_sha256": "90d331d4dcbb5edc5407f6cd9812a35abfbb2f800cf69ecb39542c4bbe692965",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15161": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15161",
+      "manifest_digest": "sha256:e5dc48b0c810feeed9bcc4a979bcc60fbe662d85a24d9c2a6573d5a28bbc012f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4b6f9d0d4d694d6ed3bc62a74206e19ff909a98bd5c8f84a7caac02679255c6e",
+      "verified": true,
+      "sif_sha256": "20d5fab1a015ec6f2a408543e6a71a1e4f41a07a1e6a2189ea03672c700af35b",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-14711": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-14711",
+      "manifest_digest": "sha256:c5366c33ed254ded2f8b39f7350deada09fc6ff5b1fe252041d10844fab54997",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:db09c7341f3cbf583f2d08dbf56f25673911c1b8d42599c19519411242fa9035",
+      "verified": true,
+      "sif_sha256": "33fd1cd5f7ad7e0bbc709abe3a696bf568126a18b17276834589c6ff7e2db725",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11490": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11490",
+      "manifest_digest": "sha256:efe0a8e57dfa92d296fb017ad7931d842b506ad05ef7582195b4bd9a890c3a9e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:d4fb2ca01ba943c7bac346b65e0e51b7a28a9170a29eaeb9091adcf6a2eab4b2",
+      "verified": true,
+      "sif_sha256": "dc7b81d7f8d01391ad144722537308f7b31fdca4ea79b6d205fa977853bdb3b3",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12155": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12155",
+      "manifest_digest": "sha256:e039b37f460b99a0cf541ea6759ac5a31e94ce9959d3755d99775792421e44dc",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:a0cc9fcdd67a7a030e947521e227ba9bfc37df118525c0d68ae3ed0d620ca07a",
+      "verified": true,
+      "sif_sha256": "c43e124befe4b2770cacf7ef8bf64319847a46339c9ac5df3791fbcc00cfc294",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-13480": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-13480",
+      "manifest_digest": "sha256:98270682f9052def68c8c42f78fb6ce6573f2dc7b8cb7fe741139a0543b30e21",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e6f975f907a4785cd6ece52754b3192fe69bba309cf4bc24598725dc0a1807d4",
+      "verified": true,
+      "sif_sha256": "455dee67cffac9aa54ee1f2ea2ab7ab4100fd837eb2a250c1c8685f60dbc67bb",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11820": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11820",
+      "manifest_digest": "sha256:26d34e7bfd4225521b60124c4c71c7be9e00ee81255b93662edd2c31b4a68c06",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9f0fa3231d4ce350634bb02ee75e3a7870240470d1b4cb1dc0a2657889c4c952",
+      "verified": true,
+      "sif_sha256": "cb42ddbf992393ba829b70a5ea6e6e57084ee16d85fdf18bacf2353f55d768fc",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11555": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11555",
+      "manifest_digest": "sha256:e2c6d6293c8ad66c921754ee2bc13206b0f30166465ad71be92703c11ffaa3cb",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:36c28a4ff3d57102f43c3ea25d60357c48b24ceb013126e3588b707dddd1cd36",
+      "verified": true,
+      "sif_sha256": "68f973723a350ac3feda992c4cf8788d7801ca42a92b92ec9986b8fc3722d0e1",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-22456": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-22456",
+      "manifest_digest": "sha256:ffa413d994c2217162a352c8bd711b6ece23b0f0a3941b4f5071b52fdcc9bc64",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6c9b0a8431c7e8f1aaeee850822a66bc95ab7bbb50e53b177f895cc030f3aa85",
+      "verified": true,
+      "sif_sha256": "bf7cc5cf84c7c71ef98aa60aced2798151e75c30392aa56cd8ced2edec6b4de0",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15252": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15252",
+      "manifest_digest": "sha256:98b640f30877340d9f3fb681e6613c99b9661f33e294023d4d9ce697ecd128e7",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:6fb27c04c61a568c3d4b6207ce9f9ad40fae0bc890c42e2ad82b64d744229e6f",
+      "verified": false
+    },
+    "sphinx-doc__sphinx-11510": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-11510",
+      "manifest_digest": "sha256:01bf15e77e5d0f6988c8107bf81a5091900228ca0d160bf677d9b07dd17e1a0f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1bd9c81ce4a2db48c547237d0ac9899cab789eca65a0b9e9221b76724023cb13",
+      "verified": false
+    },
+    "pydata__xarray-7393": {
+      "image": "swebench/sweb.eval.x86_64.pydata_1776_xarray-7393",
+      "manifest_digest": "sha256:8d92f63564f3cfa7497bdc9fd4bacb5cfac11459f658621a00ebe3eb55832278",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:15d79e643a94b7fba2a8138cdc5daf011bc2d99f61a7ce30508689a90ab9042f",
+      "verified": true,
+      "sif_sha256": "6f17a7b0941607498b59e4c9ab02d7aa26aeea3b17ea1a01c61c72ad8af9825c",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-10999": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-10999",
+      "manifest_digest": "sha256:22a35ae325dc5abdd397b1d474d66aad62da6d23c4e9c8763478e82bcf63af7b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4dced474a58f982e59782975ab514f4a3de6ed372a80867256cd51f0a21d3be9",
+      "verified": true,
+      "sif_sha256": "771c9f97264e93e72c1ad4a1ac269e859b6aa6e7dd954ddde6fd4f25065d409f",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pylint-dev__pylint-6903": {
+      "image": "swebench/sweb.eval.x86_64.pylint-dev_1776_pylint-6903",
+      "manifest_digest": "sha256:bad80b1c20eeb5d49a6e82dc485ee40fbd67b91df47b56740e1be5471b678f5b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:9c7e997eb1256599688e4c66193f1281e2b8223578cc8064e2936d6f1a30b45f",
+      "verified": true,
+      "sif_sha256": "176524012ea25d4a1e9baf8817e97574516f8ab90e8f9e01fa61de46057498f4",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11299": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11299",
+      "manifest_digest": "sha256:e43ae327b6a8ee64f9bc09c17c0c919ff1ea381fcf69404f32914607daea9590",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:47fdbfdafa1a0a41dd32c23211a8df13a051a623234220142c29b30fae760694",
+      "verified": true,
+      "sif_sha256": "b2a4a6d1857662bd30d70b51bc2fcecb7c9f6d8ec22dc61c83d23ab58bcb6c06",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15731": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15731",
+      "manifest_digest": "sha256:00aa4ebb72a1a53853bd2ff2998b69f04a18a3d49da2d322e98d29f1b2e07641",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4b07f5b55b6506cc56d140418ccf83902fd3234141906b9c2c23baf55e886dc8",
+      "verified": true,
+      "sif_sha256": "67e538d9fa4e79d3b7c555ec01869dcbf9f76b0a8866cf847b9e4f3aafd39190",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-13112": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-13112",
+      "manifest_digest": "sha256:a5e22b373f35ce538ae14aa9b2eb2c6552379ff97a560128270e45e18984eaf1",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:bcb7b5774dc303f2bd664c3c614a5fb99e5fbbe803a776d127621a7841dcae64",
+      "verified": true,
+      "sif_sha256": "72d9e601aef441cfcf254e81b201ee171a0eb118933e6112a294503efd51c2a1",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-7205": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-7205",
+      "manifest_digest": "sha256:1c6124cd5254db8831df455575eff2795b0cbeb849d10846388e30e00870e495",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:db1e248257a048e498295866ef35a1f7dee7d4c7f9bf638cda6bcf99e1fb623c",
+      "verified": true,
+      "sif_sha256": "43bc781acc3fbe0465282327648eddc4cf30e20d5b572ba930211f634acb53ff",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12741": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12741",
+      "manifest_digest": "sha256:08e1eaac3d691871dadda2007635a13170536b6e4897698efb63e2dbcca96452",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:313ba8e7fa1d1c4e517d4f1aa9dc7e018c8250352221c7b6e20a8e216bff980a",
+      "verified": true,
+      "sif_sha256": "91a48e5ab2793ab663c3c63dc1c14d060edac831fb4db7bf27dacdca759a76b3",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-21596": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-21596",
+      "manifest_digest": "sha256:1df616eb9faad0688c22d0e38984918699b28fea9e60f5c1158f1e99b8eb2a6f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:2e743a8e76c3191f73f35996ddda5ca4b2e2511e683725bcb1c68bdcf40aa5cc",
+      "verified": true,
+      "sif_sha256": "afdc33d085e652c096d2a412d3b6a43efbc293c80fc0fb082d175237f2788e55",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-24066": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-24066",
+      "manifest_digest": "sha256:ec5b2dae801e4f826626498228a2579a6bf1600fc4b7bf9091670b5dca3343bf",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:1f27465fafb60413525ae17b82582723e697e37ec47ffd21621fb05cb51c20ac",
+      "verified": true,
+      "sif_sha256": "f2124e299e4d7dbf1b5c828eafcf91335707b268c4b35af8d9cabdac5e12bbe4",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-24539": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-24539",
+      "manifest_digest": "sha256:b6303273066473c21cbf7b97d26f6bb214a5a24ebe6c65b8f26234e3315f7a4b",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:195e87dbb7086d126af10ce55e88d7c417acee9b6d2c84a7e156044cc2dcaaa0",
+      "verified": true,
+      "sif_sha256": "6f0d70bf524a1c605c086d3aa051d8eaf86d2eb442635d1c0f35d0aa33c67494",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15103": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15103",
+      "manifest_digest": "sha256:4e1908be32bad8b1c12edad8ad657bc0b811c0de5104f4366dac1585f0c6110e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:7296563628e6ce00dba17a6c255a7407cabf9fea5243f519ff6e8094878b2970",
+      "verified": true,
+      "sif_sha256": "bb48f8b0e71a43866a9a4ee284be68fa942bdcaf52fb8f65f70713518ea619e8",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-11951": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-11951",
+      "manifest_digest": "sha256:8b2b92376eadf6ac500e6c79798d18e46c506a76508fbb4417fde91c29cf1239",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:8b4902b984cbdb3c6dc3301a1ed8f34cd2ea3ab30ba06a32d5c41cd7274baffd",
+      "verified": false
+    },
+    "django__django-16901": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16901",
+      "manifest_digest": "sha256:30d056ba431e80d4434cf885a9e7711a78d27a5624e65e4580486d7a4bd93b25",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:4383d373042de54a5ea704401481045dbd8d98740c2e7125f94e4fe95cbf3fa3",
+      "verified": true,
+      "sif_sha256": "a0794381da57cca68a2aa43c21719ef6a641fb2ec15f5ea7fde61bd69813940e",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "scikit-learn__scikit-learn-13142": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-13142",
+      "manifest_digest": "sha256:4c8ca46bcd30baef533c24ebbabe64158d2936e563be493b8a3224da52d17c84",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:7c377ff6166931d3c231a0f8ee4db63a3e6581e85b9a5f0fd3be15125810c1f6",
+      "verified": true,
+      "sif_sha256": "96052f77ec74fb1663033b340712eb444b90f2ef11c0cdff1fc4268060ee6d04",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-15554": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15554",
+      "manifest_digest": "sha256:9e1bc1db0e1ec55a32f346c36671df7384a51a9ed84eed9b7e839e1405f04292",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:e7ac5458ec19454f0616b7f2ae7b8e0853a05faf6a6941fd497f9938cd0905b4",
+      "verified": true,
+      "sif_sha256": "468ca295756b1f472acfdd162c283a48475df3cc96d159a2f651d2346a527925",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sympy__sympy-15599": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-15599",
+      "manifest_digest": "sha256:b7e6e69c4defe6eb7fe5c57ff3c946d94f7a2048523de41516d209a9b9d00016",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:068c2c597f9dffc4344f276d9a9d1e0557b9e32b15b8ff4c4ffba76995ce6853",
+      "verified": true,
+      "sif_sha256": "d54276c06ce257fbe072a70fdbeded5e8c1ef0908102f7a395e2c8a2bfe98a17",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-12125": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-12125",
+      "manifest_digest": "sha256:4345ad65eec0da8a32063c2c9a32df380e10b4fb4ccebfcfed9c4be9a185e5ff",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:da33a102cd04dc2ed17350e8e227102b56db9405f0227977060eee610e67163d",
+      "verified": true,
+      "sif_sha256": "30a2a4e906bc3552a53f5ae7455afd825a8f3f7143c22a806b665e8bc17acf53",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "astropy__astropy-14539": {
+      "image": "swebench/sweb.eval.x86_64.astropy_1776_astropy-14539",
+      "manifest_digest": "sha256:ed6b8fa262a734159bb7171934ad5d03dff520de439555bf3b6f41470a09bc4c",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:84363223c36a289d101970473e56ad12199e9b5dcbd1deef5568f4fab743ff05",
+      "verified": false
+    },
+    "scikit-learn__scikit-learn-14983": {
+      "image": "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-14983",
+      "manifest_digest": "sha256:96e1896b74d100457d8d82f3683ea4c6f807235755f89cc61862f0da7f5f5836",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:671ab629659e48085e86b54f3d83f6aba03b6183f3d569ff9c417c67dd64f343",
+      "verified": true,
+      "sif_sha256": "3c46c7c587e18dc6bdb65f9d60b77d05e4b29050b879ebaba6e1f4c28f9b8c1a",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "pytest-dev__pytest-7236": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-7236",
+      "manifest_digest": "sha256:54f89a5c1611eac42d3d7b7c03e17a43e9e70c604cd8439f45bf68102fc3ff09",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:edcc72fd067a1b88f55fc9676cd2fa8ad6f0e624a3ae7d92eae232b7f39efadf",
+      "verified": true,
+      "sif_sha256": "87c67aa17251c7ba584d612c1c5b21b381f0e566e96049b9ed6f534d8f2485e2",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-16145": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-16145",
+      "manifest_digest": "sha256:c2a9c9bd764f59d267b435b1aaab00f540b334e8e4956f113543636e42a53a33",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:c492ee3cf570167ea0106630bc76873c2a710716788b5be066708f25697f26a9",
+      "verified": true,
+      "sif_sha256": "d8fca2daa0c5a2f1b71dee69c35027b3d2ad9a77bf1e968fbe27f39f3b9681ce",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "sphinx-doc__sphinx-7454": {
+      "image": "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-7454",
+      "manifest_digest": "sha256:97b2228926083de964b14f90e8a9a900be814cfd44f7961fac3dcec3013d1d3f",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:affb5d1b27c24d95d739507e958b7939e3a9472bc69c68f10e3f5ccf35217b30",
+      "verified": true,
+      "sif_sha256": "6ab828767db7080809130a12b10c8480ff23da0a6a1b11c6a977cab8844cbdc6",
+      "verification": "HPC swebench_preflight: pull by manifest digest, base commit present, conflicting/nochange -> test_failure"
+    },
+    "django__django-14351": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-14351",
+      "manifest_digest": "sha256:6a6c13bbbfd1d5d89c9dfa8d1176467098dcc938be7d956743eef3fd55382e3e",
+      "manifest_kind": "index",
+      "platform_digest": "sha256:cdbd1bfcd9546406425b6dc517312e5fe55d2c6b13ab4acb53a71d1b1ae4f624",
+      "verified": false
+    }
+  }
+}

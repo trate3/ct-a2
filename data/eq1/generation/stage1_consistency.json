@@ -1,0 +1,371 @@
+{
+ "stage1_dir": "<HOME>/ct_eq1/repo_v5/results/tap_live/run2/generate_calls_1",
+ "stage1_run_config_sha256": "d4ce1c16341b89b5278f2a59149daa86f6d041fed3fd460c4aa37012c4a5c2e1",
+ "stage1_calls_sha256": "8098d8cb511ee4e5e03ca7ff529dc20520cfc3f31a677a0714c1c01a7bb56047",
+ "note": "for the consistency check only; stage 1 is curtailed supporting data (cap 4,096 tokens)",
+ "list_rule_sha256": "044e30e2807ed222bc91c8b0092d83c92750003cb7bbe5f7c7a8010b52babd64",
+ "groups": [
+  {
+   "representative_index": 0,
+   "representative": "lcbhard_101@0.25",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "0aed2aefeba29ce70602ceb52ddacc9b33d347ba3a6aa06b034ba77733df6c9f",
+    "A1": "0aed2aefeba29ce70602ceb52ddacc9b33d347ba3a6aa06b034ba77733df6c9f"
+   }
+  },
+  {
+   "representative_index": 1,
+   "representative": "lcbhard_101@0.5",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "14adf867e759eb37d1c53f69a13c8b2ab505e172cd1f9f04297ca5461ee66ecf",
+    "A1": "14adf867e759eb37d1c53f69a13c8b2ab505e172cd1f9f04297ca5461ee66ecf"
+   }
+  },
+  {
+   "representative_index": 2,
+   "representative": "lcbhard_101@0.75",
+   "pair_exists": true,
+   "pair_natural": false,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "cap",
+    "A1": "cap"
+   },
+   "token_hashes": {
+    "A0": "c67096566c44828d00a0ce4cf559a009b8e2ea072cdbc0f8ea6887b7119141fa",
+    "A1": "c67096566c44828d00a0ce4cf559a009b8e2ea072cdbc0f8ea6887b7119141fa"
+   }
+  },
+  {
+   "representative_index": 3,
+   "representative": "lcbhard_18@0.25",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "e8902e142110d8ae9980fd01478c6e4b995a9c782d2644664f13f8e3343eb1ee",
+    "A1": "e8902e142110d8ae9980fd01478c6e4b995a9c782d2644664f13f8e3343eb1ee"
+   }
+  },
+  {
+   "representative_index": 4,
+   "representative": "lcbhard_18@0.5",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "acc2f945ee5274e26210c10d22b9bc1561767b747d8baf734d89295db72ff604",
+    "A1": "acc2f945ee5274e26210c10d22b9bc1561767b747d8baf734d89295db72ff604"
+   }
+  },
+  {
+   "representative_index": 5,
+   "representative": "lcbhard_18@0.75",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "6acb462485f955602583a8cda66877f7a6c68c1b58a03c9d5cbc0fb3154cdbe9",
+    "A1": "6acb462485f955602583a8cda66877f7a6c68c1b58a03c9d5cbc0fb3154cdbe9"
+   }
+  },
+  {
+   "representative_index": 6,
+   "representative": "lcbhard_22@0.25",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "b0fd3911ebd6ed5fbf25bc2f3af4641f149ee8f7b291ad536d0e3efc37d23fcb",
+    "A1": "b0fd3911ebd6ed5fbf25bc2f3af4641f149ee8f7b291ad536d0e3efc37d23fcb"
+   }
+  },
+  {
+   "representative_index": 7,
+   "representative": "lcbhard_22@0.5",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "abd6bc222e6c5b9bd48c8fc987d835a93de6233519c7850334d1a3c8ffd78146",
+    "A1": "abd6bc222e6c5b9bd48c8fc987d835a93de6233519c7850334d1a3c8ffd78146"
+   }
+  },
+  {
+   "representative_index": 8,
+   "representative": "lcbhard_45@0.25",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "0ebca51d3fe7765ac60a5ad99ea1133a6c1638fc549503ae56144100212a68be",
+    "A1": "0ebca51d3fe7765ac60a5ad99ea1133a6c1638fc549503ae56144100212a68be"
+   }
+  },
+  {
+   "representative_index": 9,
+   "representative": "lcbhard_45@0.5",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "1ee2624840785a20684e4f46734fcd0ac430997c6c3e407efa48a1b0f0e74386",
+    "A1": "1ee2624840785a20684e4f46734fcd0ac430997c6c3e407efa48a1b0f0e74386"
+   }
+  },
+  {
+   "representative_index": 10,
+   "representative": "lcbhard_45@0.75",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "f25d2e547da0bac14ea2f2bfbea87107e07d4d97460e30957602086b8bda90f3",
+    "A1": "f25d2e547da0bac14ea2f2bfbea87107e07d4d97460e30957602086b8bda90f3"
+   }
+  },
+  {
+   "representative_index": 11,
+   "representative": "lcbhard_55@0.25",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "a55a23d894789436c59a5dbee7651ce8433378200c5eca2755649192ac223f59",
+    "A1": "a55a23d894789436c59a5dbee7651ce8433378200c5eca2755649192ac223f59"
+   }
+  },
+  {
+   "representative_index": 12,
+   "representative": "lcbhard_55@0.5",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "5d1e05a563a138655eb17f24f1b6de7c63abda846f58322ba46770949bc447ea",
+    "A1": "5d1e05a563a138655eb17f24f1b6de7c63abda846f58322ba46770949bc447ea"
+   }
+  },
+  {
+   "representative_index": 13,
+   "representative": "lcbhard_55@0.75",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "4ee579bf8fa679d124227eb8ecca930ec547347d578522df6135a76e7bf31bf5",
+    "A1": "4ee579bf8fa679d124227eb8ecca930ec547347d578522df6135a76e7bf31bf5"
+   }
+  },
+  {
+   "representative_index": 14,
+   "representative": "lcbhard_64@0.25",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "093d79e8b40d862691745b228e6d451c94c992e731958e71221ae3e1c9bfbade",
+    "A1": "093d79e8b40d862691745b228e6d451c94c992e731958e71221ae3e1c9bfbade"
+   }
+  },
+  {
+   "representative_index": 15,
+   "representative": "lcbhard_64@0.5",
+   "pair_exists": true,
+   "pair_natural": true,
+   "seed_matches": true,
+   "finish_reasons": {
+    "A0": "natural",
+    "A1": "natural"
+   },
+   "token_hashes": {
+    "A0": "74235cd853d896510a64478ba17f71f248a7fe9a1c4510d53cd0215cf60e9566",
+    "A1": "74235cd853d896510a64478ba17f71f248a7fe9a1c4510d53cd0215cf60e9566"
+   }
+  },
+  {
+   "representative_index": 16,
+   "representative": "lcbhard_71@0.25",
+   "pair_exists": false,
+   "pair_natural": false,
+   "seed_matches": null,
+   "finish_reasons": {
+    "A0": null,
+    "A1": null
+   },
+   "token_hashes": {
+    "A0": null,
+    "A1": null
+   }
+  },
+  {
+   "representative_index": 17,
+   "representative": "lcbhard_80@0.25",
+   "pair_exists": false,
+   "pair_natural": false,
+   "seed_matches": null,
+   "finish_reasons": {
+    "A0": null,
+    "A1": null
+   },
+   "token_hashes": {
+    "A0": null,
+    "A1": null
+   }
+  },
+  {
+   "representative_index": 18,
+   "representative": "lcbhard_80@0.5",
+   "pair_exists": false,
+   "pair_natural": false,
+   "seed_matches": null,
+   "finish_reasons": {
+    "A0": null,
+    "A1": null
+   },
+   "token_hashes": {
+    "A0": null,
+    "A1": null
+   }
+  },
+  {
+   "representative_index": 19,
+   "representative": "lcbhard_80@0.75",
+   "pair_exists": false,
+   "pair_natural": false,
+   "seed_matches": null,
+   "finish_reasons": {
+    "A0": null,
+    "A1": null
+   },
+   "token_hashes": {
+    "A0": null,
+    "A1": null
+   }
+  },
+  {
+   "representative_index": 20,
+   "representative": "lcbhard_9@0.25",
+   "pair_exists": false,
+   "pair_natural": false,
+   "seed_matches": null,
+   "finish_reasons": {
+    "A0": null,
+    "A1": null
+   },
+   "token_hashes": {
+    "A0": null,
+    "A1": null
+   }
+  },
+  {
+   "representative_index": 21,
+   "representative": "lcbhard_9@0.5",
+   "pair_exists": false,
+   "pair_natural": false,
+   "seed_matches": null,
+   "finish_reasons": {
+    "A0": null,
+    "A1": null
+   },
+   "token_hashes": {
+    "A0": null,
+    "A1": null
+   }
+  },
+  {
+   "representative_index": 22,
+   "representative": "lcbhard_9@0.75",
+   "pair_exists": false,
+   "pair_natural": false,
+   "seed_matches": null,
+   "finish_reasons": {
+    "A0": null,
+    "A1": null
+   },
+   "token_hashes": {
+    "A0": null,
+    "A1": null
+   }
+  },
+  {
+   "representative_index": 23,
+   "representative": "lcbhard_99@0.25",
+   "pair_exists": false,
+   "pair_natural": false,
+   "seed_matches": null,
+   "finish_reasons": {
+    "A0": null,
+    "A1": null
+   },
+   "token_hashes": {
+    "A0": null,
+    "A1": null
+   }
+  }
+ ],
+ "n_pairs_exist": 16,
+ "n_pairs_natural": 15
+}

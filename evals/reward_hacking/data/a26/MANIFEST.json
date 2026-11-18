@@ -1,0 +1,46 @@
+{
+ "rows": {
+  "full_T1_trainval.jsonl": 175,
+  "full_T1_test.jsonl": 105,
+  "full_T6_trainval.jsonl": 175,
+  "full_T6_test.jsonl": 105
+ },
+ "sha256": {
+  "full_T1_trainval.jsonl": "c377aa95aa2204b9662f6d24ea34f1288dc11c10ae569a80d215d87302b4d52b",
+  "full_T1_test.jsonl": "67fa29353261d4a7500957d9f0ceaf49b0d8588454f1549837538441c9c2dd64",
+  "full_T6_trainval.jsonl": "e292ba579c1351007c58e3db98eb7117c5040972d26b8013967421c1f67d6ace",
+  "full_T6_test.jsonl": "e3ba1f8c7895b1a282c706d76dbaa6f5a9df47b7b19d04359b8b9517840f6ac2"
+ },
+ "pilot_tasks_excluded_at_k0": [
+  "lcbhard_10",
+  "lcbhard_101",
+  "lcbhard_15",
+  "lcbhard_18",
+  "lcbhard_19",
+  "lcbhard_20",
+  "lcbhard_21",
+  "lcbhard_23",
+  "lcbhard_29",
+  "lcbhard_30",
+  "lcbhard_32",
+  "lcbhard_4",
+  "lcbhard_40",
+  "lcbhard_41",
+  "lcbhard_42",
+  "lcbhard_44",
+  "lcbhard_45",
+  "lcbhard_47",
+  "lcbhard_50",
+  "lcbhard_51"
+ ],
+ "tasks_per_split": {
+  "val": 18,
+  "test": 35,
+  "train": 47
+ },
+ "excluded_malformed": [
+  "lcbhard_35",
+  "lcbhard_77",
+  "lcbhard_87"
+ ]
+}

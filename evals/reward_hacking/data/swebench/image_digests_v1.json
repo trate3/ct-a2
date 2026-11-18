@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "dataset_revision": "9c2d34f364b7229e8c0ff807c646100bdc18bbb5",
+  "images": {
+    "matplotlib__matplotlib-25122": {
+      "image": "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-25122",
+      "manifest_digest": "sha256:0fa06f48ba2c929c68f74e8bf02673e9f8cb007059d4455289feb18805aaca38",
+      "verified": true,
+      "verification": "Docker Registry manifest digest independently checked"
+    },
+    "django__django-15863": {
+      "image": "swebench/sweb.eval.x86_64.django_1776_django-15863",
+      "manifest_digest": "sha256:6fa751d50cbfcf2b3b2234fb5ec04f46887607fa6085cea4a5994769a9f5b214",
+      "verified": true,
+      "verification": "Docker Registry manifest digest independently checked"
+    },
+    "pytest-dev__pytest-5787": {
+      "image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-5787",
+      "manifest_digest": "sha256:48c6ca4406eb36dae43e08dc2137b750239b8ad8f9ccdf2924e8fc2177fca241",
+      "sif_sha256": "c943fe3c190a6875fe7d4b0f53c75fce01389f2dd07706f789bc25703d1036d6",
+      "verified": true,
+      "verification": "HPC manifest preflight and provider scorer smoke"
+    },
+    "sympy__sympy-16597": {
+      "image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-16597",
+      "manifest_digest": "sha256:80716265dd8eef4052cb15f07ded4cbf2ddcd5957d7d526597be6808c56bb55e",
+      "verified": true,
+      "verification": "Docker Registry manifest digest independently checked"
+    }
+  }
+}

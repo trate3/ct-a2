@@ -1,0 +1,59 @@
+{
+ "flags": {
+  "command": "<HOME>/rh/envs/vllm/bin/vllm serve <SCRATCH>/rh/models/qwen3.8-27b --served-model-name qwen3.8-27b --host 127.0.0.1 --port <job-specific> --max-model-len 196608 --max-num-seqs 32 --gpu-memory-utilization 0.90 --dtype bfloat16 --enable-prefix-caching --enable-prompt-tokens-details --generation-config vllm --language-model-only",
+  "vllm_flags": {
+   "--served-model-name": "qwen3.8-27b",
+   "--host": "127.0.0.1",
+   "--max-model-len": "196608",
+   "--max-num-seqs": "32",
+   "--gpu-memory-utilization": "0.90",
+   "--dtype": "bfloat16",
+   "--enable-prefix-caching": true,
+   "--enable-prompt-tokens-details": true,
+   "--generation-config": "vllm",
+   "--language-model-only": true
+  },
+  "served_model_name": "qwen3.8-27b",
+  "serve_model_path": "<SCRATCH>/rh/models/qwen3.8-27b",
+  "max_model_len": 196608,
+  "registry_max_model_len": 196608,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.9,
+  "dtype": "bfloat16",
+  "quantization": "none (bf16 safetensors)",
+  "kv_cache_dtype": "auto (model dtype, bf16)",
+  "max_num_batched_tokens": null,
+  "chunked_prefill": false,
+  "model_loader_extra_config": null,
+  "prefix_caching": "on",
+  "generation_config": "vllm",
+  "language_model_only": true,
+  "extra": "",
+  "tensor_parallel_size": 1,
+  "n_gpus": 1,
+  "gpus_visible_to_job": 1,
+  "gpu_name": "datacenter GPU",
+  "gpu": [
+   "datacenter GPU"
+  ],
+  "vllm_and_torch_version": "0.31.0 torch 2.13.0+cu130",
+  "script": "deploy/second_machine/slurm/eq1_judge_saved_calls_second_machine.sbatch (server start as eq3_a48_mon.sbatch: lib.sh rh_engine_start, serve_vllm.sh)",
+  "weights_dir": "<HOME>/rh/models/qwen3.8-27b",
+  "weights_revision_file": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "registry_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "registry_hf_id": "Qwen/Qwen3.8-27B",
+  "weights_staged_to_node_scratch": true
+ },
+ "session": {
+  "slurm_job_id": "165264",
+  "restart_count": 0,
+  "node": "<NODE>",
+  "launch_utc": "2026-11-17T18:06:44Z",
+  "seconds_launch_to_health_ok": 65.282,
+  "seconds_weights_staging_before_launch": 0.078,
+  "server_pid": 1952419,
+  "port": 25264,
+  "engine_log": "<HOME>/rh/logs/eq1-judge-165264-qwen3.8-27b-think-r0.vllm.log",
+  "command_file": "<HOME>/rh/logs/eq1-judge-165264-qwen3.8-27b-think-r0.vllm.cmd"
+ }
+}

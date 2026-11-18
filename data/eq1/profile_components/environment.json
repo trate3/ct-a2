@@ -1,0 +1,13 @@
+{
+ "python": "3.12.3",
+ "torch": "2.15.0+cu132",
+ "cuda": "13.2",
+ "device": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+ "host": "workstation",
+ "nvidia_smi": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition, 595.91.07, 180 MHz, 3090 MHz, 600.00 W, 97887 MiB",
+ "reps": 200,
+ "warmups": 20,
+ "gpu_reps": 20,
+ "gpu_warmups": 3,
+ "sleep_us": 80.0
+}
